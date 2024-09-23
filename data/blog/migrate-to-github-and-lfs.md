@@ -19,7 +19,7 @@ Unless you are a big corporate (you need to protect your IP) or a company that n
 
 Also, every employee in a company needs to remember their core mission, the 'raison d'être'. If your core mission is not to manage VCS servers and maintain uptime, hire someone proficient in that.
 
-Also, Github now allows private unlimited repositories for teams of any size [free](https://github.com/pricing) ($0/month) with 2000 hours of Github Actions. So the cost-effectiveness/saving (not known till you lose data with self-hosted) is not an argument anymore. You don't get branch protection since it's available only for the paid version ($4/month).
+Also, Github now allows private unlimited repositories for teams of any size [free](https://github.com/pricing) USD 0/month with 2000 hours of Github Actions. So the cost-effectiveness/saving (not known till you lose data with self-hosted) is not an argument anymore. You don't get branch protection since it's available only for the paid version USD 4/month.
 
 Github is the default choice for many. Personally, for me, it was the tooling, ubiquity, community and ecosystem and the many new initiatives like storing the code in [Arctic](https://archive.github.com) which demonstrated how deeply they care about their core business.
 

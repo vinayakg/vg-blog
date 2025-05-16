@@ -3,7 +3,7 @@ title: 'Simple Digital Security for everyone'
 tags: [guide, noads, notracking, privacy, tools, tech, security, pihole6, doh]
 date: 2025-05-14
 draft: false
-summary:
+summary: Browse privately and securely, using pihole with wireguard VPN. If you want to just block unwanted domains, just run pihole and doh-proxy
 images: ['/static/images/Vultr_ip_rules.png']
 canonicalUrl: https://vinayakg.dev/simple-digital-security-for-everyone-vpn
 ---

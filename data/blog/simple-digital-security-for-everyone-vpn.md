@@ -1,5 +1,5 @@
 ---
-title: 'Invest in your digital security with pi-hole and wiregaurd'
+title: 'Simple Digital Security for everyone'
 tags: [guide, noads, notracking, privacy, tools, tech, security, pihole6, doh]
 date: 2025-05-14
 draft: false

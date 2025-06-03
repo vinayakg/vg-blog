@@ -13,9 +13,9 @@ If you don't have the need to use many git accounts - I'm sure there will be lea
 
 In case you have an existing git setup and looking to to start fresh, head to [Troubleshoot section](#troubleshooting)
 
-### Setting Up
+## Setting Up
 
-#### Generate SSH keys
+### Generate SSH keys
 
 Check your current SSH keys (back if you need them before deleting or leave them). They are all located at `~/.ssh/`. View them using `ls -al ~/.ssh/`
 
@@ -43,7 +43,7 @@ ssh-keygen -t rsa -C "vinayakg@personal.com" -f "id_my_user"
 
 All the generated keys will be at `~/.ssh` and we have 2 private keys (no extn) and 2 public keys (`.pub`)
 
-#### Let your provider know these keys
+### Let your provider know these keys
 
 This will help us setup the auth when we push or pull code via git. We will use [GitHub](https://gitHub.com) for this example
 
@@ -56,9 +56,9 @@ Copy your public key `pbcopy < ~/.ssh/id_work_user.pub` and then log in to your 
 
 Repeat the above steps for the other keys generated for other accounts in the above step
 
-#### Setting up and usage
+## Setup and usage
 
-##### The SSH-Agent way
+### The SSH-Agent way
 
 To use the above keys for auth we need to register with the `ssh-agent` on our machine. Ensure `ssh-agent` is running on the machine by using this command
 
@@ -73,7 +73,7 @@ ssh-add ~/.ssh/id_rsa
 ssh-add ~/.ssh/id_rsa_work_user1
 ```
 
-###### Usage
+#### Usage
 
 To start using ssh-agent, you need to set useremail registered with git. git uses this for authentication, username (does not matter - could be any, please do try and see
 
@@ -101,7 +101,7 @@ git clone git@github.com:vinayakg/repo
 
 The next time you have to work on many git accounts follow the above steps (`git config` && `ssh-add`). It's also possible to create handy aliases in git or in shell to save the number of keystrokes. You need not use the global command with git config if you are working on an existing repository. It's also possible to set email in the local .git/config, but this is not helpful for new repositories
 
-##### The SSH Config way ( The Preferred way)
+### The SSH Config way ( The Preferred way)
 
 Here we are going to use the same ssh config that we use for SSH auth while connecting to other machines over cloud. This method needs only changing the url while `git clone` and setting the url while adding `git remote` . Also this does not rely on any folder structures or other commands. (No need to customize git url if you just want to checkout/clone some code)
 
@@ -131,7 +131,7 @@ Host gh-work
 
 We will see below how to use these ==Host== name that we setup
 
-###### Usage
+#### Usage
 
 Now we have 2 accounts configured. Let's say you want to clone code from the personal account. Use the below command. This command will set correct git remotes. So we don't have to worry when we switch back after working in another account
 
@@ -145,15 +145,15 @@ For second, we can use the similar command
 git clone git@gh-work:work/repo
 ```
 
-### Troubleshooting
+## Troubleshooting
 
-#### Issues with existing git accounts on your machine
+### Issues with existing git accounts on your machine
 
 The default git account on the machine seems to take precedence and wont let us use the other git account. To set things fresh, let's clear using the below command. git config won't be of so much help
 
 Follow the below steps to reset your existing/previous settings
 
-###### Step 1
+#### Step 1
 
 ```shell
 $ git credential-osxkeychain erase
@@ -163,13 +163,13 @@ protocol=https
 <press return>
 ```
 
-###### Step 2
+#### Step 2
 
 Follow this step if step1 did not work
 
 Go to Launcher :arrow_right: search box :arrow_right:type git username :arrow_right: then press delete :x:
 
-###### Step 3
+#### Step 3
 
 Now check your ssh-add listing and see the certifications that are currently configured. If you see any suspects go ahead and delete them
 
@@ -227,7 +227,7 @@ It was real fun learning and experimenting all this with multiple accounts all b
 
 If there are any missing pieces, feel free to let me know in the comments section below
 
-#### References:
+### References:
 
 https://stackoverflow.com/questions/4220416/can-i-specify-multiple-users-for-myself-in-gitconfig
 

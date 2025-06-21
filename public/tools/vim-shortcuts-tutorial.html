@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Vim Shortcuts Tutorial</title>
+  <style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  background: #1a1a1a;
+  color: #e0e0e0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 30px 0;
+  background: linear-gradient(135deg, #2d3748, #4a5568);
+  border-radius: 10px;
+}
+
+h1 {
+  color: #68d391;
+  margin: 0;
+  font-size: 2.5em;
+}
+
+.subtitle {
+  color: #a0aec0;
+  margin: 10px 0 0 0;
+  font-size: 1.1em;
+}
+
+.nav-container {
+  position: sticky;
+  top: 20px;
+  background: #2d3748;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.nav-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.nav-btn {
+  background: #4a5568;
+  color: #e0e0e0;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.nav-btn:hover {
+  background: #68d391;
+  color: #1a1a1a;
+  transform: translateY(-2px);
+}
+
+.nav-btn.active {
+  background: #68d391;
+  color: #1a1a1a;
+}
+
+.content-section {
+  display: none;
+  background: #2d3748;
+  border-radius: 10px;
+  padding: 30px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.content-section.active {
+  display: block;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-title {
+  color: #68d391;
+  font-size: 2em;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #4a5568;
+  padding-bottom: 10px;
+}
+
+.subsection {
+  margin-bottom: 30px;
+}
+
+.subsection h3 {
+  color: #90cdf4;
+  font-size: 1.3em;
+  margin-bottom: 15px;
+}
+
+.shortcut-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.shortcut-item {
+  background: #1a1a1a;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #68d391;
+  transition: transform 0.2s ease;
+}
+
+.shortcut-item:hover {
+  transform: translateX(5px);
+}
+
+.shortcut-key {
+  font-family: 'Courier New', monospace;
+  background: #4a5568;
+  color: #68d391;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.shortcut-desc {
+  color: #cbd5e0;
+  margin-left: 10px;
+}
+
+.example-box {
+  background: #1a1a1a;
+  border: 1px solid #4a5568;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.example-title {
+  color: #90cdf4;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.example-code {
+  font-family: 'Courier New', monospace;
+  background: #2d3748;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 10px 0;
+  border-left: 3px solid #68d391;
+}
+
+.search-container {
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #4a5568;
+  border-radius: 6px;
+  background: #1a1a1a;
+  color: #e0e0e0;
+  font-size: 16px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #68d391;
+}
+
+.highlight {
+  background: #68d391;
+  color: #1a1a1a;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.tip-box {
+  background: #2b6cb0;
+  border-left: 4px solid #3182ce;
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 0 8px 8px 0;
+}
+
+.tip-box .tip-title {
+  color: #90cdf4;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Interactive Vim Shortcuts Tutorial</h1>
+      <p class="subtitle">Master Vim with categorized shortcuts and easy navigation</p>
+    </header>
+
+    <div class="search-container">
+      <input type="text" id="searchInput" class="search-input" placeholder="Search shortcuts (e.g., 'delete', 'word', 'dd')..." />
+    </div>
+
+    <div class="nav-container">
+      <div class="nav-grid">
+        <button class="nav-btn active" data-section="basics">Basics & Movement</button>
+        <button class="nav-btn" data-section="editing">Essential Editing</button>
+        <button class="nav-btn" data-section="textobjects">Text Objects</button>
+        <button class="nav-btn" data-section="operators">Operators</button>
+        <button class="nav-btn" data-section="search">Search & Replace</button>
+        <button class="nav-btn" data-section="visual">Visual Mode</button>
+        <button class="nav-btn" data-section="commands">Command Mode</button>
+        <button class="nav-btn" data-section="advanced">Advanced</button>
+        <button class="nav-btn" data-section="combinations">Power Combinations</button>
+      </div>
+    </div>
+
+    <!-- Basics & Movement Section -->
+    <div id="basics" class="content-section active">
+      <h2 class="section-title">Basics & Movement</h2>
+      
+      <div class="subsection">
+        <h3>Basic Movement</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">h/j/k/l</span>
+            <span class="shortcut-desc">Move left/down/up/right</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">w/b</span>
+            <span class="shortcut-desc">Move forward/backward by word</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">e/ge</span>
+            <span class="shortcut-desc">Move to end of word forward/backward</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">W/B/E</span>
+            <span class="shortcut-desc">Move by WORD (whitespace-separated)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Line Navigation</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">0</span>
+            <span class="shortcut-desc">Jump to beginning of line</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">$</span>
+            <span class="shortcut-desc">Jump to end of line</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">^</span>
+            <span class="shortcut-desc">Jump to first non-blank character</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">g_</span>
+            <span class="shortcut-desc">Jump to last non-blank character</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>File Navigation</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">gg</span>
+            <span class="shortcut-desc">Go to first line</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">G</span>
+            <span class="shortcut-desc">Go to last line</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">:{number}</span>
+            <span class="shortcut-desc">Go to line number</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">Ctrl+d/u</span>
+            <span class="shortcut-desc">Scroll down/up half page</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Character Navigation</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">f{char}</span>
+            <span class="shortcut-desc">Jump to next occurrence of character</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">F{char}</span>
+            <span class="shortcut-desc">Jump to previous occurrence of character</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">t{char}</span>
+            <span class="shortcut-desc">Jump to before next occurrence</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">T{char}</span>
+            <span class="shortcut-desc">Jump to after previous occurrence</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">;</span>
+            <span class="shortcut-desc">Repeat last f/F/t/T command</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">,</span>
+            <span class="shortcut-desc">Repeat last f/F/t/T in opposite direction</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tip-box">
+        <div class="tip-title">💡 Movement Tip</div>
+        Use numbers with movement commands! <code>3w</code> moves 3 words forward, <code>5j</code> moves 5 lines down.
+      </div>
+    </div>
+
+    <!-- Essential Editing Section -->
+    <div id="editing" class="content-section">
+      <h2 class="section-title">Essential Editing</h2>
+      
+      <div class="subsection">
+        <h3>Insert Mode</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">i</span>
+            <span class="shortcut-desc">Insert before cursor</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">a</span>
+            <span class="shortcut-desc">Insert after cursor</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">I</span>
+            <span class="shortcut-desc">Insert at beginning of line</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">A</span>
+            <span class="shortcut-desc">Insert at end of line</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">o</span>
+            <span class="shortcut-desc">Open new line below</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">O</span>
+            <span class="shortcut-desc">Open new line above</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Delete Operations</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">x</span>
+            <span class="shortcut-desc">Delete character under cursor</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">X</span>
+            <span class="shortcut-desc">Delete character before cursor</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">dd</span>
+            <span class="shortcut-desc">Delete entire line</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">dw</span>
+            <span class="shortcut-desc">Delete word</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">d$</span>
+            <span class="shortcut-desc">Delete to end of line</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">d0</span>
+            <span class="shortcut-desc">Delete to beginning of line</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Copy & Paste</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">yy</span>
+            <span class="shortcut-desc">Copy (yank) entire line</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">yw</span>
+            <span class="shortcut-desc">Copy word</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">y$</span>
+            <span class="shortcut-desc">Copy to end of line</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">p</span>
+            <span class="shortcut-desc">Paste after cursor</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">P</span>
+            <span class="shortcut-desc">Paste before cursor</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Undo & Redo</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">u</span>
+            <span class="shortcut-desc">Undo</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">Ctrl+r</span>
+            <span class="shortcut-desc">Redo</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">U</span>
+            <span class="shortcut-desc">Undo all changes on current line</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="example-box">
+        <div class="example-title">Example Workflow:</div>
+        <div class="example-code">
+          dd → delete current line<br>
+          3dd → delete 3 lines<br>
+          yy → copy line<br>
+          p → paste below<br>
+          u → undo if needed
+        </div>
+      </div>
+    </div>
+
+    <!-- Text Objects Section -->
+    <div id="textobjects" class="content-section">
+      <h2 class="section-title">Text Objects</h2>
+      
+      <div class="subsection">
+        <h3>Word Objects</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">iw</span>
+            <span class="shortcut-desc">Inner word (without surrounding whitespace)</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">aw</span>
+            <span class="shortcut-desc">A word (with surrounding whitespace)</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">iW</span>
+            <span class="shortcut-desc">Inner WORD (non-whitespace sequence)</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">aW</span>
+            <span class="shortcut-desc">A WORD (with surrounding whitespace)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Bracket Objects</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">i( / i) / ib</span>
+            <span class="shortcut-desc">Inside parentheses</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">a( / a) / ab</span>
+            <span class="shortcut-desc">Around parentheses (including brackets)</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">i[ / i]</span>
+            <span class="shortcut-desc">Inside square brackets</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">a[ / a]</span>
+            <span class="shortcut-desc">Around square brackets</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">i{ / i} / iB</span>
+            <span class="shortcut-desc">Inside curly braces</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">a{ / a} / aB</span>
+            <span class="shortcut-desc">Around curly braces</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">i< / i></span>
+            <span class="shortcut-desc">Inside angle brackets</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">a< / a></span>
+            <span class="shortcut-desc">Around angle brackets</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Quote Objects</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">i"</span>
+            <span class="shortcut-desc">Inside double quotes</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">a"</span>
+            <span class="shortcut-desc">Around double quotes (including quotes)</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">i'</span>
+            <span class="shortcut-desc">Inside single quotes</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">a'</span>
+            <span class="shortcut-desc">Around single quotes</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">i`</span>
+            <span class="shortcut-desc">Inside backticks</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">a`</span>
+            <span class="shortcut-desc">Around backticks</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Sentence & Paragraph Objects</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">is</span>
+            <span class="shortcut-desc">Inner sentence</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">as</span>
+            <span class="shortcut-desc">A sentence (with trailing whitespace)</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">ip</span>
+            <span class="shortcut-desc">Inner paragraph</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">ap</span>
+            <span class="shortcut-desc">A paragraph (with surrounding blank lines)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Tag Objects (HTML/XML)</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">it</span>
+            <span class="shortcut-desc">Inside tag</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">at</span>
+            <span class="shortcut-desc">Around tag (including the tags)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tip-box">
+        <div class="tip-title">💡 Text Objects Tip</div>
+        Text objects are used with operators! Try <code>ciw</code> (change inner word), <code>di"</code> (delete inside quotes), or <code>ya{</code> (yank around braces).
+      </div>
+    </div>
+
+    <!-- Operators Section -->
+    <div id="operators" class="content-section">
+      <h2 class="section-title">Operators</h2>
+      
+      <div class="subsection">
+        <h3>Basic Operators</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">d</span>
+            <span class="shortcut-desc">Delete</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">c</span>
+            <span class="shortcut-desc">Change (delete and enter insert mode)</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">y</span>
+            <span class="shortcut-desc">Yank (copy)</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">v</span>
+            <span class="shortcut-desc">Visual select</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Case Operators</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">g~</span>
+            <span class="shortcut-desc">Toggle case</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">gu</span>
+            <span class="shortcut-desc">Make lowercase</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">gU</span>
+            <span class="shortcut-desc">Make uppercase</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Formatting Operators</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">=</span>
+            <span class="shortcut-desc">Auto-indent</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">></span>
+            <span class="shortcut-desc">Indent right</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key"><</span>
+            <span class="shortcut-desc">Indent left</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">!</span>
+            <span class="shortcut-desc">Filter through external command</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="example-box">
+        <div class="example-title">Operator + Text Object Examples:</div>
+        <div class="example-code">
+          ciw → change inner word<br>
+          di" → delete inside quotes<br>
+          ya{ → yank around braces<br>
+          =ip → auto-indent paragraph<br>
+          gUiw → make word uppercase<br>
+          >i{ → indent inside braces
+        </div>
+      </div>
+    </div>
+
+    <!-- Search & Replace Section -->
+    <div id="search" class="content-section">
+      <h2 class="section-title">Search & Replace</h2>
+      
+      <div class="subsection">
+        <h3>Basic Search</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">/pattern</span>
+            <span class="shortcut-desc">Search forward</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">?pattern</span>
+            <span class="shortcut-desc">Search backward</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">n</span>
+            <span class="shortcut-desc">Next search result</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">N</span>
+            <span class="shortcut-desc">Previous search result</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">*</span>
+            <span class="shortcut-desc">Search for word under cursor (forward)</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">#</span>
+            <span class="shortcut-desc">Search for word under cursor (backward)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Replace Commands</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">:s/old/new/</span>
+            <span class="shortcut-desc">Replace first occurrence in line</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">:s/old/new/g</span>
+            <span class="shortcut-desc">Replace all in current line</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">:%s/old/new/g</span>
+            <span class="shortcut-desc">Replace all occurrences in file</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">:%s/old/new/gc</span>
+            <span class="shortcut-desc">Replace all with confirmation</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">:5,12s/old/new/g</span>
+            <span class="shortcut-desc">Replace in lines 5-12</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Search Options</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">:set ignorecase</span>
+            <span class="shortcut-desc">Case-insensitive search</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">:set noignorecase</span>
+            <span class="shortcut-desc">Case-sensitive search</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">:set hlsearch</span>
+            <span class="shortcut-desc">Highlight search results</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">:nohlsearch</span>
+            <span class="shortcut-desc">Clear search highlighting</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="example-box">
+        <div class="example-title">Common Search Patterns:</div>
+        <div class="example-code">
+          /\&lt;word\&gt; → search for exact word<br>
+          /^pattern → search at beginning of line<br>
+          /pattern$ → search at end of line<br>
+          /[abc] → search for any of a, b, or c<br>
+          /\d → search for any digit
+        </div>
+      </div>
+    </div>
+
+    <!-- Visual Mode Section -->
+    <div id="visual" class="content-section">
+      <h2 class="section-title">Visual Mode</h2>
+      
+      <div class="subsection">
+        <h3>Visual Mode Types</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">v</span>
+            <span class="shortcut-desc">Visual mode (character selection)</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">V</span>
+            <span class="shortcut-desc">Visual line mode</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">Ctrl+v</span>
+            <span class="shortcut-desc">Visual block mode</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">gv</span>
+            <span class="shortcut-desc">Reselect last visual selection</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Visual Mode Operations</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">d</span>
+            <span class="shortcut-desc">Delete selected text</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">y</span>
+            <span class="shortcut-desc">Yank (copy) selected text</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">c</span>
+            <span class="shortcut-desc">Change selected text</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">></span>
+            <span class="shortcut-desc">Indent selection</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key"><</span>
+            <span class="shortcut-desc">Unindent selection</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">u/U</span>
+            <span class="shortcut-desc">Make selection lowercase/uppercase</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Command Mode Section -->
+    <div id="commands" class="content-section">
+      <h2 class="section-title">Command Mode</h2>
+      
+      <div class="subsection">
+        <h3>File Operations</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">:w</span>
+            <span class="shortcut-desc">Save file</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">:q</span>
+            <span class="shortcut-desc">Quit</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">:wq / ZZ</span>
+            <span class="shortcut-desc">Save and quit</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">:q! / ZQ</span>
+            <span class="shortcut-desc">Quit without saving</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">:e filename</span>
+            <span class="shortcut-desc">Edit file</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">:w filename</span>
+            <span class="shortcut-desc">Save as filename</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Window Management</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">:split / :sp</span>
+            <span class="shortcut-desc">Split window horizontally</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">:vsplit / :vsp</span>
+            <span class="shortcut-desc">Split window vertically</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">Ctrl+w w</span>
+            <span class="shortcut-desc">Switch between windows</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">Ctrl+w h/j/k/l</span>
+            <span class="shortcut-desc">Move between split windows</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">Ctrl+w q</span>
+            <span class="shortcut-desc">Close current window</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Buffer Management</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">:bn / :bnext</span>
+            <span class="shortcut-desc">Next buffer</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">:bp / :bprev</span>
+            <span class="shortcut-desc">Previous buffer</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">:bd</span>
+            <span class="shortcut-desc">Delete (close) buffer</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">:ls</span>
+            <span class="shortcut-desc">List all buffers</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Advanced Section -->
+    <div id="advanced" class="content-section">
+      <h2 class="section-title">Advanced</h2>
+      
+      <div class="subsection">
+        <h3>Repeat & Macros</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">.</span>
+            <span class="shortcut-desc">Repeat last command</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">q{letter}</span>
+            <span class="shortcut-desc">Start recording macro</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">q</span>
+            <span class="shortcut-desc">Stop recording macro</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">@{letter}</span>
+            <span class="shortcut-desc">Play macro</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">@@</span>
+            <span class="shortcut-desc">Repeat last macro</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Marks & Jumps</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">m{letter}</span>
+            <span class="shortcut-desc">Set mark</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">'{letter}</span>
+            <span class="shortcut-desc">Jump to mark (line)</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">`{letter}</span>
+            <span class="shortcut-desc">Jump to mark (exact position)</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">''</span>
+            <span class="shortcut-desc">Jump back to previous position</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">Ctrl+o / Ctrl+i</span>
+            <span class="shortcut-desc">Navigate jump list backward/forward</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Screen Control</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">zz</span>
+            <span class="shortcut-desc">Center current line on screen</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">zt</span>
+            <span class="shortcut-desc">Move current line to top</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">zb</span>
+            <span class="shortcut-desc">Move current line to bottom</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">Ctrl+e / Ctrl+y</span>
+            <span class="shortcut-desc">Scroll down/up one line</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Special Characters</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">~</span>
+            <span class="shortcut-desc">Toggle case of character</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">J</span>
+            <span class="shortcut-desc">Join line below to current line</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">Ctrl+a</span>
+            <span class="shortcut-desc">Increment number</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">Ctrl+x</span>
+            <span class="shortcut-desc">Decrement number</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Power Combinations Section -->
+    <div id="combinations" class="content-section">
+      <h2 class="section-title">Power Combinations</h2>
+      
+      <div class="subsection">
+        <h3>Change Operations</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">ciw</span>
+            <span class="shortcut-desc">Change inner word</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">ci"</span>
+            <span class="shortcut-desc">Change inside quotes</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">ci(</span>
+            <span class="shortcut-desc">Change inside parentheses</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">cit</span>
+            <span class="shortcut-desc">Change inside HTML tag</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">cis</span>
+            <span class="shortcut-desc">Change inner sentence</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">cap</span>
+            <span class="shortcut-desc">Change around paragraph</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Delete Operations</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">diw</span>
+            <span class="shortcut-desc">Delete inner word</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">di"</span>
+            <span class="shortcut-desc">Delete inside quotes</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">da{</span>
+            <span class="shortcut-desc">Delete around curly braces</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">dit</span>
+            <span class="shortcut-desc">Delete inside HTML tag</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">dap</span>
+            <span class="shortcut-desc">Delete around paragraph</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Yank Operations</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">yiw</span>
+            <span class="shortcut-desc">Yank inner word</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">yi"</span>
+            <span class="shortcut-desc">Yank inside quotes</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">ya{</span>
+            <span class="shortcut-desc">Yank around curly braces</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">yit</span>
+            <span class="shortcut-desc">Yank inside HTML tag</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">yap</span>
+            <span class="shortcut-desc">Yank around paragraph</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Advanced Combinations with Numbers</h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <span class="shortcut-key">d3w</span>
+            <span class="shortcut-desc">Delete 3 words</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">c2j</span>
+            <span class="shortcut-desc">Change current line plus 2 below</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">y4l</span>
+            <span class="shortcut-desc">Yank 4 characters to the right</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">3dd</span>
+            <span class="shortcut-desc">Delete 3 lines</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">5yy</span>
+            <span class="shortcut-desc">Yank 5 lines</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="shortcut-key">=3}</span>
+            <span class="shortcut-desc">Auto-indent 3 paragraphs</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="example-box">
+        <div class="example-title">Pro Workflow Examples:</div>
+        <div class="example-code">
+          1. Change function name: f( → bi → ciw → type new name<br>
+          2. Duplicate line: yy → p<br>
+          3. Delete function: di{ → delete inside braces<br>
+          4. Change HTML content: cit → change inside tag<br>
+          5. Fix indentation: =ap → auto-indent paragraph
+        </div>
+      </div>
+
+      <div class="tip-box">
+        <div class="tip-title">🚀 Master's Tip</div>
+        The real power is combining operators + text objects + counts. Practice <code>d2aw</code> (delete 2 words), <code>c3is</code> (change 3 sentences), <code>y4ap</code> (yank 4 paragraphs). Once this becomes muscle memory, you'll edit at the speed of thought!
+      </div>
+    </div>
+
+    <script type="module">
+// Navigation functionality
+const navButtons = document.querySelectorAll('.nav-btn');
+const sections = document.querySelectorAll('.content-section');
+const searchInput = document.getElementById('searchInput');
+
+// Handle navigation clicks
+navButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    const targetSection = button.getAttribute('data-section');
+    
+    // Remove active class from all buttons and sections
+    navButtons.forEach(btn => btn.classList.remove('active'));
+    sections.forEach(section => section.classList.remove('active'));
+    
+    // Add active class to clicked button and target section
+    button.classList.add('active');
+    document.getElementById(targetSection).classList.add('active');
+    
+    // Clear search when switching sections
+    searchInput.value = '';
+    clearHighlights();
+  });
+});
+
+// Search functionality
+searchInput.addEventListener('input', (e) => {
+  const searchTerm = e.target.value.toLowerCase().trim();
+  
+  if (searchTerm === '') {
+    clearHighlights();
+    return;
+  }
+  
+  clearHighlights();
+  highlightSearchResults(searchTerm);
+});
+
+function highlightSearchResults(searchTerm) {
+  const allShortcutItems = document.querySelectorAll('.shortcut-item');
+  let hasResults = false;
+  
+  allShortcutItems.forEach(item => {
+    const keyText = item.querySelector('.shortcut-key').textContent.toLowerCase();
+    const descText = item.querySelector('.shortcut-desc').textContent.toLowerCase();
+    
+    if (keyText.includes(searchTerm) || descText.includes(searchTerm)) {
+      item.style.display = 'block';
+      item.style.backgroundColor = '#4a5568';
+      item.style.border = '2px solid #68d391';
+      hasResults = true;
+      
+      // Show the parent section
+      const parentSection = item.closest('.content-section');
+      if (parentSection && !parentSection.classList.contains('active')) {
+        // Hide current active section
+        sections.forEach(section => section.classList.remove('active'));
+        navButtons.forEach(btn => btn.classList.remove('active'));
+        
+        // Show section with results
+        parentSection.classList.add('active');
+        const sectionId = parentSection.id;
+        const correspondingButton = document.querySelector(`[data-section="${sectionId}"]`);
+        if (correspondingButton) {
+          correspondingButton.classList.add('active');
+        }
+      }
+    } else {
+      item.style.display = 'none';
+    }
+  });
+  
+  if (!hasResults) {
+    // Show message if no results found
+    showNoResultsMessage(searchTerm);
+  }
+}
+
+function clearHighlights() {
+  const allShortcutItems = document.querySelectorAll('.shortcut-item');
+  allShortcutItems.forEach(item => {
+    item.style.display = 'block';
+    item.style.backgroundColor = '#1a1a1a';
+    item.style.border = 'none';
+    item.style.borderLeft = '4px solid #68d391';
+  });
+  
+  // Remove no results message if it exists
+  const noResultsMsg = document.querySelector('.no-results-message');
+  if (noResultsMsg) {
+    noResultsMsg.remove();
+  }
+}
+
+function showNoResultsMessage(searchTerm) {
+  const activeSection = document.querySelector('.content-section.active');
+  
+  // Remove existing message
+  const existingMsg = document.querySelector('.no-results-message');
+  if (existingMsg) {
+    existingMsg.remove();
+  }
+  
+  // Create new message
+  const noResultsDiv = document.createElement('div');
+  noResultsDiv.className = 'no-results-message';
+  noResultsDiv.style.cssText = `
+    background: #2d3748;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    color: #a0aec0;
+    margin: 20px 0;
+  `;
+  noResultsDiv.innerHTML = `
+    <h3 style="color: #68d391; margin-bottom: 10px;">No results found</h3>
+    <p>No shortcuts found for "${searchTerm}". Try searching for terms like "delete", "word", "bracket", or specific keys like "dd".</p>
+  `;
+  
+  activeSection.appendChild(noResultsDiv);
+}
+
+// Keyboard shortcuts for navigation
+document.addEventListener('keydown', (e) => {
+  // Only handle shortcuts when not typing in search
+  if (document.activeElement === searchInput) return;
+  
+  if (e.key >= '1' && e.key <= '9') {
+    const index = parseInt(e.key) - 1;
+    if (navButtons[index]) {
+      navButtons[index].click();
+    }
+  }
+  
+  // Clear search with Escape
+  if (e.key === 'Escape') {
+    searchInput.value = '';
+    clearHighlights();
+    searchInput.blur();
+  }
+  
+  // Focus search with /
+  if (e.key === '/' && document.activeElement !== searchInput) {
+    e.preventDefault();
+    searchInput.focus();
+  }
+});
+
+// Add keyboard hints
+const keyboardHint = document.createElement('div');
+keyboardHint.style.cssText = `
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #2d3748;
+  color: #a0aec0;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-size: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+`;
+keyboardHint.innerHTML = `
+  <strong>Keyboard shortcuts:</strong><br>
+  1-9: Jump to sections<br>
+  /: Focus search<br>
+  Esc: Clear search
+`;
+document.body.appendChild(keyboardHint);
+
+    </script>
+    

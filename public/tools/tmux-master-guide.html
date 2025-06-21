@@ -1,204 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tmux Master Command Reference</title>
   <style>
-* {
-  box-sizing: border-box;
-}
+    * {
+      box-sizing: border-box;
+    }
 
-body {
-  font-family: Helvetica, Arial, sans-serif;
-  line-height: 1.6;
-  margin: 0;
-  padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  color: #333;
-}
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+      background: #ffffff;
+      color: #333;
+    }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 20px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-}
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-.header {
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
-  color: white;
-  padding: 30px;
-  text-align: center;
-}
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 30px 0;
+      border-bottom: 1px solid #e5e5e5;
+    }
 
-.header h1 {
-  margin: 0;
-  font-size: 2.5em;
-  font-weight: 300;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
+    .header h1 {
+      margin: 0;
+      font-size: 2.5em;
+      font-weight: 300;
+      color: #333;
+    }
 
-.content {
-  padding: 30px;
-}
+    .header p {
+      margin: 10px 0 0;
+      color: #666;
+      font-size: 1.1em;
+    }
 
-.section {
-  margin-bottom: 40px;
-  animation: slideIn 0.6s ease-out forwards;
-  opacity: 0;
-  transform: translateY(20px);
-}
+    .content {
+      padding: 0;
+    }
 
-.section:nth-child(1) { animation-delay: 0.1s; }
-.section:nth-child(2) { animation-delay: 0.2s; }
-.section:nth-child(3) { animation-delay: 0.3s; }
-.section:nth-child(4) { animation-delay: 0.4s; }
-.section:nth-child(5) { animation-delay: 0.5s; }
-.section:nth-child(6) { animation-delay: 0.6s; }
+    .section {
+      margin-bottom: 40px;
+    }
 
-@keyframes slideIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+    .section h2 {
+      color: #333;
+      border-bottom: 2px solid #00bcd4;
+      padding-bottom: 10px;
+      margin-bottom: 25px;
+      font-weight: 500;
+    }
 
-.section h2 {
-  color: #4f46e5;
-  border-bottom: 3px solid #4f46e5;
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-  font-weight: 600;
-}
+    .command-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 15px;
+    }
 
-.command-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 15px;
-}
+    .command {
+      background: #f8f9fa;
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+      padding: 15px;
+      transition: all 0.2s ease;
+      border-left: 3px solid #00bcd4;
+    }
 
-.command {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 15px;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
+    .command:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 188, 212, 0.15);
+      border-color: #00bcd4;
+    }
 
-.command:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(79, 70, 229, 0.15);
-  border-color: #4f46e5;
-}
+    .shortcut {
+      font-family: 'Courier New', monospace;
+      background: #ffffff;
+      color: #333;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 0.9em;
+      border: 1px solid #ddd;
+    }
 
-.command:hover::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #4f46e5, #7c3aed);
-}
+    .description {
+      margin-top: 8px;
+      font-size: 0.95em;
+      color: #666;
+    }
 
-.shortcut {
-  font-family: 'Courier New', monospace;
-  background: #1e293b;
-  color: #f1f5f9;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 0.9em;
-}
+    .highlight {
+      background: #f0f8ff;
+      border-left: 3px solid #00bcd4;
+      padding: 20px;
+      border-radius: 4px;
+      margin: 30px 0;
+      border: 1px solid #e5e5e5;
+    }
 
-.description {
-  margin-top: 8px;
-  font-size: 0.95em;
-  color: #64748b;
-}
+    .highlight h3 {
+      margin-top: 0;
+      color: #333;
+    }
 
-.highlight {
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
-  border-left: 4px solid #f59e0b;
-  padding: 20px;
-  border-radius: 12px;
-  margin: 20px 0;
-}
+    .highlight h4 {
+      color: #333;
+      font-weight: 500;
+      margin-top: 20px;
+    }
 
-.highlight h3 {
-  margin-top: 0;
-  color: #92400e;
-}
+    .code-block {
+      background: #f5f5f5;
+      color: #333;
+      padding: 15px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      overflow-x: auto;
+      margin: 15px 0;
+      border: 1px solid #ddd;
+      font-size: 14px;
+    }
 
-.code-block {
-  background: #1e293b;
-  color: #f1f5f9;
-  padding: 20px;
-  border-radius: 12px;
-  font-family: 'Courier New', monospace;
-  overflow-x: auto;
-  margin: 15px 0;
-  border: 1px solid #334155;
-}
+    .filter-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
 
-.filter-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 30px;
-  flex-wrap: wrap;
-}
+    .filter-btn {
+      background: #ffffff;
+      border: 1px solid #ddd;
+      padding: 10px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+    }
 
-.filter-btn {
-  background: #f1f5f9;
-  border: 2px solid #e2e8f0;
-  padding: 8px 16px;
-  border-radius: 25px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 14px;
-  font-weight: 500;
-}
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: #00bcd4;
+      color: white;
+      border-color: #00bcd4;
+    }
 
-.filter-btn:hover, .filter-btn.active {
-  background: #4f46e5;
-  color: white;
-  border-color: #4f46e5;
-}
+    .search-box {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      transition: border-color 0.2s ease;
+    }
 
-.search-box {
-  width: 100%;
-  padding: 15px;
-  font-size: 16px;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  margin-bottom: 20px;
-  transition: border-color 0.3s ease;
-}
+    .search-box:focus {
+      outline: none;
+      border-color: #00bcd4;
+    }
 
-.search-box:focus {
-  outline: none;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-}
+    ul,
+    ol {
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 5px;
+    }
+
+    @media (max-width: 768px) {
+      .command-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-buttons {
+        flex-direction: column;
+      }
+
+      .filter-btn {
+        text-align: center;
+      }
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
     <div class="header">
-      <h1>🚀 Tmux Master Command Reference</h1>
+      <h1>Tmux Master Command Reference</h1>
       <p>Master tmux with these essential commands and shortcuts (Prefix: Ctrl+b)</p>
     </div>
-    
+
     <div class="content">
       <input type="text" class="search-box" placeholder="Search commands..." id="searchBox">
-      
+
       <div class="filter-buttons">
         <button class="filter-btn active" data-category="all">All Commands</button>
         <button class="filter-btn" data-category="session">Sessions</button>
@@ -410,115 +417,117 @@ body {
       <div class="highlight">
         <h3>🌐 Remote SSH Session with Multiple Panes</h3>
         <p><strong>Recommendation: Use PANES (not windows)</strong></p>
-        <p><strong>Why Panes?</strong> For running different commands simultaneously on the same remote machine, panes are better because:</p>
+        <p><strong>Why Panes?</strong> For running different commands simultaneously on the same remote machine, panes
+          are better because:</p>
         <ul>
           <li>✅ <strong>Single SSH connection</strong> - More efficient, less overhead</li>
           <li>✅ <strong>Visual context</strong> - See all outputs at once</li>
           <li>✅ <strong>Easier switching</strong> - Quick navigation with arrow keys</li>
           <li>✅ <strong>Shared environment</strong> - Same working directory and environment variables</li>
         </ul>
-        
+
         <h4>🚀 One-liner to create remote session with 2 panes:</h4>
         <div class="code-block">
-ssh user@remote-host -t 'tmux new-session -d -s "remote-work" \; split-window -h \; attach'
+          ssh user@remote-host -t 'tmux new-session -d -s "remote-work" \; split-window -h \; attach'
         </div>
-        
+
         <h4>📝 Step-by-step breakdown:</h4>
         <div class="code-block">
-# Connect to remote host and create tmux session
-ssh user@remote-host -t 'tmux new-session -d -s "remote-work"'
+          # Connect to remote host and create tmux session
+          ssh user@remote-host -t 'tmux new-session -d -s "remote-work"'
 
-# Split the window horizontally (2 panes side by side)
-# Then attach to the session
-ssh user@remote-host -t 'tmux attach -t "remote-work" \; split-window -h'
+          # Split the window horizontally (2 panes side by side)
+          # Then attach to the session
+          ssh user@remote-host -t 'tmux attach -t "remote-work" \; split-window -h'
         </div>
-        
+
         <h4>⚡ Alternative approach (more control):</h4>
         <div class="code-block">
-# SSH into remote machine first
-ssh user@remote-host
+          # SSH into remote machine first
+          ssh user@remote-host
 
-# Then create session with 2 panes
-tmux new-session -d -s "work-session"
-tmux split-window -h -t "work-session"
-tmux attach -t "work-session"
+          # Then create session with 2 panes
+          tmux new-session -d -s "work-session"
+          tmux split-window -h -t "work-session"
+          tmux attach -t "work-session"
         </div>
-        
+
         <h4>🎯 Quick navigation once inside:</h4>
         <div class="code-block">
-Ctrl+b %          # Split vertically (if you need more panes)
-Ctrl+b "          # Split horizontally
-Ctrl+b arrow-keys # Navigate between panes
-Ctrl+b z          # Toggle fullscreen for current pane
+          Ctrl+b % # Split vertically (if you need more panes)
+          Ctrl+b " # Split horizontally
+          Ctrl+b arrow-keys # Navigate between panes
+          Ctrl+b z # Toggle fullscreen for current pane
         </div>
       </div>
     </div>
   </div>
 
   <script type="module">
-// Search functionality
-const searchBox = document.getElementById('searchBox');
-const commands = document.querySelectorAll('.command');
-const sections = document.querySelectorAll('.section');
-const filterButtons = document.querySelectorAll('.filter-btn');
+    // Search functionality
+    const searchBox = document.getElementById('searchBox');
+    const commands = document.querySelectorAll('.command');
+    const sections = document.querySelectorAll('.section');
+    const filterButtons = document.querySelectorAll('.filter-btn');
 
-searchBox.addEventListener('input', function() {
-  const searchTerm = this.value.toLowerCase();
-  
-  commands.forEach(command => {
-    const text = command.textContent.toLowerCase();
-    const shouldShow = text.includes(searchTerm);
-    command.style.display = shouldShow ? 'block' : 'none';
-  });
-  
-  // Hide empty sections
-  sections.forEach(section => {
-    const visibleCommands = section.querySelectorAll('.command[style="display: block"], .command:not([style*="display: none"])');
-    section.style.display = visibleCommands.length > 0 ? 'block' : 'none';
-  });
-});
+    searchBox.addEventListener('input', function () {
+      const searchTerm = this.value.toLowerCase();
 
-// Filter functionality
-filterButtons.forEach(button => {
-  button.addEventListener('click', function() {
-    // Remove active class from all buttons
-    filterButtons.forEach(btn => btn.classList.remove('active'));
-    // Add active class to clicked button
-    this.classList.add('active');
-    
-    const category = this.dataset.category;
-    
-    if (category === 'all') {
-      sections.forEach(section => section.style.display = 'block');
-    } else {
-      sections.forEach(section => {
-        const shouldShow = section.dataset.category === category;
-        section.style.display = shouldShow ? 'block' : 'none';
+      commands.forEach(command => {
+        const text = command.textContent.toLowerCase();
+        const shouldShow = text.includes(searchTerm);
+        command.style.display = shouldShow ? 'block' : 'none';
       });
-    }
-    
-    // Clear search when filtering
-    searchBox.value = '';
-    commands.forEach(command => command.style.display = 'block');
-  });
-});
 
-// Add copy to clipboard functionality for code blocks
-document.querySelectorAll('.code-block').forEach(block => {
-  block.style.cursor = 'pointer';
-  block.title = 'Click to copy';
-  
-  block.addEventListener('click', function() {
-    navigator.clipboard.writeText(this.textContent.trim()).then(() => {
-      // Visual feedback
-      const original = this.style.background;
-      this.style.background = '#059669';
-      setTimeout(() => {
-        this.style.background = original;
-      }, 200);
+      // Hide empty sections
+      sections.forEach(section => {
+        const visibleCommands = section.querySelectorAll('.command[style="display: block"], .command:not([style*="display: none"])');
+        section.style.display = visibleCommands.length > 0 ? 'block' : 'none';
+      });
     });
-  });
-});
+
+    // Filter functionality
+    filterButtons.forEach(button => {
+      button.addEventListener('click', function () {
+        // Remove active class from all buttons
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        // Add active class to clicked button
+        this.classList.add('active');
+
+        const category = this.dataset.category;
+
+        if (category === 'all') {
+          sections.forEach(section => section.style.display = 'block');
+        } else {
+          sections.forEach(section => {
+            const shouldShow = section.dataset.category === category;
+            section.style.display = shouldShow ? 'block' : 'none';
+          });
+        }
+
+        // Clear search when filtering
+        searchBox.value = '';
+        commands.forEach(command => command.style.display = 'block');
+      });
+    });
+
+    // Add copy to clipboard functionality for code blocks
+    document.querySelectorAll('.code-block').forEach(block => {
+      block.style.cursor = 'pointer';
+      block.title = 'Click to copy';
+
+      block.addEventListener('click', function () {
+        navigator.clipboard.writeText(this.textContent.trim()).then(() => {
+          // Visual feedback
+          const original = this.style.background;
+          this.style.background = '#e0f2f1';
+          setTimeout(() => {
+            this.style.background = original;
+          }, 200);
+        });
+      });
+    });
   </script>
 </body>
+
 </html>

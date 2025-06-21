@@ -1,222 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Interactive Vim Shortcuts Tutorial</title>
   <style>
-* {
-  box-sizing: border-box;
-}
+    * {
+      box-sizing: border-box;
+    }
 
-body {
-  font-family: Helvetica, Arial, sans-serif;
-  line-height: 1.6;
-  margin: 0;
-  padding: 0;
-  background: #1a1a1a;
-  color: #e0e0e0;
-}
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+      color: #333;
+    }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-}
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
 
-header {
-  text-align: center;
-  margin-bottom: 40px;
-  padding: 30px 0;
-  background: linear-gradient(135deg, #2d3748, #4a5568);
-  border-radius: 10px;
-}
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 30px 0;
+      border-bottom: 1px solid #e5e5e5;
+    }
 
-h1 {
-  color: #68d391;
-  margin: 0;
-  font-size: 2.5em;
-}
+    h1 {
+      color: #333;
+      margin: 0;
+      font-size: 2.5em;
+      font-weight: 300;
+    }
 
-.subtitle {
-  color: #a0aec0;
-  margin: 10px 0 0 0;
-  font-size: 1.1em;
-}
+    .subtitle {
+      color: #666;
+      margin: 10px 0 0 0;
+      font-size: 1.1em;
+    }
 
-.nav-container {
-  position: sticky;
-  top: 20px;
-  background: #2d3748;
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
+    .nav-container {
+      position: sticky;
+      top: 20px;
+      background: #f8f9fa;
+      border-radius: 4px;
+      padding: 20px;
+      margin-bottom: 30px;
+      border: 1px solid #e5e5e5;
+    }
 
-.nav-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 10px;
-}
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
 
-.nav-btn {
-  background: #4a5568;
-  color: #e0e0e0;
-  border: none;
-  padding: 12px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 14px;
-  font-weight: 500;
-}
+    .nav-btn {
+      background: #ffffff;
+      color: #333;
+      border: 1px solid #ddd;
+      padding: 12px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 14px;
+      font-weight: 500;
+    }
 
-.nav-btn:hover {
-  background: #68d391;
-  color: #1a1a1a;
-  transform: translateY(-2px);
-}
+    .nav-btn:hover {
+      background: #00bcd4;
+      color: #ffffff;
+      border-color: #00bcd4;
+    }
 
-.nav-btn.active {
-  background: #68d391;
-  color: #1a1a1a;
-}
+    .nav-btn.active {
+      background: #00bcd4;
+      color: #ffffff;
+      border-color: #00bcd4;
+    }
 
-.content-section {
-  display: none;
-  background: #2d3748;
-  border-radius: 10px;
-  padding: 30px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
+    .content-section {
+      display: none;
+      background: #ffffff;
+      border-radius: 4px;
+      padding: 30px;
+      margin-bottom: 20px;
+      border: 1px solid #e5e5e5;
+    }
 
-.content-section.active {
-  display: block;
-  animation: fadeIn 0.3s ease-in;
-}
+    .content-section.active {
+      display: block;
+    }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+    .section-title {
+      color: #333;
+      font-size: 2em;
+      margin-bottom: 25px;
+      border-bottom: 2px solid #00bcd4;
+      padding-bottom: 10px;
+      font-weight: 500;
+    }
 
-.section-title {
-  color: #68d391;
-  font-size: 2em;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #4a5568;
-  padding-bottom: 10px;
-}
+    .subsection {
+      margin-bottom: 30px;
+    }
 
-.subsection {
-  margin-bottom: 30px;
-}
+    .subsection h3 {
+      color: #333;
+      font-size: 1.3em;
+      margin-bottom: 15px;
+      font-weight: 500;
+    }
 
-.subsection h3 {
-  color: #90cdf4;
-  font-size: 1.3em;
-  margin-bottom: 15px;
-}
+    .shortcut-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
 
-.shortcut-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 15px;
-  margin-bottom: 20px;
-}
+    .shortcut-item {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      border-left: 3px solid #00bcd4;
+      transition: transform 0.2s ease;
+      border: 1px solid #e5e5e5;
+    }
 
-.shortcut-item {
-  background: #1a1a1a;
-  padding: 15px;
-  border-radius: 8px;
-  border-left: 4px solid #68d391;
-  transition: transform 0.2s ease;
-}
+    .shortcut-item:hover {
+      transform: translateX(5px);
+    }
 
-.shortcut-item:hover {
-  transform: translateX(5px);
-}
+    .shortcut-key {
+      font-family: 'Courier New', monospace;
+      background: #ffffff;
+      color: #333;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+      border: 1px solid #ddd;
+    }
 
-.shortcut-key {
-  font-family: 'Courier New', monospace;
-  background: #4a5568;
-  color: #68d391;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-weight: bold;
-}
+    .shortcut-desc {
+      color: #666;
+      margin-left: 10px;
+    }
 
-.shortcut-desc {
-  color: #cbd5e0;
-  margin-left: 10px;
-}
+    .example-box {
+      background: #f0f8ff;
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+      padding: 20px;
+      margin: 20px 0;
+      border-left: 3px solid #00bcd4;
+    }
 
-.example-box {
-  background: #1a1a1a;
-  border: 1px solid #4a5568;
-  border-radius: 8px;
-  padding: 20px;
-  margin: 20px 0;
-}
+    .example-title {
+      color: #333;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
 
-.example-title {
-  color: #90cdf4;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
+    .example-code {
+      font-family: 'Courier New', monospace;
+      background: #ffffff;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      font-size: 14px;
+    }
 
-.example-code {
-  font-family: 'Courier New', monospace;
-  background: #2d3748;
-  padding: 10px;
-  border-radius: 4px;
-  margin: 10px 0;
-  border-left: 3px solid #68d391;
-}
+    .search-container {
+      margin-bottom: 20px;
+    }
 
-.search-container {
-  margin-bottom: 20px;
-}
+    .search-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #ffffff;
+      color: #333;
+      font-size: 16px;
+    }
 
-.search-input {
-  width: 100%;
-  padding: 12px;
-  border: 2px solid #4a5568;
-  border-radius: 6px;
-  background: #1a1a1a;
-  color: #e0e0e0;
-  font-size: 16px;
-}
+    .search-input:focus {
+      outline: none;
+      border-color: #00bcd4;
+    }
 
-.search-input:focus {
-  outline: none;
-  border-color: #68d391;
-}
+    .highlight {
+      background: #00bcd4;
+      color: #ffffff;
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
 
-.highlight {
-  background: #68d391;
-  color: #1a1a1a;
-  padding: 2px 4px;
-  border-radius: 3px;
-}
+    .tip-box {
+      background: #e3f2fd;
+      border-left: 3px solid #00bcd4;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+      border: 1px solid #e5e5e5;
+    }
 
-.tip-box {
-  background: #2b6cb0;
-  border-left: 4px solid #3182ce;
-  padding: 15px;
-  margin: 20px 0;
-  border-radius: 0 8px 8px 0;
-}
+    .tip-box .tip-title {
+      color: #333;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
 
-.tip-box .tip-title {
-  color: #90cdf4;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
+    code {
+      font-family: 'Courier New', monospace;
+      background: #f5f5f5;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 14px;
+      border: 1px solid #ddd;
+    }
+
+    @media (max-width: 768px) {
+      .nav-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .shortcut-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
     <header>
@@ -225,7 +248,8 @@ h1 {
     </header>
 
     <div class="search-container">
-      <input type="text" id="searchInput" class="search-input" placeholder="Search shortcuts (e.g., 'delete', 'word', 'dd')..." />
+      <input type="text" id="searchInput" class="search-input"
+        placeholder="Search shortcuts (e.g., 'delete', 'word', 'dd')..." />
     </div>
 
     <div class="nav-container">
@@ -245,7 +269,7 @@ h1 {
     <!-- Basics & Movement Section -->
     <div id="basics" class="content-section active">
       <h2 class="section-title">Basics & Movement</h2>
-      
+
       <div class="subsection">
         <h3>Basic Movement</h3>
         <div class="shortcut-grid">
@@ -351,7 +375,7 @@ h1 {
     <!-- Essential Editing Section -->
     <div id="editing" class="content-section">
       <h2 class="section-title">Essential Editing</h2>
-      
+
       <div class="subsection">
         <h3>Insert Mode</h3>
         <div class="shortcut-grid">
@@ -471,7 +495,7 @@ h1 {
     <!-- Text Objects Section -->
     <div id="textobjects" class="content-section">
       <h2 class="section-title">Text Objects</h2>
-      
+
       <div class="subsection">
         <h3>Word Objects</h3>
         <div class="shortcut-grid">
@@ -600,14 +624,15 @@ h1 {
 
       <div class="tip-box">
         <div class="tip-title">💡 Text Objects Tip</div>
-        Text objects are used with operators! Try <code>ciw</code> (change inner word), <code>di"</code> (delete inside quotes), or <code>ya{</code> (yank around braces).
+        Text objects are used with operators! Try <code>ciw</code> (change inner word), <code>di"</code> (delete inside
+        quotes), or <code>ya{</code> (yank around braces).
       </div>
     </div>
 
     <!-- Operators Section -->
     <div id="operators" class="content-section">
       <h2 class="section-title">Operators</h2>
-      
+
       <div class="subsection">
         <h3>Basic Operators</h3>
         <div class="shortcut-grid">
@@ -660,8 +685,9 @@ h1 {
             <span class="shortcut-desc">Indent right</span>
           </div>
           <div class="shortcut-item">
-            <span class="shortcut-key"><</span>
-            <span class="shortcut-desc">Indent left</span>
+            <span class="shortcut-key">
+              << /span>
+                <span class="shortcut-desc">Indent left</span>
           </div>
           <div class="shortcut-item">
             <span class="shortcut-key">!</span>
@@ -686,7 +712,7 @@ h1 {
     <!-- Search & Replace Section -->
     <div id="search" class="content-section">
       <h2 class="section-title">Search & Replace</h2>
-      
+
       <div class="subsection">
         <h3>Basic Search</h3>
         <div class="shortcut-grid">
@@ -780,7 +806,7 @@ h1 {
     <!-- Visual Mode Section -->
     <div id="visual" class="content-section">
       <h2 class="section-title">Visual Mode</h2>
-      
+
       <div class="subsection">
         <h3>Visual Mode Types</h3>
         <div class="shortcut-grid">
@@ -823,8 +849,9 @@ h1 {
             <span class="shortcut-desc">Indent selection</span>
           </div>
           <div class="shortcut-item">
-            <span class="shortcut-key"><</span>
-            <span class="shortcut-desc">Unindent selection</span>
+            <span class="shortcut-key">
+              << /span>
+                <span class="shortcut-desc">Unindent selection</span>
           </div>
           <div class="shortcut-item">
             <span class="shortcut-key">u/U</span>
@@ -837,7 +864,7 @@ h1 {
     <!-- Command Mode Section -->
     <div id="commands" class="content-section">
       <h2 class="section-title">Command Mode</h2>
-      
+
       <div class="subsection">
         <h3>File Operations</h3>
         <div class="shortcut-grid">
@@ -920,7 +947,7 @@ h1 {
     <!-- Advanced Section -->
     <div id="advanced" class="content-section">
       <h2 class="section-title">Advanced</h2>
-      
+
       <div class="subsection">
         <h3>Repeat & Macros</h3>
         <div class="shortcut-grid">
@@ -1021,7 +1048,7 @@ h1 {
     <!-- Power Combinations Section -->
     <div id="combinations" class="content-section">
       <h2 class="section-title">Power Combinations</h2>
-      
+
       <div class="subsection">
         <h3>Change Operations</h3>
         <div class="shortcut-grid">
@@ -1147,179 +1174,162 @@ h1 {
 
       <div class="tip-box">
         <div class="tip-title">🚀 Master's Tip</div>
-        The real power is combining operators + text objects + counts. Practice <code>d2aw</code> (delete 2 words), <code>c3is</code> (change 3 sentences), <code>y4ap</code> (yank 4 paragraphs). Once this becomes muscle memory, you'll edit at the speed of thought!
+        The real power is combining operators + text objects + counts. Practice <code>d2aw</code> (delete 2 words),
+        <code>c3is</code> (change 3 sentences), <code>y4ap</code> (yank 4 paragraphs). Once this becomes muscle memory,
+        you'll edit at the speed of thought!
       </div>
     </div>
 
     <script type="module">
-// Navigation functionality
-const navButtons = document.querySelectorAll('.nav-btn');
-const sections = document.querySelectorAll('.content-section');
-const searchInput = document.getElementById('searchInput');
+      // Navigation functionality
+      const navButtons = document.querySelectorAll('.nav-btn');
+      const sections = document.querySelectorAll('.content-section');
+      const searchInput = document.getElementById('searchInput');
 
-// Handle navigation clicks
-navButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    const targetSection = button.getAttribute('data-section');
-    
-    // Remove active class from all buttons and sections
-    navButtons.forEach(btn => btn.classList.remove('active'));
-    sections.forEach(section => section.classList.remove('active'));
-    
-    // Add active class to clicked button and target section
-    button.classList.add('active');
-    document.getElementById(targetSection).classList.add('active');
-    
-    // Clear search when switching sections
-    searchInput.value = '';
-    clearHighlights();
-  });
-});
+      // Handle navigation clicks
+      navButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const targetSection = button.getAttribute('data-section');
 
-// Search functionality
-searchInput.addEventListener('input', (e) => {
-  const searchTerm = e.target.value.toLowerCase().trim();
-  
-  if (searchTerm === '') {
-    clearHighlights();
-    return;
-  }
-  
-  clearHighlights();
-  highlightSearchResults(searchTerm);
-});
+          // Remove active class from all buttons and sections
+          navButtons.forEach(btn => btn.classList.remove('active'));
+          sections.forEach(section => section.classList.remove('active'));
 
-function highlightSearchResults(searchTerm) {
-  const allShortcutItems = document.querySelectorAll('.shortcut-item');
-  let hasResults = false;
-  
-  allShortcutItems.forEach(item => {
-    const keyText = item.querySelector('.shortcut-key').textContent.toLowerCase();
-    const descText = item.querySelector('.shortcut-desc').textContent.toLowerCase();
-    
-    if (keyText.includes(searchTerm) || descText.includes(searchTerm)) {
-      item.style.display = 'block';
-      item.style.backgroundColor = '#4a5568';
-      item.style.border = '2px solid #68d391';
-      hasResults = true;
-      
-      // Show the parent section
-      const parentSection = item.closest('.content-section');
-      if (parentSection && !parentSection.classList.contains('active')) {
-        // Hide current active section
-        sections.forEach(section => section.classList.remove('active'));
-        navButtons.forEach(btn => btn.classList.remove('active'));
-        
-        // Show section with results
-        parentSection.classList.add('active');
-        const sectionId = parentSection.id;
-        const correspondingButton = document.querySelector(`[data-section="${sectionId}"]`);
-        if (correspondingButton) {
-          correspondingButton.classList.add('active');
+          // Add active class to clicked button and target section
+          button.classList.add('active');
+          document.getElementById(targetSection).classList.add('active');
+
+          // Clear search when switching sections
+          searchInput.value = '';
+          clearHighlights();
+        });
+      });
+
+      // Search functionality
+      searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase().trim();
+
+        if (searchTerm === '') {
+          clearHighlights();
+          return;
+        }
+
+        clearHighlights();
+        highlightSearchResults(searchTerm);
+      });
+
+      function highlightSearchResults(searchTerm) {
+        const allShortcutItems = document.querySelectorAll('.shortcut-item');
+        let hasResults = false;
+
+        allShortcutItems.forEach(item => {
+          const keyText = item.querySelector('.shortcut-key').textContent.toLowerCase();
+          const descText = item.querySelector('.shortcut-desc').textContent.toLowerCase();
+
+          if (keyText.includes(searchTerm) || descText.includes(searchTerm)) {
+            item.style.display = 'block';
+            item.style.backgroundColor = '#e3f2fd';
+            item.style.border = '1px solid #00bcd4';
+            hasResults = true;
+
+            // Show the parent section
+            const parentSection = item.closest('.content-section');
+            if (parentSection && !parentSection.classList.contains('active')) {
+              // Hide current active section
+              sections.forEach(section => section.classList.remove('active'));
+              navButtons.forEach(btn => btn.classList.remove('active'));
+
+              // Show section with results
+              parentSection.classList.add('active');
+              const sectionId = parentSection.id;
+              const correspondingButton = document.querySelector(`[data-section="${sectionId}"]`);
+              if (correspondingButton) {
+                correspondingButton.classList.add('active');
+              }
+            }
+          } else {
+            item.style.display = 'none';
+          }
+        });
+
+        if (!hasResults) {
+          // Show message if no results found
+          showNoResultsMessage(searchTerm);
         }
       }
-    } else {
-      item.style.display = 'none';
-    }
-  });
-  
-  if (!hasResults) {
-    // Show message if no results found
-    showNoResultsMessage(searchTerm);
-  }
-}
 
-function clearHighlights() {
-  const allShortcutItems = document.querySelectorAll('.shortcut-item');
-  allShortcutItems.forEach(item => {
-    item.style.display = 'block';
-    item.style.backgroundColor = '#1a1a1a';
-    item.style.border = 'none';
-    item.style.borderLeft = '4px solid #68d391';
-  });
-  
-  // Remove no results message if it exists
-  const noResultsMsg = document.querySelector('.no-results-message');
-  if (noResultsMsg) {
-    noResultsMsg.remove();
-  }
-}
+      function clearHighlights() {
+        const allShortcutItems = document.querySelectorAll('.shortcut-item');
+        allShortcutItems.forEach(item => {
+          item.style.display = 'block';
+          item.style.backgroundColor = '#f8f9fa';
+          item.style.border = '1px solid #e5e5e5';
+          item.style.borderLeft = '3px solid #00bcd4';
+        });
 
-function showNoResultsMessage(searchTerm) {
-  const activeSection = document.querySelector('.content-section.active');
-  
-  // Remove existing message
-  const existingMsg = document.querySelector('.no-results-message');
-  if (existingMsg) {
-    existingMsg.remove();
-  }
-  
-  // Create new message
-  const noResultsDiv = document.createElement('div');
-  noResultsDiv.className = 'no-results-message';
-  noResultsDiv.style.cssText = `
-    background: #2d3748;
+        // Remove no results message if it exists
+        const noResultsMsg = document.querySelector('.no-results-message');
+        if (noResultsMsg) {
+          noResultsMsg.remove();
+        }
+      }
+
+      function showNoResultsMessage(searchTerm) {
+        const activeSection = document.querySelector('.content-section.active');
+
+        // Remove existing message
+        const existingMsg = document.querySelector('.no-results-message');
+        if (existingMsg) {
+          existingMsg.remove();
+        }
+
+        // Create new message
+        const noResultsDiv = document.createElement('div');
+        noResultsDiv.className = 'no-results-message';
+        noResultsDiv.style.cssText = `
+    background: #f8f9fa;
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 4px;
     text-align: center;
-    color: #a0aec0;
+    color: #666;
     margin: 20px 0;
+    border: 1px solid #e5e5e5;
   `;
-  noResultsDiv.innerHTML = `
-    <h3 style="color: #68d391; margin-bottom: 10px;">No results found</h3>
+        noResultsDiv.innerHTML = `
+    <h3 style="color: #333; margin-bottom: 10px;">No results found</h3>
     <p>No shortcuts found for "${searchTerm}". Try searching for terms like "delete", "word", "bracket", or specific keys like "dd".</p>
   `;
-  
-  activeSection.appendChild(noResultsDiv);
-}
 
-// Keyboard shortcuts for navigation
-document.addEventListener('keydown', (e) => {
-  // Only handle shortcuts when not typing in search
-  if (document.activeElement === searchInput) return;
-  
-  if (e.key >= '1' && e.key <= '9') {
-    const index = parseInt(e.key) - 1;
-    if (navButtons[index]) {
-      navButtons[index].click();
-    }
-  }
-  
-  // Clear search with Escape
-  if (e.key === 'Escape') {
-    searchInput.value = '';
-    clearHighlights();
-    searchInput.blur();
-  }
-  
-  // Focus search with /
-  if (e.key === '/' && document.activeElement !== searchInput) {
-    e.preventDefault();
-    searchInput.focus();
-  }
-});
+        activeSection.appendChild(noResultsDiv);
+      }
 
-// Add keyboard hints
-const keyboardHint = document.createElement('div');
-keyboardHint.style.cssText = `
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #2d3748;
-  color: #a0aec0;
-  padding: 10px 15px;
-  border-radius: 6px;
-  font-size: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  z-index: 1000;
-`;
-keyboardHint.innerHTML = `
-  <strong>Keyboard shortcuts:</strong><br>
-  1-9: Jump to sections<br>
-  /: Focus search<br>
-  Esc: Clear search
-`;
-document.body.appendChild(keyboardHint);
+      // Keyboard shortcuts for navigation
+      document.addEventListener('keydown', (e) => {
+        // Only handle shortcuts when not typing in search
+        if (document.activeElement === searchInput) return;
 
+        if (e.key >= '1' && e.key <= '9') {
+          const index = parseInt(e.key) - 1;
+          if (navButtons[index]) {
+            navButtons[index].click();
+          }
+        }
+
+        // Clear search with Escape
+        if (e.key === 'Escape') {
+          searchInput.value = '';
+          clearHighlights();
+          searchInput.blur();
+        }
+
+        // Focus search with /
+        if (e.key === '/' && document.activeElement !== searchInput) {
+          e.preventDefault();
+          searchInput.focus();
+        }
+      });
     </script>
-    
+  </div>
+</body>
+
+</html>

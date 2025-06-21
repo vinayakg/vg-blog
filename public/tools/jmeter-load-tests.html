@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JMeter Load Testing Tutorial</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+      background: #ffffff;
+      color: #333;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 20px 0;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 2.5em;
+      font-weight: 300;
+      color: #333;
+    }
+
+    .header p {
+      margin: 10px 0 0;
+      color: #666;
+      font-size: 1.1em;
+    }
+
+    .content {
+      padding: 0;
+    }
+
+    .calculator {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 25px;
+      margin: 30px 0;
+      border: 1px solid #e5e5e5;
+    }
+
+    .calculator h3 {
+      margin-top: 0;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .form-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .form-group input {
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #00bcd4;
+    }
+
+    .calculate-btn {
+      background: #00bcd4;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.2s;
+      font-weight: 500;
+    }
+
+    .calculate-btn:hover {
+      background: #00acc1;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 20px;
+      background: #ffffff;
+      border-radius: 4px;
+      border: 1px solid #e5e5e5;
+    }
+
+    .parameter {
+      background: #ffffff;
+      border-radius: 4px;
+      padding: 25px;
+      margin: 20px 0;
+      border: 1px solid #e5e5e5;
+    }
+
+    .parameter h3 {
+      color: #333;
+      margin-top: 0;
+      font-weight: 500;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #00bcd4;
+      margin-bottom: 15px;
+    }
+
+    .parameter h4 {
+      color: #333;
+      font-weight: 500;
+      margin-top: 20px;
+    }
+
+    .formula {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      border-left: 3px solid #00bcd4;
+      margin: 15px 0;
+      font-size: 14px;
+    }
+
+    .warning {
+      background: #fff8e1;
+      border: 1px solid #ffcc02;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      border-left: 3px solid #ffcc02;
+    }
+
+    .warning strong {
+      color: #f57c00;
+    }
+
+    .example {
+      background: #f0f8ff;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      border-left: 3px solid #00bcd4;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #e5e5e5;
+      margin: 30px 0 0 0;
+    }
+
+    .tab {
+      padding: 15px 25px;
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-size: 16px;
+      color: #666;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+
+    .tab.active {
+      color: #00bcd4;
+      border-bottom-color: #00bcd4;
+    }
+
+    .tab:hover {
+      color: #00bcd4;
+    }
+
+    .tab-content {
+      display: none;
+      padding: 30px 0;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .tab-content h2 {
+      color: #333;
+      font-weight: 400;
+      margin-bottom: 25px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin: 25px 0;
+    }
+
+    ul,
+    ol {
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 5px;
+    }
+
+    code {
+      background: #f5f5f5;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .result-item {
+      background: white;
+      padding: 15px;
+      border-radius: 4px;
+      border-left: 4px solid #00bcd4;
+    }
+
+    .result-item strong {
+      color: #333;
+    }
+
+    .result-item small {
+      color: #666;
+      font-size: 12px;
+    }
+
+    .result-note {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 4px;
+      border-left: 3px solid #00bcd4;
+    }
+
+    .result-warning {
+      margin-top: 15px;
+      padding: 12px;
+      background: #fff8e1;
+      border-radius: 4px;
+      border-left: 3px solid #ffcc02;
+    }
+
+    @media (max-width: 768px) {
+      .form-group {
+        grid-template-columns: 1fr;
+      }
+
+      .tabs {
+        flex-wrap: wrap;
+      }
+
+      .tab {
+        flex: 1;
+        min-width: 120px;
+        text-align: center;
+      }
+
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>JMeter Load Testing Tutorial</h1>
+      <p>Configure JMeter for 500 RPS Load Testing</p>
+    </div>
+
+    <div class="content">
+      <div class="calculator">
+        <h3>🧮 RPS Calculator</h3>
+        <p>Calculate the optimal JMeter settings for your target RPS:</p>
+
+        <div class="form-group">
+          <div>
+            <label>Target RPS:</label>
+            <input type="number" id="targetRps" value="500" min="1">
+          </div>
+          <div>
+            <label>Test Duration (seconds):</label>
+            <input type="number" id="duration" value="300" min="1">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div>
+            <label>Ramp-up Period (seconds):</label>
+            <input type="number" id="rampUp" value="60" min="1">
+          </div>
+          <div>
+            <label>Think Time (ms):</label>
+            <input type="number" id="thinkTime" value="1000" min="0">
+          </div>
+        </div>
+
+        <button class="calculate-btn" onclick="calculateSettings()">Calculate Settings</button>
+
+        <div id="calculationResult" class="result" style="display: none;"></div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" onclick="showTab('overview')">Overview</button>
+        <button class="tab" onclick="showTab('parameters')">Parameters</button>
+        <button class="tab" onclick="showTab('configuration')">Configuration</button>
+        <button class="tab" onclick="showTab('monitoring')">Monitoring</button>
+      </div>
+
+      <div id="overview" class="tab-content active">
+        <h2>Understanding Load Testing Fundamentals</h2>
+
+        <div class="formula">
+          <strong>Key Formula:</strong><br>
+          RPS = (Number of Threads × Loop Count) ÷ (Test Duration + Think Time)
+        </div>
+
+        <div class="warning">
+          <strong>Important:</strong> Achieving exactly 500 RPS requires careful balance of all parameters. The actual
+          RPS depends on server response time, network latency, and JMeter's ability to process responses.
+        </div>
+
+        <div class="grid">
+          <div class="parameter">
+            <h3>🎯 What is RPS?</h3>
+            <p><strong>Requests Per Second (RPS)</strong> measures how many HTTP requests your system can handle in one
+              second.</p>
+            <p>500 RPS means your system should process 500 requests every second during the test.</p>
+          </div>
+
+          <div class="parameter">
+            <h3>⚡ Why 500 RPS?</h3>
+            <p>This is a significant load that can reveal:</p>
+            <ul>
+              <li>Database connection limits</li>
+              <li>Memory usage patterns</li>
+              <li>CPU bottlenecks</li>
+              <li>Network saturation points</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div id="parameters" class="tab-content">
+        <h2>JMeter Parameters Deep Dive</h2>
+
+        <div class="parameter">
+          <h3>👥 Number of Threads (Users)</h3>
+          <p><strong>What it is:</strong> The number of virtual users JMeter will simulate concurrently.</p>
+          <p><strong>How it affects RPS:</strong> More threads = potentially higher RPS, but diminishing returns apply.
+          </p>
+
+          <div class="example">
+            <strong>For 500 RPS:</strong> Start with 50-100 threads. If response time is 200ms, you need fewer threads
+            than if response time is 2 seconds.
+          </div>
+
+          <div class="formula">
+            Optimal Threads ≈ Target RPS × Average Response Time (in seconds)
+          </div>
+        </div>
+
+        <div class="parameter">
+          <h3>📈 Ramp-up Period</h3>
+          <p><strong>What it is:</strong> Time taken to start all threads gradually.</p>
+          <p><strong>Why it matters:</strong> Prevents overwhelming the server with sudden load spikes.</p>
+
+          <div class="example">
+            <strong>Recommended:</strong> 1-2 minutes for 500 RPS tests. This gives time to identify bottlenecks as load
+            increases.
+          </div>
+
+          <div class="formula">
+            Thread Start Rate = Number of Threads ÷ Ramp-up Period
+          </div>
+        </div>
+
+        <div class="parameter">
+          <h3>🔄 Loop Count</h3>
+          <p><strong>What it is:</strong> How many times each thread executes the test plan.</p>
+          <p><strong>Options:</strong></p>
+          <ul>
+            <li><strong>Infinite:</strong> Threads run until test duration ends</li>
+            <li><strong>Fixed:</strong> Each thread runs exactly N times</li>
+          </ul>
+
+          <div class="example">
+            <strong>For sustained 500 RPS:</strong> Use "Infinite" with a duration-based test controller.
+          </div>
+        </div>
+
+        <div class="parameter">
+          <h3>⏱️ Test Duration</h3>
+          <p><strong>What it is:</strong> Total time the test runs.</p>
+          <p><strong>Recommendations:</strong></p>
+          <ul>
+            <li><strong>5-10 minutes:</strong> Quick validation tests</li>
+            <li><strong>30-60 minutes:</strong> Stress testing and monitoring</li>
+            <li><strong>2+ hours:</strong> Endurance testing</li>
+          </ul>
+        </div>
+
+        <div class="parameter">
+          <h3>⏳ Think Time (Timer)</h3>
+          <p><strong>What it is:</strong> Pause between requests to simulate real user behavior.</p>
+          <p><strong>Impact on RPS:</strong> Longer think time = lower RPS from same number of threads.</p>
+
+          <div class="formula">
+            Effective RPS = Threads ÷ (Response Time + Think Time)
+          </div>
+
+          <div class="example">
+            <strong>For pure load testing:</strong> Use 0ms think time<br>
+            <strong>For realistic simulation:</strong> Use 1-5 seconds think time
+          </div>
+        </div>
+      </div>
+
+      <div id="configuration" class="tab-content">
+        <h2>Step-by-Step Configuration</h2>
+
+        <div class="parameter">
+          <h3>🛠️ Basic Test Plan Setup</h3>
+          <ol>
+            <li><strong>Create Test Plan</strong>
+              <div class="example">Right-click Test Plan → Add → Threads → Thread Group</div>
+            </li>
+            <li><strong>Configure Thread Group</strong>
+              <ul>
+                <li>Number of Threads: 100</li>
+                <li>Ramp-up Period: 60 seconds</li>
+                <li>Loop Count: Infinite ✓</li>
+                <li>Duration: 300 seconds</li>
+              </ul>
+            </li>
+            <li><strong>Add HTTP Request</strong>
+              <div class="example">Right-click Thread Group → Add → Sampler → HTTP Request</div>
+            </li>
+          </ol>
+        </div>
+
+        <div class="parameter">
+          <h3>🎛️ Advanced Settings</h3>
+
+          <h4>Constant Throughput Timer</h4>
+          <div class="example">
+            <strong>Location:</strong> Thread Group → Add → Timer → Constant Throughput Timer<br>
+            <strong>Target Throughput:</strong> 30000 (samples per minute for 500 RPS)<br>
+            <strong>Calculate based on:</strong> All active threads
+          </div>
+
+          <h4>HTTP Request Defaults</h4>
+          <div class="example">
+            <strong>Location:</strong> Thread Group → Add → Config Element → HTTP Request Defaults<br>
+            <strong>Settings:</strong>
+            <ul>
+              <li>Server Name: your-api-server.com</li>
+              <li>Port: 443 (HTTPS) or 80 (HTTP)</li>
+              <li>Protocol: https or http</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="parameter">
+          <h3>📊 Essential Listeners</h3>
+          <ul>
+            <li><strong>Summary Report:</strong> Overall test statistics</li>
+            <li><strong>Aggregate Report:</strong> Detailed response time metrics</li>
+            <li><strong>View Results Tree:</strong> Individual request/response details (disable during load test)</li>
+            <li><strong>Simple Data Writer:</strong> Export results to CSV</li>
+          </ul>
+        </div>
+
+        <div class="warning">
+          <strong>Performance Tip:</strong> Disable View Results Tree and other GUI listeners during actual load
+          testing. They consume significant resources and can affect test accuracy.
+        </div>
+      </div>
+
+      <div id="monitoring" class="tab-content">
+        <h2>Monitoring and Optimization</h2>
+
+        <div class="parameter">
+          <h3>📈 Key Metrics to Watch</h3>
+          <ul>
+            <li><strong>Throughput:</strong> Actual RPS achieved</li>
+            <li><strong>Response Time:</strong> Average, 90th, 95th percentiles</li>
+            <li><strong>Error Rate:</strong> Should be < 1% for valid tests</li>
+            <li><strong>Active Threads:</strong> Number of concurrent users</li>
+          </ul>
+        </div>
+
+        <div class="parameter">
+          <h3>🔧 Troubleshooting Common Issues</h3>
+
+          <h4>Not Reaching 500 RPS?</h4>
+          <ul>
+            <li>Increase thread count</li>
+            <li>Reduce think time</li>
+            <li>Check JMeter heap size (-Xmx4g)</li>
+            <li>Verify server capacity</li>
+          </ul>
+
+          <h4>High Error Rates?</h4>
+          <ul>
+            <li>Reduce ramp-up speed</li>
+            <li>Check connection timeouts</li>
+            <li>Verify server resources</li>
+            <li>Review application logs</li>
+          </ul>
+        </div>
+
+        <div class="parameter">
+          <h3>⚙️ JMeter Performance Tuning</h3>
+          <div class="example">
+            <strong>JVM Arguments:</strong><br>
+            <code>
+            -Xms1g -Xmx4g -XX:+UseG1GC<br>
+            -XX:MaxGCPauseMillis=100<br>
+            -Djava.net.preferIPv4Stack=true
+            </code>
+          </div>
+
+          <div class="example">
+            <strong>JMeter Properties:</strong><br>
+            <code>
+            jmeter.save.saveservice.output_format=csv<br>
+            jmeter.save.saveservice.response_data=false<br>
+            jmeter.save.saveservice.samplerData=false
+            </code>
+          </div>
+        </div>
+
+        <div class="warning">
+          <strong>Hardware Considerations:</strong> For 500 RPS testing, ensure your JMeter machine has adequate CPU (4+
+          cores) and RAM (8+ GB). Consider distributed testing for higher loads.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Tab functionality
+    window.showTab = function (tabName) {
+      // Hide all tab contents
+      const tabContents = document.querySelectorAll('.tab-content');
+      tabContents.forEach(content => content.classList.remove('active'));
+
+      // Remove active class from all tabs
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(tab => tab.classList.remove('active'));
+
+      // Show selected tab content
+      document.getElementById(tabName).classList.add('active');
+
+      // Add active class to clicked tab
+      event.target.classList.add('active');
+    }
+
+    // RPS Calculator
+    window.calculateSettings = function () {
+      const targetRps = parseInt(document.getElementById('targetRps').value);
+      const duration = parseInt(document.getElementById('duration').value);
+      const rampUp = parseInt(document.getElementById('rampUp').value);
+      const thinkTime = parseInt(document.getElementById('thinkTime').value);
+
+      // Estimate response time (assuming 200ms average)
+      const estimatedResponseTime = 200;
+
+      // Calculate optimal threads
+      const optimalThreads = Math.ceil(targetRps * (estimatedResponseTime + thinkTime) / 1000);
+
+      // Calculate throughput timer value (samples per minute)
+      const throughputTimerValue = targetRps * 60;
+
+      // Calculate total requests
+      const totalRequests = targetRps * duration;
+
+      // Calculate loop count if not infinite
+      const loopCount = Math.ceil(totalRequests / optimalThreads);
+
+      const result = `
+    <h4>🎯 Recommended Settings for ${targetRps} RPS:</h4>
+    <div class="result-grid">
+      <div class="result-item">
+        <strong>Threads:</strong> ${optimalThreads}<br>
+        <small>Concurrent virtual users</small>
+      </div>
+      <div class="result-item">
+        <strong>Ramp-up:</strong> ${rampUp}s<br>
+        <small>Thread start rate: ${(optimalThreads / rampUp).toFixed(2)}/sec</small>
+      </div>
+      <div class="result-item">
+        <strong>Duration:</strong> ${duration}s<br>
+        <small>Total test time</small>
+      </div>
+      <div class="result-item">
+        <strong>Loop Count:</strong> Infinite ✓<br>
+        <small>Or ${loopCount} fixed loops</small>
+      </div>
+    </div>
+    
+    <div class="result-note">
+      <strong>Constant Throughput Timer:</strong> ${throughputTimerValue} samples/min<br>
+      <strong>Think Time:</strong> ${thinkTime}ms between requests<br>
+      <strong>Expected Total Requests:</strong> ${totalRequests.toLocaleString()}
+    </div>
+    
+    <div class="result-warning">
+      <strong>⚠️ Note:</strong> These are estimates. Actual RPS depends on server response time and system resources. Monitor and adjust during testing.
+    </div>
+  `;
+
+      document.getElementById('calculationResult').innerHTML = result;
+      document.getElementById('calculationResult').style.display = 'block';
+    }
+
+    // Auto-calculate on page load
+    document.addEventListener('DOMContentLoaded', function () {
+      calculateSettings();
+    });
+  </script>
+</body>
+
+</html>

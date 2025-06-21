@@ -24,6 +24,12 @@ const toolsData: Tool[] = [
     imgSrc: '/static/images/vim-svgrepo-com.svg',
     href: '/tools/vim-shortcuts-tutorial.html',
   },
+  {
+    title: 'JMeter Load Testing Quick Tutorial',
+    description: `A quick guide to setting up loads tests on JMeter.`,
+    imgSrc: '/static/images/apachejmeter-svgrepo-com.svg',
+    href: '/tools/jmeter-load-tests.html',
+  },
 ]
 
 export default toolsData

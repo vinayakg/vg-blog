@@ -1,141 +1,201 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JWT Authentication Demo</title>
   <style>
-* {
-  box-sizing: border-box;
-}
+    * {
+      box-sizing: border-box;
+    }
 
-body {
-  font-family: Helvetica, Arial, sans-serif;
-  margin: 0;
-  padding: 20px;
-  background-color: #f5f5f5;
-}
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #ffffff;
+      color: #333;
+      line-height: 1.6;
+    }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-h1 {
-  text-align: center;
-  color: #333;
-}
+    h1 {
+      text-align: center;
+      color: #333;
+      font-weight: 300;
+      margin-bottom: 40px;
+      font-size: 2.5em;
+    }
 
-.section {
-  background: white;
-  margin: 20px 0;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
+    .section {
+      background: #ffffff;
+      margin: 30px 0;
+      padding: 25px;
+      border-radius: 4px;
+      border: 1px solid #e5e5e5;
+    }
 
-.demo-controls {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
+    .section h2 {
+      color: #333;
+      font-weight: 500;
+      margin-top: 0;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #00bcd4;
+      margin-bottom: 20px;
+    }
 
-.control-group {
-  flex: 1;
-  min-width: 200px;
-}
+    .demo-controls {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
 
-label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
+    .control-group {
+      flex: 1;
+      min-width: 200px;
+    }
 
-input, textarea, button {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 16px;
-  font-family: Helvetica, Arial, sans-serif;
-}
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #333;
+    }
 
-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-  margin-top: 10px;
-}
+    input,
+    textarea,
+    button {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      font-family: Helvetica, Arial, sans-serif;
+    }
 
-button:hover {
-  background-color: #0056b3;
-}
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #00bcd4;
+    }
 
-.state-diagram {
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  padding: 20px;
-  margin: 20px 0;
-  font-family: monospace;
-  white-space: pre-line;
-}
+    button {
+      background-color: #00bcd4;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
 
-.jwt-display {
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  padding: 15px;
-  margin: 10px 0;
-  word-break: break-all;
-  font-family: monospace;
-  font-size: 14px;
-}
+    button:hover {
+      background-color: #00acc1;
+    }
 
-.jwt-part {
-  margin: 5px 0;
-  padding: 5px;
-  border-radius: 3px;
-}
+    .state-diagram {
+      background: #f8f9fa;
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+      padding: 20px;
+      margin: 20px 0;
+      font-family: monospace;
+      white-space: pre-line;
+      font-size: 14px;
+    }
 
-.header { background-color: #ff6b6b; color: white; }
-.payload { background-color: #4ecdc4; color: white; }
-.signature { background-color: #45b7d1; color: white; }
+    .jwt-display {
+      background: #f8f9fa;
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      word-break: break-all;
+      font-family: monospace;
+      font-size: 14px;
+    }
 
-.log {
-  background: #2d3748;
-  color: #e2e8f0;
-  padding: 15px;
-  border-radius: 4px;
-  height: 200px;
-  overflow-y: auto;
-  font-family: monospace;
-  font-size: 12px;
-  margin-top: 10px;
-}
+    .jwt-part {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 4px;
+      border-left: 3px solid #00bcd4;
+    }
 
-.success { color: #68d391; }
-.error { color: #fc8181; }
-.info { color: #63b3ed; }
+    .header {
+      background-color: #e3f2fd;
+      border-left-color: #2196f3;
+    }
 
-.decoder-section {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
+    .payload {
+      background-color: #e0f2f1;
+      border-left-color: #00bcd4;
+    }
 
-.decoder-input, .decoder-output {
-  flex: 1;
-  min-width: 300px;
-}
+    .signature {
+      background-color: #f3e5f5;
+      border-left-color: #9c27b0;
+    }
+
+    .log {
+      background: #f5f5f5;
+      color: #333;
+      padding: 15px;
+      border-radius: 4px;
+      height: 200px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+      margin-top: 15px;
+      border: 1px solid #e5e5e5;
+    }
+
+    .success {
+      color: #4caf50;
+    }
+
+    .error {
+      color: #f44336;
+    }
+
+    .info {
+      color: #00bcd4;
+    }
+
+    .decoder-section {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .decoder-input,
+    .decoder-output {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    @media (max-width: 768px) {
+      .demo-controls {
+        flex-direction: column;
+      }
+
+      .decoder-section {
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
     <h1>JWT Authentication Demo</h1>
-    
+
     <div class="section">
       <h2>Authentication Flow</h2>
       <div class="demo-controls">
@@ -151,30 +211,30 @@ button:hover {
       <button onclick="authenticate()">1. Authenticate & Get JWT</button>
       <button onclick="makeProtectedRequest()">2. Use JWT for Protected Request</button>
       <button onclick="clearLog()">Clear Log</button>
-      
+
       <div class="state-diagram" id="stateDiagram">
-Initial State: User not authenticated
+        Initial State: User not authenticated
 
-1. User Login Request
-   Client → Server: POST /login {username, password}
-   
-2. Server Validation
-   Server validates credentials
-   
-3. JWT Generation
-   Server creates JWT with user claims
-   Server → Client: {token: "jwt_string"}
-   
-4. Protected Request
-   Client → Server: GET /protected (Authorization: Bearer jwt_string)
-   
-5. JWT Verification
-   Server verifies JWT signature and expiration
-   Server → Client: Protected resource data
+        1. User Login Request
+        Client → Server: POST /login {username, password}
 
-Current State: Ready for authentication
+        2. Server Validation
+        Server validates credentials
+
+        3. JWT Generation
+        Server creates JWT with user claims
+        Server → Client: {token: "jwt_string"}
+
+        4. Protected Request
+        Client → Server: GET /protected (Authorization: Bearer jwt_string)
+
+        5. JWT Verification
+        Server verifies JWT signature and expiration
+        Server → Client: Protected resource data
+
+        Current State: Ready for authentication
       </div>
-      
+
       <div class="log" id="authLog"></div>
     </div>
 
@@ -204,190 +264,190 @@ Current State: Ready for authentication
   </div>
 
   <script type="module">
-// JWT Demo Implementation
+    // JWT Demo Implementation
 
-// Simple base64url encoding/decoding
-function base64urlEncode(str) {
-  return btoa(str)
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=/g, '');
-}
+    // Simple base64url encoding/decoding
+    function base64urlEncode(str) {
+      return btoa(str)
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=/g, '');
+    }
 
-function base64urlDecode(str) {
-  str += '='.repeat((4 - str.length % 4) % 4);
-  return atob(str.replace(/-/g, '+').replace(/_/g, '/'));
-}
+    function base64urlDecode(str) {
+      str += '='.repeat((4 - str.length % 4) % 4);
+      return atob(str.replace(/-/g, '+').replace(/_/g, '/'));
+    }
 
-// Mock server class
-class MockServer {
-  constructor() {
-    this.secret = 'my-super-secret-key';
-    this.users = {
-      'john_doe': 'secret123',
-      'jane_smith': 'password456'
-    };
-  }
-
-  validateCredentials(username, password) {
-    return this.users[username] === password;
-  }
-
-  generateJWT(username) {
-    const header = {
-      alg: 'HS256',
-      typ: 'JWT'
-    };
-
-    const payload = {
-      sub: username,
-      name: username.replace('_', ' '),
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 3600, // 1 hour
-      role: 'user'
-    };
-
-    const headerEncoded = base64urlEncode(JSON.stringify(header));
-    const payloadEncoded = base64urlEncode(JSON.stringify(payload));
-    
-    // Simple signature simulation (in real apps, use proper HMAC)
-    const signature = base64urlEncode(`signature_for_${username}_${payload.iat}`);
-    
-    return `${headerEncoded}.${payloadEncoded}.${signature}`;
-  }
-
-  verifyJWT(token) {
-    try {
-      const parts = token.split('.');
-      if (parts.length !== 3) return null;
-
-      const payload = JSON.parse(base64urlDecode(parts[1]));
-      
-      // Check expiration
-      if (payload.exp < Math.floor(Date.now() / 1000)) {
-        return { valid: false, error: 'Token expired' };
+    // Mock server class
+    class MockServer {
+      constructor() {
+        this.secret = 'my-super-secret-key';
+        this.users = {
+          'john_doe': 'secret123',
+          'jane_smith': 'password456'
+        };
       }
 
-      return { valid: true, payload };
-    } catch (error) {
-      return { valid: false, error: 'Invalid token format' };
-    }
-  }
-}
+      validateCredentials(username, password) {
+        return this.users[username] === password;
+      }
 
-// Mock client class
-class MockClient {
-  constructor() {
-    this.token = null;
-  }
+      generateJWT(username) {
+        const header = {
+          alg: 'HS256',
+          typ: 'JWT'
+        };
 
-  async login(username, password) {
-    // Simulate API call
-    log('Client: Sending login request...', 'info');
-    
-    const response = await mockServer.authenticate(username, password);
-    if (response.success) {
-      this.token = response.token;
-      log(`Client: Received JWT token`, 'success');
-      updateStateDiagram('authenticated');
-      displayJWT(this.token);
-    } else {
-      log(`Client: Authentication failed - ${response.error}`, 'error');
-    }
-    
-    return response;
-  }
+        const payload = {
+          sub: username,
+          name: username.replace('_', ' '),
+          iat: Math.floor(Date.now() / 1000),
+          exp: Math.floor(Date.now() / 1000) + 3600, // 1 hour
+          role: 'user'
+        };
 
-  async makeProtectedRequest() {
-    if (!this.token) {
-      log('Client: No token available. Please authenticate first.', 'error');
-      return;
-    }
+        const headerEncoded = base64urlEncode(JSON.stringify(header));
+        const payloadEncoded = base64urlEncode(JSON.stringify(payload));
 
-    log('Client: Making protected request with JWT...', 'info');
-    const response = await mockServer.handleProtectedRequest(this.token);
-    
-    if (response.success) {
-      log(`Client: Protected resource accessed successfully`, 'success');
-      log(`Client: Received data: ${JSON.stringify(response.data)}`, 'info');
-    } else {
-      log(`Client: Protected request failed - ${response.error}`, 'error');
-    }
-    
-    return response;
-  }
-}
+        // Simple signature simulation (in real apps, use proper HMAC)
+        const signature = base64urlEncode(`signature_for_${username}_${payload.iat}`);
 
-// Initialize mock server and client
-const mockServer = {
-  server: new MockServer(),
-  
-  async authenticate(username, password) {
-    log(`Server: Received authentication request for ${username}`, 'info');
-    
-    if (this.server.validateCredentials(username, password)) {
-      const token = this.server.generateJWT(username);
-      log(`Server: Credentials valid, generating JWT...`, 'success');
-      log(`Server: JWT generated successfully`, 'success');
-      
-      return { success: true, token };
-    } else {
-      log(`Server: Invalid credentials for ${username}`, 'error');
-      return { success: false, error: 'Invalid credentials' };
-    }
-  },
-  
-  async handleProtectedRequest(token) {
-    log(`Server: Received protected request with JWT`, 'info');
-    
-    const verification = this.server.verifyJWT(token);
-    
-    if (verification.valid) {
-      log(`Server: JWT verification successful`, 'success');
-      log(`Server: User: ${verification.payload.sub}`, 'info');
-      
-      return {
-        success: true,
-        data: {
-          message: 'Access granted to protected resource',
-          user: verification.payload.sub,
-          timestamp: new Date().toISOString()
+        return `${headerEncoded}.${payloadEncoded}.${signature}`;
+      }
+
+      verifyJWT(token) {
+        try {
+          const parts = token.split('.');
+          if (parts.length !== 3) return null;
+
+          const payload = JSON.parse(base64urlDecode(parts[1]));
+
+          // Check expiration
+          if (payload.exp < Math.floor(Date.now() / 1000)) {
+            return { valid: false, error: 'Token expired' };
+          }
+
+          return { valid: true, payload };
+        } catch (error) {
+          return { valid: false, error: 'Invalid token format' };
         }
-      };
-    } else {
-      log(`Server: JWT verification failed - ${verification.error}`, 'error');
-      return { success: false, error: verification.error };
+      }
     }
-  }
-};
 
-const mockClient = new MockClient();
+    // Mock client class
+    class MockClient {
+      constructor() {
+        this.token = null;
+      }
 
-// UI Functions
-function log(message, type = 'info') {
-  const logElement = document.getElementById('authLog');
-  const timestamp = new Date().toLocaleTimeString();
-  const logEntry = document.createElement('div');
-  logEntry.className = type;
-  logEntry.textContent = `[${timestamp}] ${message}`;
-  logElement.appendChild(logEntry);
-  logElement.scrollTop = logElement.scrollHeight;
-}
+      async login(username, password) {
+        // Simulate API call
+        log('Client: Sending login request...', 'info');
 
-function clearLog() {
-  document.getElementById('authLog').innerHTML = '';
-}
+        const response = await mockServer.authenticate(username, password);
+        if (response.success) {
+          this.token = response.token;
+          log(`Client: Received JWT token`, 'success');
+          updateStateDiagram('authenticated');
+          displayJWT(this.token);
+        } else {
+          log(`Client: Authentication failed - ${response.error}`, 'error');
+        }
 
-function updateStateDiagram(state) {
-  const diagram = document.getElementById('stateDiagram');
-  const states = {
-    'ready': 'Current State: Ready for authentication',
-    'authenticating': 'Current State: Processing authentication...',
-    'authenticated': 'Current State: User authenticated, JWT token received',
-    'accessing': 'Current State: Accessing protected resource...'
-  };
-  
-  const baseText = `Initial State: User not authenticated
+        return response;
+      }
+
+      async makeProtectedRequest() {
+        if (!this.token) {
+          log('Client: No token available. Please authenticate first.', 'error');
+          return;
+        }
+
+        log('Client: Making protected request with JWT...', 'info');
+        const response = await mockServer.handleProtectedRequest(this.token);
+
+        if (response.success) {
+          log(`Client: Protected resource accessed successfully`, 'success');
+          log(`Client: Received data: ${JSON.stringify(response.data)}`, 'info');
+        } else {
+          log(`Client: Protected request failed - ${response.error}`, 'error');
+        }
+
+        return response;
+      }
+    }
+
+    // Initialize mock server and client
+    const mockServer = {
+      server: new MockServer(),
+
+      async authenticate(username, password) {
+        log(`Server: Received authentication request for ${username}`, 'info');
+
+        if (this.server.validateCredentials(username, password)) {
+          const token = this.server.generateJWT(username);
+          log(`Server: Credentials valid, generating JWT...`, 'success');
+          log(`Server: JWT generated successfully`, 'success');
+
+          return { success: true, token };
+        } else {
+          log(`Server: Invalid credentials for ${username}`, 'error');
+          return { success: false, error: 'Invalid credentials' };
+        }
+      },
+
+      async handleProtectedRequest(token) {
+        log(`Server: Received protected request with JWT`, 'info');
+
+        const verification = this.server.verifyJWT(token);
+
+        if (verification.valid) {
+          log(`Server: JWT verification successful`, 'success');
+          log(`Server: User: ${verification.payload.sub}`, 'info');
+
+          return {
+            success: true,
+            data: {
+              message: 'Access granted to protected resource',
+              user: verification.payload.sub,
+              timestamp: new Date().toISOString()
+            }
+          };
+        } else {
+          log(`Server: JWT verification failed - ${verification.error}`, 'error');
+          return { success: false, error: verification.error };
+        }
+      }
+    };
+
+    const mockClient = new MockClient();
+
+    // UI Functions
+    function log(message, type = 'info') {
+      const logElement = document.getElementById('authLog');
+      const timestamp = new Date().toLocaleTimeString();
+      const logEntry = document.createElement('div');
+      logEntry.className = type;
+      logEntry.textContent = `[${timestamp}] ${message}`;
+      logElement.appendChild(logEntry);
+      logElement.scrollTop = logElement.scrollHeight;
+    }
+
+    function clearLog() {
+      document.getElementById('authLog').innerHTML = '';
+    }
+
+    function updateStateDiagram(state) {
+      const diagram = document.getElementById('stateDiagram');
+      const states = {
+        'ready': 'Current State: Ready for authentication',
+        'authenticating': 'Current State: Processing authentication...',
+        'authenticated': 'Current State: User authenticated, JWT token received',
+        'accessing': 'Current State: Accessing protected resource...'
+      };
+
+      const baseText = `Initial State: User not authenticated
 
 1. User Login Request
    Client → Server: POST /login {username, password}
@@ -407,93 +467,94 @@ function updateStateDiagram(state) {
    Server → Client: Protected resource data
 
 ${states[state] || states['ready']}`;
-  
-  diagram.textContent = baseText;
-}
 
-function displayJWT(token) {
-  const jwtDisplay = document.getElementById('jwtDisplay');
-  const parts = token.split('.');
-  
-  if (parts.length === 3) {
-    const header = JSON.parse(base64urlDecode(parts[0]));
-    const payload = JSON.parse(base64urlDecode(parts[1]));
-    
-    jwtDisplay.innerHTML = `
-      <div class="jwt-part header">Header: ${JSON.stringify(header, null, 2)}</div>
-      <div class="jwt-part payload">Payload: ${JSON.stringify(payload, null, 2)}</div>
-      <div class="jwt-part signature">Signature: ${parts[2]}</div>
+      diagram.textContent = baseText;
+    }
+
+    function displayJWT(token) {
+      const jwtDisplay = document.getElementById('jwtDisplay');
+      const parts = token.split('.');
+
+      if (parts.length === 3) {
+        const header = JSON.parse(base64urlDecode(parts[0]));
+        const payload = JSON.parse(base64urlDecode(parts[1]));
+
+        jwtDisplay.innerHTML = `
+      <div class="jwt-part header"><strong>Header:</strong><br>${JSON.stringify(header, null, 2)}</div>
+      <div class="jwt-part payload"><strong>Payload:</strong><br>${JSON.stringify(payload, null, 2)}</div>
+      <div class="jwt-part signature"><strong>Signature:</strong><br>${parts[2]}</div>
       <br>
       <strong>Full Token:</strong><br>
       ${token}
     `;
-  } else {
-    jwtDisplay.textContent = token;
-  }
-}
-
-// Global functions for button clicks
-window.authenticate = async function() {
-  const username = document.getElementById('username').value;
-  const password = document.getElementById('password').value;
-  
-  if (!username || !password) {
-    log('Please enter both username and password', 'error');
-    return;
-  }
-  
-  updateStateDiagram('authenticating');
-  await mockClient.login(username, password);
-};
-
-window.makeProtectedRequest = async function() {
-  updateStateDiagram('accessing');
-  await mockClient.makeProtectedRequest();
-  updateStateDiagram('authenticated');
-};
-
-window.decodeJWT = function() {
-  const token = document.getElementById('jwtInput').value.trim();
-  const output = document.getElementById('decodedOutput');
-  
-  if (!token) {
-    output.textContent = 'Please enter a JWT token to decode.';
-    return;
-  }
-  
-  try {
-    const parts = token.split('.');
-    if (parts.length !== 3) {
-      throw new Error('Invalid JWT format - must have 3 parts separated by dots');
+      } else {
+        jwtDisplay.textContent = token;
+      }
     }
-    
-    const header = JSON.parse(base64urlDecode(parts[0]));
-    const payload = JSON.parse(base64urlDecode(parts[1]));
-    
-    // Check if token is expired
-    const now = Math.floor(Date.now() / 1000);
-    const isExpired = payload.exp && payload.exp < now;
-    const expirationStatus = payload.exp ? 
-      (isExpired ? '⚠️ EXPIRED' : `✅ Valid until ${new Date(payload.exp * 1000).toLocaleString()}`) : 
-      'No expiration set';
-    
-    output.innerHTML = `
+
+    // Global functions for button clicks
+    window.authenticate = async function () {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      if (!username || !password) {
+        log('Please enter both username and password', 'error');
+        return;
+      }
+
+      updateStateDiagram('authenticating');
+      await mockClient.login(username, password);
+    };
+
+    window.makeProtectedRequest = async function () {
+      updateStateDiagram('accessing');
+      await mockClient.makeProtectedRequest();
+      updateStateDiagram('authenticated');
+    };
+
+    window.decodeJWT = function () {
+      const token = document.getElementById('jwtInput').value.trim();
+      const output = document.getElementById('decodedOutput');
+
+      if (!token) {
+        output.textContent = 'Please enter a JWT token to decode.';
+        return;
+      }
+
+      try {
+        const parts = token.split('.');
+        if (parts.length !== 3) {
+          throw new Error('Invalid JWT format - must have 3 parts separated by dots');
+        }
+
+        const header = JSON.parse(base64urlDecode(parts[0]));
+        const payload = JSON.parse(base64urlDecode(parts[1]));
+
+        // Check if token is expired
+        const now = Math.floor(Date.now() / 1000);
+        const isExpired = payload.exp && payload.exp < now;
+        const expirationStatus = payload.exp ?
+          (isExpired ? '⚠️ EXPIRED' : `✅ Valid until ${new Date(payload.exp * 1000).toLocaleString()}`) :
+          'No expiration set';
+
+        output.innerHTML = `
       <div class="jwt-part header"><strong>Header:</strong><br>${JSON.stringify(header, null, 2)}</div>
       <div class="jwt-part payload"><strong>Payload:</strong><br>${JSON.stringify(payload, null, 2)}</div>
       <div class="jwt-part signature"><strong>Signature:</strong><br>${parts[2]}</div>
-      <div style="margin-top: 10px; padding: 10px; background: #f0f0f0; border-radius: 4px;">
+      <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 4px; border-left: 3px solid #00bcd4;">
         <strong>Token Status:</strong> ${expirationStatus}
       </div>
     `;
-  } catch (error) {
-    output.innerHTML = `<div style="color: red;">Error decoding JWT: ${error.message}</div>`;
-  }
-};
+      } catch (error) {
+        output.innerHTML = `<div style="color: #f44336;">Error decoding JWT: ${error.message}</div>`;
+      }
+    };
 
-window.clearLog = clearLog;
+    window.clearLog = clearLog;
 
-// Initialize
-log('JWT Demo initialized. Ready for authentication.', 'info');
+    // Initialize
+    log('JWT Demo initialized. Ready for authentication.', 'info');
   </script>
 </body>
+
 </html>

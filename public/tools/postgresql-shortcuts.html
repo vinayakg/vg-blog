@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PostgreSQL (psql) Shortcuts Reference</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #ffffff;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 30px 0;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 2.5em;
+      font-weight: 300;
+      color: #333;
+    }
+
+    .search-bar {
+      padding: 20px 0;
+      margin-bottom: 20px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: #00bcd4;
+    }
+
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 20px 0;
+      gap: 10px;
+      margin-bottom: 30px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .category-btn {
+      padding: 10px 16px;
+      background: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 14px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .category-btn:hover {
+      background: #f8f9fa;
+      border-color: #00bcd4;
+    }
+
+    .category-btn.active {
+      background: #00bcd4;
+      color: white;
+      border-color: #00bcd4;
+    }
+
+    .shortcuts {
+      padding: 0;
+    }
+
+    .category-section {
+      margin-bottom: 40px;
+    }
+
+    .category-title {
+      font-size: 1.5em;
+      color: #333;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #00bcd4;
+      font-weight: 500;
+    }
+
+    .shortcut-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 15px;
+    }
+
+    .shortcut-item {
+      background: #f8f9fa;
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+      padding: 15px;
+      transition: all 0.2s;
+      border-left: 3px solid #00bcd4;
+    }
+
+    .shortcut-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 188, 212, 0.15);
+      border-color: #00bcd4;
+    }
+
+    .shortcut-command {
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      background: #ffffff;
+      color: #333;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin-bottom: 8px;
+      word-break: break-all;
+      cursor: pointer;
+      position: relative;
+      border: 1px solid #ddd;
+      transition: all 0.2s;
+    }
+
+    .shortcut-command:hover {
+      background: #f0f8ff;
+      border-color: #00bcd4;
+    }
+
+    .shortcut-command:hover::after {
+      content: "Click to copy";
+      position: absolute;
+      top: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      z-index: 10;
+    }
+
+    .shortcut-description {
+      color: #666;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .copy-notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #00bcd4;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 4px;
+      transform: translateX(300px);
+      transition: transform 0.3s;
+      z-index: 1000;
+      font-weight: 500;
+    }
+
+    .copy-notification.show {
+      transform: translateX(0);
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 40px 20px;
+      color: #666;
+    }
+
+    .no-results h3 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .categories {
+        justify-content: center;
+      }
+      
+      .shortcut-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .category-btn {
+        flex: 1;
+        min-width: 120px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>PostgreSQL (psql) Shortcuts Reference</h1>
+      <p>Comprehensive guide to psql commands and shortcuts</p>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" class="search-input" placeholder="Search shortcuts... (e.g., 'list tables', '\dt', 'connection')" id="searchInput">
+    </div>
+
+    <div class="categories" id="categories">
+      <button class="category-btn active" data-category="all">All</button>
+      <button class="category-btn" data-category="connection">Connection</button>
+      <button class="category-btn" data-category="database">Database Info</button>
+      <button class="category-btn" data-category="tables">Tables & Schemas</button>
+      <button class="category-btn" data-category="query">Query & Execution</button>
+      <button class="category-btn" data-category="formatting">Formatting</button>
+      <button class="category-btn" data-category="navigation">Navigation</button>
+      <button class="category-btn" data-category="help">Help & Info</button>
+    </div>
+
+    <div class="shortcuts" id="shortcuts">
+      <div class="category-section" data-category="connection">
+        <h2 class="category-title">Connection & Session</h2>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <div class="shortcut-command">\c database_name</div>
+            <div class="shortcut-description">Connect to a specific database</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\c database_name username</div>
+            <div class="shortcut-description">Connect to database as specific user</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\conninfo</div>
+            <div class="shortcut-description">Display current connection information</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\q</div>
+            <div class="shortcut-description">Quit psql</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\! command</div>
+            <div class="shortcut-description">Execute shell command</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="category-section" data-category="database">
+        <h2 class="category-title">Database Information</h2>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <div class="shortcut-command">\l</div>
+            <div class="shortcut-description">List all databases</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\l+</div>
+            <div class="shortcut-description">List databases with additional details</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\du</div>
+            <div class="shortcut-description">List all users/roles</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\du+</div>
+            <div class="shortcut-description">List users with detailed information</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\dn</div>
+            <div class="shortcut-description">List all schemas</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">SET search_path TO schema_name;</div>
+            <div class="shortcut-description">Change current schema</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">SHOW search_path;</div>
+            <div class="shortcut-description">Show current schema path</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\db</div>
+            <div class="shortcut-description">List tablespaces</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="category-section" data-category="tables">
+        <h2 class="category-title">Tables & Schemas</h2>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <div class="shortcut-command">\dt</div>
+            <div class="shortcut-description">List all tables in current schema</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\dt+</div>
+            <div class="shortcut-description">List tables with size and description</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\dt schema.*</div>
+            <div class="shortcut-description">List tables in specific schema</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\d table_name</div>
+            <div class="shortcut-description">Describe table structure</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\d+ table_name</div>
+            <div class="shortcut-description">Describe table with additional details</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\di</div>
+            <div class="shortcut-description">List all indexes</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\dv</div>
+            <div class="shortcut-description">List all views</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\ds</div>
+            <div class="shortcut-description">List all sequences</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\df</div>
+            <div class="shortcut-description">List all functions</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\dT</div>
+            <div class="shortcut-description">List all data types</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\dd</div>
+            <div class="shortcut-description">Show object descriptions/comments</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\da</div>
+            <div class="shortcut-description">List aggregate functions</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\do</div>
+            <div class="shortcut-description">List operators</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\dD</div>
+            <div class="shortcut-description">List domains</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\det</div>
+            <div class="shortcut-description">List foreign tables</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\deu</div>
+            <div class="shortcut-description">List user mappings</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\dew</div>
+            <div class="shortcut-description">List foreign-data wrappers</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\des</div>
+            <div class="shortcut-description">List foreign servers</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="category-section" data-category="query">
+        <h2 class="category-title">Query & Execution</h2>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <div class="shortcut-command">\g</div>
+            <div class="shortcut-description">Execute last query again</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\p</div>
+            <div class="shortcut-description">Show current query buffer</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\r</div>
+            <div class="shortcut-description">Reset/clear query buffer</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\e</div>
+            <div class="shortcut-description">Edit query buffer in external editor</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\i filename</div>
+            <div class="shortcut-description">Execute SQL commands from file</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\o filename</div>
+            <div class="shortcut-description">Send query results to file</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\o</div>
+            <div class="shortcut-description">Stop sending output to file</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\timing</div>
+            <div class="shortcut-description">Toggle timing of queries</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\watch [seconds]</div>
+            <div class="shortcut-description">Repeat query every N seconds</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\copy table FROM 'file.csv' CSV HEADER;</div>
+            <div class="shortcut-description">Import CSV data to table</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\copy table TO 'file.csv' CSV HEADER;</div>
+            <div class="shortcut-description">Export table data to CSV</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\COPY (SELECT...) TO 'file.csv' CSV;</div>
+            <div class="shortcut-description">Export query results to CSV</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\w filename</div>
+            <div class="shortcut-description">Write query buffer to file</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\ir filename</div>
+            <div class="shortcut-description">Execute file relative to current script</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\gx</div>
+            <div class="shortcut-description">Execute query with expanded output</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\gset</div>
+            <div class="shortcut-description">Execute query and store results in variables</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="category-section" data-category="formatting">
+        <h2 class="category-title">Output Formatting</h2>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <div class="shortcut-command">\x</div>
+            <div class="shortcut-description">Toggle expanded/vertical display</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\pset format aligned</div>
+            <div class="shortcut-description">Set output format to aligned</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\pset format csv</div>
+            <div class="shortcut-description">Set output format to CSV</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\pset format html</div>
+            <div class="shortcut-description">Set output format to HTML</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\pset border 2</div>
+            <div class="shortcut-description">Set table border style (0-2)</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\pset null 'NULL'</div>
+            <div class="shortcut-description">Display NULL values as 'NULL'</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\pset pager off</div>
+            <div class="shortcut-description">Disable pager for output</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\H</div>
+            <div class="shortcut-description">Toggle HTML output mode</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="category-section" data-category="navigation">
+        <h2 class="category-title">Navigation & History</h2>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <div class="shortcut-command">↑ / ↓</div>
+            <div class="shortcut-description">Navigate command history</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">Ctrl + R</div>
+            <div class="shortcut-description">Reverse search in history</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">Tab</div>
+            <div class="shortcut-description">Auto-complete table names, keywords</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">Ctrl + C</div>
+            <div class="shortcut-description">Cancel current command</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">Ctrl + D</div>
+            <div class="shortcut-description">Exit psql (EOF)</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">Ctrl + L</div>
+            <div class="shortcut-description">Clear screen</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\s</div>
+            <div class="shortcut-description">Display command history</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\s filename</div>
+            <div class="shortcut-description">Save command history to file</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="category-section" data-category="help">
+        <h2 class="category-title">Help & Information</h2>
+        <div class="shortcut-grid">
+          <div class="shortcut-item">
+            <div class="shortcut-command">\?</div>
+            <div class="shortcut-description">Show all psql commands</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\h</div>
+            <div class="shortcut-description">Show SQL command syntax help</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\h SELECT</div>
+            <div class="shortcut-description">Show help for specific SQL command</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\dconfig</div>
+            <div class="shortcut-description">Show configuration parameters</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\dconfig+</div>
+            <div class="shortcut-description">Show config parameters with descriptions</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">SELECT version();</div>
+            <div class="shortcut-description">Show PostgreSQL version</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\echo message</div>
+            <div class="shortcut-description">Print message to stdout</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\set</div>
+            <div class="shortcut-description">Show all psql variables</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\set var_name value</div>
+            <div class="shortcut-description">Set psql variable</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\unset var_name</div>
+            <div class="shortcut-description">Unset psql variable</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\prompt text var_name</div>
+            <div class="shortcut-description">Prompt user for input and store in variable</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\password username</div>
+            <div class="shortcut-description">Change user password securely</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\encoding</div>
+            <div class="shortcut-description">Show current encoding</div>
+          </div>
+          <div class="shortcut-item">
+            <div class="shortcut-command">\encoding UTF8</div>
+            <div class="shortcut-description">Set client encoding</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="no-results hidden" id="noResults">
+      <h3>No results found</h3>
+      <p>Try searching for different terms or browse by category.</p>
+    </div>
+  </div>
+
+  <div class="copy-notification" id="copyNotification">
+    Command copied to clipboard!
+  </div>
+
+  <script type="module">
+// Search functionality
+const searchInput = document.getElementById('searchInput');
+const shortcuts = document.getElementById('shortcuts');
+const categoryBtns = document.querySelectorAll('.category-btn');
+const copyNotification = document.getElementById('copyNotification');
+const noResults = document.getElementById('noResults');
+
+let currentFilter = 'all';
+
+function filterShortcuts() {
+  const searchTerm = searchInput.value.toLowerCase();
+  const sections = shortcuts.querySelectorAll('.category-section');
+  let hasAnyResults = false;
+  
+  sections.forEach(section => {
+    const category = section.dataset.category;
+    const shouldShowCategory = currentFilter === 'all' || currentFilter === category;
+    
+    if (!shouldShowCategory) {
+      section.classList.add('hidden');
+      return;
+    }
+    
+    const items = section.querySelectorAll('.shortcut-item');
+    let hasVisibleItems = false;
+    
+    items.forEach(item => {
+      const command = item.querySelector('.shortcut-command').textContent.toLowerCase();
+      const description = item.querySelector('.shortcut-description').textContent.toLowerCase();
+      
+      const matchesSearch = !searchTerm || 
+        command.includes(searchTerm) || 
+        description.includes(searchTerm);
+      
+      if (matchesSearch) {
+        item.style.display = 'block';
+        hasVisibleItems = true;
+        hasAnyResults = true;
+      } else {
+        item.style.display = 'none';
+      }
+    });
+    
+    section.classList.toggle('hidden', !hasVisibleItems);
+  });
+  
+  // Show/hide no results message
+  noResults.classList.toggle('hidden', hasAnyResults);
+  shortcuts.classList.toggle('hidden', !hasAnyResults);
+}
+
+// Search input handler
+searchInput.addEventListener('input', filterShortcuts);
+
+// Category filter handlers
+categoryBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    categoryBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.category;
+    filterShortcuts();
+  });
+});
+
+// Copy to clipboard functionality
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('shortcut-command')) {
+    const command = e.target.textContent;
+    navigator.clipboard.writeText(command).then(() => {
+      copyNotification.classList.add('show');
+      setTimeout(() => {
+        copyNotification.classList.remove('show');
+      }, 2000);
+    }).catch(() => {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = command;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      copyNotification.classList.add('show');
+      setTimeout(() => {
+        copyNotification.classList.remove('show');
+      }, 2000);
+    });
+  }
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && !e.target.matches('input')) {
+    e.preventDefault();
+    searchInput.focus();
+  }
+  
+  if (e.key === 'Escape') {
+    searchInput.blur();
+    searchInput.value = '';
+    filterShortcuts();
+  }
+});
+
+// Initial load
+filterShortcuts();
+  </script>
+</body>
+</html>

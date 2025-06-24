@@ -30,6 +30,12 @@ const toolsData: Tool[] = [
     imgSrc: '/static/images/apachejmeter-svgrepo-com.svg',
     href: '/tools/jmeter-load-tests.html',
   },
+  {
+    title: 'PostgreSQL (psql) Shortcuts Reference',
+    description: `Comprehensive guide to psql commands and shortcuts`,
+    imgSrc: '/static/images/postgresql-svgrepo-com.svg',
+    href: '/tools/postgresql-shortcuts.html',
+  },
 ]
 
 export default toolsData

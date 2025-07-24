@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Youtube yt-dlp Command Builder</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #ffffff;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 30px 0;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 2.5em;
+      font-weight: 300;
+      color: #333;
+    }
+
+    .header p {
+      margin: 10px 0 20px;
+      color: #666;
+      font-size: 1.1em;
+    }
+
+    .url-input {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      border: 1px solid #e5e5e5;
+    }
+
+    .url-input input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      transition: border-color 0.2s;
+    }
+
+    .url-input input:focus {
+      outline: none;
+      border-color: #00bcd4;
+    }
+
+    .command-output {
+      background: #f5f5f5;
+      color: #333;
+      padding: 15px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      width: 100%;
+      min-height: 80px;
+      resize: vertical;
+      border-radius: 4px;
+      margin-bottom: 15px;
+    }
+
+    .copy-btn {
+      background: #00bcd4;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: #00acc1;
+    }
+
+    .copy-btn.copied {
+      background: #4caf50;
+    }
+
+    .categories {
+      display: flex;
+      background: #f8f9fa;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin-bottom: 30px;
+      border: 1px solid #e5e5e5;
+    }
+
+    .category-tab {
+      padding: 15px 20px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+      font-size: 14px;
+      font-weight: 500;
+      color: #666;
+    }
+
+    .category-tab:hover {
+      background: #ffffff;
+      color: #333;
+    }
+
+    .category-tab.active {
+      background: #ffffff;
+      border-bottom-color: #00bcd4;
+      color: #333;
+    }
+
+    .content {
+      padding: 0;
+    }
+
+    .category-content {
+      display: none;
+    }
+
+    .category-content.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      font-family: Helvetica, Arial, sans-serif;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #00bcd4;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      background: #f8f9fa;
+      border-radius: 4px;
+      border: 1px solid #e5e5e5;
+      transition: all 0.2s;
+    }
+
+    .checkbox-item:hover {
+      background: #ffffff;
+      border-color: #00bcd4;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: auto;
+      margin: 0;
+      accent-color: #00bcd4;
+    }
+
+    .checkbox-item label {
+      margin: 0;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .help-text {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+      line-height: 1.4;
+    }
+
+    .preset-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .preset-btn {
+      background: #ffffff;
+      border: 1px solid #ddd;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.2s;
+      color: #333;
+    }
+
+    .preset-btn:hover {
+      background: #f8f9fa;
+      border-color: #00bcd4;
+    }
+
+    .preset-btn.active {
+      background: #00bcd4;
+      color: white;
+      border-color: #00bcd4;
+    }
+
+    .section-title {
+      color: #333;
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e5e5e5;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .categories {
+        flex-direction: column;
+      }
+
+      .category-tab {
+        text-align: center;
+        border-bottom: none;
+        border-left: 3px solid transparent;
+      }
+
+      .category-tab.active {
+        border-left-color: #00bcd4;
+        border-bottom: none;
+      }
+
+      .checkbox-group {
+        grid-template-columns: 1fr;
+      }
+
+      .preset-buttons {
+        flex-direction: column;
+      }
+
+      .preset-btn {
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>yt-dlp Command Builder</h1>
+      <p>Interactive tool to build powerful yt-dlp commands with ease</p>
+
+      <div class="url-input">
+        <input type="text" id="url" placeholder="Enter video/playlist URL here..." />
+        <textarea class="command-output" id="command" readonly>yt-dlp [Enter URL above to see command]</textarea>
+        <button class="copy-btn" onclick="copyCommand()">Copy Command</button>
+      </div>
+    </div>
+
+    <div class="categories">
+      <div class="category-tab active" onclick="switchCategory('basic')">Basic Downloads</div>
+      <div class="category-tab" onclick="switchCategory('quality')">Video Quality</div>
+      <div class="category-tab" onclick="switchCategory('audio')">Audio Extraction</div>
+      <div class="category-tab" onclick="switchCategory('time')">Time-based</div>
+      <div class="category-tab" onclick="switchCategory('subtitles')">Subtitles</div>
+      <div class="category-tab" onclick="switchCategory('playlists')">Playlists</div>
+      <div class="category-tab" onclick="switchCategory('advanced')">Advanced</div>
+    </div>
+
+    <div class="content">
+      <!-- Basic Downloads -->
+      <div class="category-content active" id="basic">
+        <div class="form-group">
+          <label>Download Mode</label>
+          <div class="preset-buttons">
+            <button class="preset-btn active" onclick="setBasicMode('normal')">Normal Download</button>
+            <button class="preset-btn" onclick="setBasicMode('info')">Info Only</button>
+            <button class="preset-btn" onclick="setBasicMode('simulate')">Simulate</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Output Directory</label>
+          <input type="text" id="output-dir" placeholder="~/Downloads/" />
+          <div class="help-text">Where to save downloaded files</div>
+        </div>
+
+        <div class="form-group">
+          <label>File Naming Template</label>
+          <select id="naming-template">
+            <option value="">Default naming</option>
+            <option value="%(title)s.%(ext)s">Title only</option>
+            <option value="%(uploader)s - %(title)s.%(ext)s">Uploader - Title</option>
+            <option value="%(upload_date)s - %(title)s [%(id)s].%(ext)s">Date - Title [ID]</option>
+            <option value="%(uploader)s/%(upload_date>%Y)s/%(title)s.%(ext)s">Organized by uploader/year</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Options</label>
+          <div class="checkbox-group">
+            <div class="checkbox-item">
+              <input type="checkbox" id="embed-metadata" checked />
+              <label for="embed-metadata">Embed metadata</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="embed-thumbnail" />
+              <label for="embed-thumbnail">Embed thumbnail</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="write-info-json" />
+              <label for="write-info-json">Save info JSON</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="ignore-errors" checked />
+              <label for="ignore-errors">Ignore errors</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Video Quality -->
+      <div class="category-content" id="quality">
+        <div class="form-group">
+          <label>Quality Presets</label>
+          <div class="preset-buttons">
+            <button class="preset-btn" onclick="setQuality('best')">Best Available</button>
+            <button class="preset-btn" onclick="setQuality('4k')">4K (2160p)</button>
+            <button class="preset-btn" onclick="setQuality('1080p')">1080p</button>
+            <button class="preset-btn" onclick="setQuality('720p')">720p</button>
+            <button class="preset-btn" onclick="setQuality('480p')">480p</button>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Max Resolution</label>
+            <select id="max-height">
+              <option value="">No limit</option>
+              <option value="2160">4K (2160p)</option>
+              <option value="1440">1440p</option>
+              <option value="1080">1080p</option>
+              <option value="720">720p</option>
+              <option value="480">480p</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Max Frame Rate</label>
+            <select id="max-fps">
+              <option value="">No limit</option>
+              <option value="60">60 FPS</option>
+              <option value="30">30 FPS</option>
+              <option value="24">24 FPS</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Video Codec Preference</label>
+            <select id="video-codec">
+              <option value="">Any codec</option>
+              <option value="h264">H.264 (Most compatible)</option>
+              <option value="vp9">VP9 (Good compression)</option>
+              <option value="av01">AV1 (Best compression)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Max File Size</label>
+            <input type="text" id="max-filesize" placeholder="e.g., 500M, 2G" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Audio Extraction -->
+      <div class="category-content" id="audio">
+        <div class="form-group">
+          <label>Audio Options</label>
+          <div class="checkbox-group">
+            <div class="checkbox-item">
+              <input type="checkbox" id="extract-audio" />
+              <label for="extract-audio">Extract audio only</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="keep-video" />
+              <label for="keep-video">Keep original video</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Audio Format</label>
+            <select id="audio-format">
+              <option value="mp3">MP3 (Most compatible)</option>
+              <option value="m4a">M4A (Good quality)</option>
+              <option value="flac">FLAC (Lossless)</option>
+              <option value="opus">Opus (Efficient)</option>
+              <option value="wav">WAV (Uncompressed)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Audio Quality</label>
+            <select id="audio-quality">
+              <option value="0">Best quality</option>
+              <option value="320K">320K (Very high)</option>
+              <option value="256K">256K (High)</option>
+              <option value="192K">192K (Good)</option>
+              <option value="128K">128K (Standard)</option>
+              <option value="96K">96K (Low)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Time-based -->
+      <div class="category-content" id="time">
+        <div class="form-group">
+          <label>Download Sections</label>
+          <div class="help-text">Use format: *start-end (e.g., *1:30-5:45 or *0:00-2:00)</div>
+          <textarea id="download-sections" rows="3" placeholder="*1:30-5:45&#10;*10:00-12:00"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Chapter Options</label>
+          <div class="checkbox-group">
+            <div class="checkbox-item">
+              <input type="checkbox" id="split-chapters" />
+              <label for="split-chapters">Split by chapters</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="remove-chapters" />
+              <label for="remove-chapters">Remove chapter markers</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Download Speed Limit</label>
+          <input type="text" id="rate-limit" placeholder="e.g., 2M, 500K" />
+          <div class="help-text">Limit download speed to avoid detection</div>
+        </div>
+      </div>
+
+      <!-- Subtitles -->
+      <div class="category-content" id="subtitles">
+        <div class="form-group">
+          <label>Subtitle Options</label>
+          <div class="checkbox-group">
+            <div class="checkbox-item">
+              <input type="checkbox" id="write-subs" />
+              <label for="write-subs">Download subtitles</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="write-auto-subs" />
+              <label for="write-auto-subs">Download auto-generated subs</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="embed-subs" />
+              <label for="embed-subs">Embed in video</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="skip-download-subs" />
+              <label for="skip-download-subs">Subtitles only (no video)</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Subtitle Languages</label>
+            <input type="text" id="sub-langs" placeholder="en,es,fr" />
+            <div class="help-text">Comma-separated language codes</div>
+          </div>
+          <div class="form-group">
+            <label>Convert Subtitles To</label>
+            <select id="convert-subs">
+              <option value="">Keep original format</option>
+              <option value="srt">SRT</option>
+              <option value="vtt">WebVTT</option>
+              <option value="ass">ASS</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Playlists -->
+      <div class="category-content" id="playlists">
+        <div class="form-group">
+          <label>Playlist Options</label>
+          <div class="checkbox-group">
+            <div class="checkbox-item">
+              <input type="checkbox" id="yes-playlist" checked />
+              <label for="yes-playlist">Download entire playlist</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="no-playlist" />
+              <label for="no-playlist">Single video only</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="download-archive" />
+              <label for="download-archive">Use download archive</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Playlist Start</label>
+            <input type="number" id="playlist-start" placeholder="1" />
+          </div>
+          <div class="form-group">
+            <label>Playlist End</label>
+            <input type="number" id="playlist-end" placeholder="" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Max Downloads</label>
+            <input type="number" id="max-downloads" placeholder="No limit" />
+          </div>
+          <div class="form-group">
+            <label>Sleep Between Downloads</label>
+            <input type="text" id="sleep-interval" placeholder="1" />
+            <div class="help-text">Seconds to wait between downloads</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Advanced -->
+      <div class="category-content" id="advanced">
+        <div class="form-group">
+          <label>Authentication</label>
+          <div class="checkbox-group">
+            <div class="checkbox-item">
+              <input type="checkbox" id="cookies-from-browser" />
+              <label for="cookies-from-browser">Use browser cookies</label>
+            </div>
+          </div>
+          <select id="browser-choice">
+            <option value="chrome">Chrome</option>
+            <option value="firefox">Firefox</option>
+            <option value="safari">Safari</option>
+            <option value="edge">Edge</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Network Options</label>
+          <div class="checkbox-group">
+            <div class="checkbox-item">
+              <input type="checkbox" id="geo-bypass" />
+              <label for="geo-bypass">Bypass geo-restrictions</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="mark-watched" />
+              <label for="mark-watched">Mark as watched</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Retry Attempts</label>
+            <input type="number" id="retries" placeholder="10" />
+          </div>
+          <div class="form-group">
+            <label>Concurrent Fragments</label>
+            <input type="number" id="concurrent-fragments" placeholder="1" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Custom Format Selector</label>
+          <input type="text" id="custom-format" placeholder="bestvideo+bestaudio/best" />
+          <div class="help-text">Advanced format selection string</div>
+        </div>
+
+        <div class="form-group">
+          <label>Extra Arguments</label>
+          <textarea id="extra-args" rows="2" placeholder="Additional yt-dlp arguments..."></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+// Global state
+let currentCategory = 'basic';
+
+// Category switching
+function switchCategory(category) {
+  // Hide all category contents
+  document.querySelectorAll('.category-content').forEach(content => {
+    content.classList.remove('active');
+  });
+
+  // Remove active class from all tabs
+  document.querySelectorAll('.category-tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+
+  // Show selected category
+  document.getElementById(category).classList.add('active');
+
+  // Add active class to selected tab
+  event.target.classList.add('active');
+
+  currentCategory = category;
+  updateCommand();
+}
+
+// Preset functions
+function setBasicMode(mode) {
+  document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+
+  const elements = {
+    'info': ['--list-formats'],
+    'simulate': ['--simulate']
+  };
+
+  updateCommand();
+}
+
+function setQuality(quality) {
+  document.querySelectorAll('#quality .preset-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+
+  const maxHeight = document.getElementById('max-height');
+  const customFormat = document.getElementById('custom-format');
+
+  switch(quality) {
+    case '4k':
+      maxHeight.value = '2160';
+      break;
+    case '1080p':
+      maxHeight.value = '1080';
+      break;
+    case '720p':
+      maxHeight.value = '720';
+      break;
+    case '480p':
+      maxHeight.value = '480';
+      break;
+    case 'best':
+      maxHeight.value = '';
+      customFormat.value = 'bestvideo+bestaudio/best';
+      break;
+  }
+
+  updateCommand();
+}
+
+// Command building
+function buildCommand() {
+  const url = document.getElementById('url').value;
+  if (!url) return 'yt-dlp [Enter URL above to see command]';
+
+  let command = 'yt-dlp';
+  let args = [];
+
+  // Basic options
+  if (document.getElementById('embed-metadata')?.checked) args.push('--embed-metadata');
+  if (document.getElementById('embed-thumbnail')?.checked) args.push('--embed-thumbnail');
+  if (document.getElementById('write-info-json')?.checked) args.push('--write-info-json');
+  if (document.getElementById('ignore-errors')?.checked) args.push('--ignore-errors');
+
+  // Output options
+  const outputDir = document.getElementById('output-dir')?.value;
+  const namingTemplate = document.getElementById('naming-template')?.value;
+  if (outputDir || namingTemplate) {
+    let outputTemplate = outputDir || '';
+    if (namingTemplate) {
+      if (outputDir && !outputDir.endsWith('/')) outputTemplate += '/';
+      outputTemplate += namingTemplate;
+    }
+    if (outputTemplate) args.push(`-o "${outputTemplate}"`);
+  }
+
+  // Quality options
+  const maxHeight = document.getElementById('max-height')?.value;
+  const maxFps = document.getElementById('max-fps')?.value;
+  const videoCodec = document.getElementById('video-codec')?.value;
+  const maxFilesize = document.getElementById('max-filesize')?.value;
+  const customFormat = document.getElementById('custom-format')?.value;
+
+  if (customFormat) {
+    args.push(`-f "${customFormat}"`);
+  } else {
+    let formatSelector = '';
+    let conditions = [];
+
+    if (maxHeight) conditions.push(`height<=${maxHeight}`);
+    if (maxFps) conditions.push(`fps<=${maxFps}`);
+    if (videoCodec) conditions.push(`vcodec^=${videoCodec}`);
+    if (maxFilesize) conditions.push(`filesize<${maxFilesize}`);
+
+    if (conditions.length > 0) {
+      formatSelector = `bestvideo[${conditions.join('][')}]+bestaudio/best[${conditions.join('][')}]`;
+      args.push(`-f "${formatSelector}"`);
+    }
+  }
+
+  // Audio options
+  if (document.getElementById('extract-audio')?.checked) {
+    args.push('-x');
+    const audioFormat = document.getElementById('audio-format')?.value;
+    if (audioFormat) args.push(`--audio-format ${audioFormat}`);
+
+    const audioQuality = document.getElementById('audio-quality')?.value;
+    if (audioQuality) args.push(`--audio-quality ${audioQuality}`);
+
+    if (document.getElementById('keep-video')?.checked) args.push('--keep-video');
+  }
+
+  // Time-based options
+  const downloadSections = document.getElementById('download-sections')?.value;
+  if (downloadSections) {
+    downloadSections.split('\n').filter(s => s.trim()).forEach(section => {
+      args.push(`--download-sections "${section.trim()}"`);
+    });
+  }
+
+  if (document.getElementById('split-chapters')?.checked) args.push('--split-chapters');
+  if (document.getElementById('remove-chapters')?.checked) args.push('--remove-chapters');
+
+  const rateLimit = document.getElementById('rate-limit')?.value;
+  if (rateLimit) args.push(`--limit-rate ${rateLimit}`);
+
+  // Subtitle options
+  if (document.getElementById('write-subs')?.checked) args.push('--write-subs');
+  if (document.getElementById('write-auto-subs')?.checked) args.push('--write-auto-subs');
+  if (document.getElementById('embed-subs')?.checked) args.push('--embed-subs');
+  if (document.getElementById('skip-download-subs')?.checked) args.push('--skip-download');
+
+  const subLangs = document.getElementById('sub-langs')?.value;
+  if (subLangs) args.push(`--sub-langs "${subLangs}"`);
+
+  const convertSubs = document.getElementById('convert-subs')?.value;
+  if (convertSubs) args.push(`--convert-subs ${convertSubs}`);
+
+  // Playlist options
+  if (document.getElementById('no-playlist')?.checked) args.push('--no-playlist');
+  if (document.getElementById('download-archive')?.checked) args.push('--download-archive archive.txt');
+
+  const playlistStart = document.getElementById('playlist-start')?.value;
+  if (playlistStart) args.push(`--playlist-start ${playlistStart}`);
+
+  const playlistEnd = document.getElementById('playlist-end')?.value;
+  if (playlistEnd) args.push(`--playlist-end ${playlistEnd}`);
+
+  const maxDownloads = document.getElementById('max-downloads')?.value;
+  if (maxDownloads) args.push(`--max-downloads ${maxDownloads}`);
+
+  const sleepInterval = document.getElementById('sleep-interval')?.value;
+  if (sleepInterval) args.push(`--sleep-interval ${sleepInterval}`);
+
+  // Advanced options
+  if (document.getElementById('cookies-from-browser')?.checked) {
+    const browser = document.getElementById('browser-choice')?.value || 'chrome';
+    args.push(`--cookies-from-browser ${browser}`);
+  }
+
+  if (document.getElementById('geo-bypass')?.checked) args.push('--geo-bypass');
+  if (document.getElementById('mark-watched')?.checked) args.push('--mark-watched');
+
+  const retries = document.getElementById('retries')?.value;
+  if (retries) args.push(`--retries ${retries}`);
+
+  const concurrentFragments = document.getElementById('concurrent-fragments')?.value;
+  if (concurrentFragments) args.push(`--concurrent-fragments ${concurrentFragments}`);
+
+  const extraArgs = document.getElementById('extra-args')?.value;
+  if (extraArgs) args.push(extraArgs);
+
+  // Add URL at the end
+  if (args.length > 0) {
+    command += ' ' + args.join(' ');
+  }
+  command += ` "${url}"`;
+
+  return command;
+}
+
+function updateCommand() {
+  const command = buildCommand();
+  document.getElementById('command').value = command;
+}
+
+function copyCommand() {
+  const commandElement = document.getElementById('command');
+  commandElement.select();
+  commandElement.setSelectionRange(0, 99999);
+
+  try {
+    navigator.clipboard.writeText(commandElement.value);
+    const btn = event.target;
+    const originalText = btn.textContent;
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.classList.remove('copied');
+    }, 2000);
+  } catch (err) {
+    // Fallback for older browsers
+    document.execCommand('copy');
+  }
+}
+
+// Event listeners for real-time updates
+document.addEventListener('DOMContentLoaded', () => {
+  // Add event listeners to all form elements
+  const formElements = document.querySelectorAll('input, select, textarea');
+  formElements.forEach(element => {
+    element.addEventListener('input', updateCommand);
+    element.addEventListener('change', updateCommand);
+  });
+
+  // Special handling for checkboxes that should be mutually exclusive
+  document.getElementById('no-playlist')?.addEventListener('change', (e) => {
+    if (e.target.checked) {
+      document.getElementById('yes-playlist').checked = false;
+    }
+  });
+
+  document.getElementById('yes-playlist')?.addEventListener('change', (e) => {
+    if (e.target.checked) {
+      document.getElementById('no-playlist').checked = false;
+    }
+  });
+
+  // Initialize command
+  updateCommand();
+});
+
+// Make functions global
+window.switchCategory = switchCategory;
+window.setBasicMode = setBasicMode;
+window.setQuality = setQuality;
+window.copyCommand = copyCommand;
+  </script>
+</body>
+</html>

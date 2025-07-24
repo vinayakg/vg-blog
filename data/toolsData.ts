@@ -36,6 +36,12 @@ const toolsData: Tool[] = [
     imgSrc: '/static/images/postgresql-svgrepo-com.svg',
     href: '/tools/postgresql-shortcuts.html',
   },
+  {
+    title: 'Youtube yt-dlp Command Builder',
+    description: `Youtube yt-dlp Command Builder for downloading videos`,
+    imgSrc: '/static/images/youtube-168-svgrepo-com.svg',
+    href: '/tools/youtube-yt-dlp-command-builder.html',
+  },
 ]
 
 export default toolsData

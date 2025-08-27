@@ -1,0 +1,78 @@
+name: Website Monitor
+
+on:
+  schedule:
+    # Run every 10 minutes
+    - cron: '*/10 * * * *'
+  # Allow manual trigger for testing
+  workflow_dispatch:
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Check website status
+      run: |
+        # Replace 'abc.com' with your actual website URL
+        WEBSITE_URL="https://vinayakg.dev"  # ← CHANGE THIS TO YOUR WEBSITE
+        HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 10 --max-time 30 "$WEBSITE_URL")
+        
+        # Check if response is successful (2xx or 3xx)
+        if [[ $HTTP_CODE -ge 200 && $HTTP_CODE -lt 400 ]]; then
+          echo "✅ Website is UP - HTTP $HTTP_CODE"
+          echo "status=up" >> $GITHUB_ENV
+        else
+          echo "❌ Website is DOWN - HTTP $HTTP_CODE"
+          echo "status=down" >> $GITHUB_ENV
+          exit 1
+        fi
+        
+    - name: Check response time
+      run: |
+        # Measure response time
+        RESPONSE_TIME=$(curl -s -o /dev/null -w "%{time_total}" --connect-timeout 10 --max-time 30 "$WEBSITE_URL")
+        echo "⏱️ Response time: ${RESPONSE_TIME}s"
+        
+        # Alert if response time > 5 seconds
+        if (( $(echo "$RESPONSE_TIME > 5.0" | bc -l) )); then
+          echo "⚠️ Slow response time detected: ${RESPONSE_TIME}s"
+        fi
+
+    - name: Create issue on failure
+      if: failure()
+      env:
+        WEBSITE_URL: "https://vinayakg.dev"
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const websiteUrl = process.env.WEBSITE_URL || 'https://vinayakg.dev';
+          const title = `🚨 Website Down: ${websiteUrl} - ${new Date().toISOString()}`;
+          const body = `
+          ## Website Monitoring Alert
+          
+          **Status**: ❌ DOWN
+          **URL**: ${websiteUrl}
+          **Time**: ${new Date().toISOString()}
+          **Workflow**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          
+          The website monitoring check has failed. Please investigate.
+          `;
+          
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: title,
+            body: body,
+            labels: ['monitoring', 'alert', 'website-down']
+          });
+
+    - name: Send notification (optional)
+      if: failure()
+      run: |
+        # Example: Send to Slack webhook
+        # curl -X POST -H 'Content-type: application/json' \
+        #   --data '{"text":"🚨 abc.com is down!"}' \
+        #   ${{ secrets.SLACK_WEBHOOK_URL }}
+        
+        echo "Notification would be sent here"

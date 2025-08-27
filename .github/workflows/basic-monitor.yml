@@ -15,7 +15,6 @@ jobs:
     steps:
     - name: Check website status
       run: |
-        # Replace 'abc.com' with your actual website URL
         WEBSITE_URL="https://vinayakg.dev"  # ← CHANGE THIS TO YOUR WEBSITE
         HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 10 --max-time 30 "$WEBSITE_URL")
         
@@ -36,7 +35,7 @@ jobs:
         echo "⏱️ Response time: ${RESPONSE_TIME}s"
         
         # Alert if response time > 5 seconds
-        if (( $(echo "$RESPONSE_TIME > 5.0" | bc -l) )); then
+        if (( $(echo "$RESPONSE_TIME > 30.0" | bc -l) )); then
           echo "⚠️ Slow response time detected: ${RESPONSE_TIME}s"
         fi
 

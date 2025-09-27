@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ripgrep (rg) Reference Guide</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #ffffff;
+      min-height: 100vh;
+      color: #333333;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      overflow: hidden;
+      border: 1px solid #f0f0f0;
+    }
+
+    .header {
+      background: #ffffff;
+      color: #333333;
+      padding: 40px 30px;
+      text-align: center;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .header h1 {
+      margin: 0 0 10px 0;
+      font-size: 2.5em;
+      font-weight: 300;
+      color: #333333;
+    }
+
+    .header p {
+      margin: 0;
+      color: #666666;
+      font-size: 1.1em;
+    }
+
+    .search-bar {
+      padding: 20px 30px;
+      background: #fafafa;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 20px;
+      font-size: 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      outline: none;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    .search-input:focus {
+      border-color: #00a8e8;
+      box-shadow: 0 0 0 3px rgba(0, 168, 232, 0.1);
+    }
+
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 0 30px;
+      background: #fafafa;
+      border-bottom: 1px solid #f0f0f0;
+      gap: 10px;
+    }
+
+    .category-btn {
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: #666666;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .category-btn:hover {
+      color: #333333;
+      background: rgba(0, 168, 232, 0.05);
+    }
+
+    .category-btn.active {
+      color: #00a8e8;
+      border-bottom-color: #00a8e8;
+    }
+
+    .content {
+      padding: 30px;
+      background: white;
+    }
+
+    .section {
+      margin-bottom: 40px;
+    }
+
+    .section.hidden {
+      display: none;
+    }
+
+    .section h2 {
+      color: #333333;
+      font-size: 1.5em;
+      margin: 0 0 20px 0;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+      font-weight: 400;
+    }
+
+    .command-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+    }
+
+    .command-card {
+      background: #fafafa;
+      border-radius: 6px;
+      padding: 20px;
+      border-left: 4px solid #00a8e8;
+      transition: all 0.3s ease;
+      opacity: 1;
+      border: 1px solid #f0f0f0;
+    }
+
+    .command-card.filtered {
+      opacity: 0.3;
+      transform: scale(0.95);
+    }
+
+    .command-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      border-color: #e0e0e0;
+    }
+
+    .command {
+      font-family: 'Courier New', monospace;
+      background: #333333;
+      color: #00ff88;
+      padding: 12px 16px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      font-size: 14px;
+      word-break: break-all;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .command::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transition: left 0.5s;
+    }
+
+    .command:hover::before {
+      left: 100%;
+    }
+
+    .description {
+      color: #555555;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+
+    .example {
+      background: #f0f8ff;
+      border-left: 3px solid #00a8e8;
+      padding: 10px 12px;
+      margin-top: 10px;
+      font-size: 13px;
+      border-radius: 0 4px 4px 0;
+      color: #444444;
+    }
+
+    .copy-notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #00a8e8;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 6px;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+      font-size: 14px;
+    }
+
+    .copy-notification.show {
+      transform: translateX(0);
+    }
+
+    @media (max-width: 768px) {
+      .command-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .categories {
+        padding: 0 20px;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      .header {
+        padding: 30px 20px;
+      }
+
+      .search-bar {
+        padding: 15px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🔍 Ripgrep Reference</h1>
+      <p>Fast, powerful file searching with rg</p>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" class="search-input" placeholder="Search commands, descriptions, or examples..." id="searchInput">
+    </div>
+
+    <div class="categories">
+      <button class="category-btn active" data-category="all">All Commands</button>
+      <button class="category-btn" data-category="basic">Basic Search</button>
+      <button class="category-btn" data-category="files">File Operations</button>
+      <button class="category-btn" data-category="patterns">Pattern Matching</button>
+      <button class="category-btn" data-category="output">Output Control</button>
+      <button class="category-btn" data-category="advanced">Advanced</button>
+    </div>
+
+    <div class="content">
+      <div class="section" data-category="basic">
+        <h2>Basic Search</h2>
+        <div class="command-grid">
+          <div class="command-card">
+            <div class="command">rg "pattern"</div>
+            <div class="description">Search for exact text pattern in current directory</div>
+            <div class="example">Example: rg "TODO" - finds all TODO comments</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -i "pattern"</div>
+            <div class="description">Case-insensitive search</div>
+            <div class="example">Example: rg -i "error" - finds Error, ERROR, error, etc.</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg "pattern" path/</div>
+            <div class="description">Search in specific directory</div>
+            <div class="example">Example: rg "function" src/ - search only in src directory</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -w "word"</div>
+            <div class="description">Search for whole words only</div>
+            <div class="example">Example: rg -w "log" - finds "log" but not "blog"</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" data-category="files">
+        <h2>File Operations</h2>
+        <div class="command-grid">
+          <div class="command-card">
+            <div class="command">rg --files</div>
+            <div class="description">List all files that would be searched</div>
+            <div class="example">Example: rg --files | grep ".py$" - list all Python files</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -t py "pattern"</div>
+            <div class="description">Search only in Python files</div>
+            <div class="example">Example: rg -t py "import" - find imports in Python files</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -T js "pattern"</div>
+            <div class="description">Exclude JavaScript files from search</div>
+            <div class="example">Example: rg -T js "function" - search everywhere except JS files</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -g "*.txt" "pattern"</div>
+            <div class="description">Search only files matching glob pattern</div>
+            <div class="example">Example: rg -g "*.{py,js}" "function" - search .py and .js files</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --hidden "pattern"</div>
+            <div class="description">Include hidden files in search</div>
+            <div class="example">Example: rg --hidden "config" - search including .hidden files</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -l "pattern"</div>
+            <div class="description">Show only filenames with matches</div>
+            <div class="example">Example: rg -l "TODO" - list files containing TODO</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" data-category="patterns">
+        <h2>Pattern Matching</h2>
+        <div class="command-grid">
+          <div class="command-card">
+            <div class="command">rg "pat.*tern"</div>
+            <div class="description">Use regular expressions (default)</div>
+            <div class="example">Example: rg "func.*\(" - find function declarations</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -F "literal.string"</div>
+            <div class="description">Search for literal string (disable regex)</div>
+            <div class="example">Example: rg -F "3.14" - find exact "3.14", not regex</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg "^pattern"</div>
+            <div class="description">Match pattern at start of line</div>
+            <div class="example">Example: rg "^import" - find import statements at line start</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg "pattern$"</div>
+            <div class="description">Match pattern at end of line</div>
+            <div class="example">Example: rg ";$" - find lines ending with semicolon</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg "\bpattern\b"</div>
+            <div class="description">Word boundary matching</div>
+            <div class="example">Example: rg "\blog\b" - match "log" as whole word</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -v "pattern"</div>
+            <div class="description">Invert match (show lines that DON'T match)</div>
+            <div class="example">Example: rg -v "^#" file.py - show non-comment lines</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" data-category="output">
+        <h2>Output Control</h2>
+        <div class="command-grid">
+          <div class="command-card">
+            <div class="command">rg -n "pattern"</div>
+            <div class="description">Show line numbers</div>
+            <div class="example">Example: rg -n "error" - show matches with line numbers</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -A 3 -B 3 "pattern"</div>
+            <div class="description">Show 3 lines after and before each match</div>
+            <div class="example">Example: rg -A 2 -B 2 "class" - show class with context</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -C 5 "pattern"</div>
+            <div class="description">Show 5 lines of context around matches</div>
+            <div class="example">Example: rg -C 3 "function" - show function with context</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --no-heading "pattern"</div>
+            <div class="description">Don't show file headings</div>
+            <div class="example">Example: rg --no-heading "TODO" - compact output format</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -c "pattern"</div>
+            <div class="description">Show count of matches per file</div>
+            <div class="example">Example: rg -c "import" - count imports per file</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --color=never "pattern"</div>
+            <div class="description">Disable colored output</div>
+            <div class="example">Example: rg --color=never "pattern" > output.txt</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" data-category="advanced">
+        <h2>Advanced Features</h2>
+        <div class="command-grid">
+          <div class="command-card">
+            <div class="command">rg -U "pattern.*\n.*pattern"</div>
+            <div class="description">Multiline search mode</div>
+            <div class="example">Example: rg -U "class.*\n.*def" - find class followed by method</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --replace '$1' "capture_group"</div>
+            <div class="description">Show replacements (preview mode)</div>
+            <div class="example">Example: rg --replace 'NEW' "old_(\w+)" - preview replacements</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -z "pattern"</div>
+            <div class="description">Search in compressed files</div>
+            <div class="example">Example: rg -z "error" logs.gz - search in gzipped files</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --stats "pattern"</div>
+            <div class="description">Show search statistics</div>
+            <div class="example">Example: rg --stats "function" - show files searched, matches found</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -j 8 "pattern"</div>
+            <div class="description">Use 8 threads for parallel search</div>
+            <div class="example">Example: rg -j 4 "pattern" - faster search on multi-core systems</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -f patterns.txt</div>
+            <div class="description">Read patterns from file</div>
+            <div class="example">Example: rg -f search_patterns.txt - search multiple patterns</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --max-depth 2 "pattern"</div>
+            <div class="description">Limit directory traversal depth</div>
+            <div class="example">Example: rg --max-depth 1 "config" - search only 1 level deep</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --sort path "pattern"</div>
+            <div class="description">Sort results by path, modified, accessed, or created</div>
+            <div class="example">Example: rg --sort modified "pattern" - newest files first</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="copy-notification" id="copyNotification">
+    Command copied to clipboard!
+  </div>
+
+  <script type="module">
+// Search functionality
+const searchInput = document.getElementById('searchInput');
+const commandCards = document.querySelectorAll('.command-card');
+const categoryBtns = document.querySelectorAll('.category-btn');
+const sections = document.querySelectorAll('.section');
+
+searchInput.addEventListener('input', (e) => {
+  const searchTerm = e.target.value.toLowerCase();
+
+  commandCards.forEach(card => {
+    const command = card.querySelector('.command').textContent.toLowerCase();
+    const description = card.querySelector('.description').textContent.toLowerCase();
+    const example = card.querySelector('.example')?.textContent.toLowerCase() || '';
+
+    const matches = command.includes(searchTerm) ||
+                   description.includes(searchTerm) ||
+                   example.includes(searchTerm);
+
+    card.classList.toggle('filtered', !matches);
+  });
+});
+
+// Category filtering
+categoryBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const category = btn.dataset.category;
+
+    // Update active button
+    categoryBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // Show/hide sections
+    sections.forEach(section => {
+      if (category === 'all' || section.dataset.category === category) {
+        section.classList.remove('hidden');
+      } else {
+        section.classList.add('hidden');
+      }
+    });
+
+    // Clear search when switching categories
+    searchInput.value = '';
+    commandCards.forEach(card => card.classList.remove('filtered'));
+  });
+});
+
+// Copy to clipboard functionality
+const commands = document.querySelectorAll('.command');
+const notification = document.getElementById('copyNotification');
+
+commands.forEach(command => {
+  command.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(command.textContent);
+
+      notification.classList.add('show');
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  });
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && !e.target.matches('input')) {
+    e.preventDefault();
+    searchInput.focus();
+  }
+
+  if (e.key === 'Escape') {
+    searchInput.blur();
+    searchInput.value = '';
+    commandCards.forEach(card => card.classList.remove('filtered'));
+  }
+});
+  </script>
+</body>
+</html>

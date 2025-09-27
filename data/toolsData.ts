@@ -42,6 +42,12 @@ const toolsData: Tool[] = [
     imgSrc: '/static/images/youtube-168-svgrepo-com.svg',
     href: '/tools/youtube-yt-dlp-command-builder.html',
   },
+  {
+    title: 'Ripgrep Reference Guide',
+    description: `Ripgrep Reference - Fast, powerful file searching with rg`,
+    imgSrc: '/static/images/find-svgrepo-com.svg',
+    href: '/tools/ripgrep-reference-guide.html',
+  },
 ]
 
 export default toolsData

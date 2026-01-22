@@ -22,7 +22,7 @@ body {
 h1 {
   color: #333;
   font-size: 28px;
-  font-weight: 700;
+  font-weight: 600;
   margin-bottom: 8px;
   padding-bottom: 12px;
   border-bottom: 2px solid #00bcd4;
@@ -41,7 +41,7 @@ h2 {
 h3 {
   color: #333;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   margin-top: 20px;
   margin-bottom: 12px;
 }
@@ -85,6 +85,7 @@ input[type="text"]:focus {
   display: flex;
   gap: 20px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 .format-selector label {
@@ -92,6 +93,7 @@ input[type="text"]:focus {
   align-items: center;
   gap: 8px;
   cursor: pointer;
+  font-weight: normal;
 }
 
 .format-selector input[type="radio"] {
@@ -422,15 +424,6 @@ tr:hover {
   color: #00838f;
 }
 
-.algorithm-example {
-  background: white;
-  padding: 10px;
-  border-radius: 4px;
-  margin-top: 8px;
-  font-family: 'Courier New', monospace;
-  font-size: 13px;
-}
-
 .warning-box {
   background: #fff8e1;
   padding: 10px 12px;
@@ -477,6 +470,113 @@ tr:hover {
   font-weight: bold;
 }
 
+.info-box {
+  background: #e0f7fa;
+  padding: 20px;
+  border-radius: 4px;
+  margin: 16px 0;
+  border-left: 4px solid #00bcd4;
+}
+
+.info-box h3 {
+  margin-top: 0;
+  color: #00838f;
+}
+
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.advantage-box {
+  padding: 16px;
+  border-radius: 4px;
+}
+
+.advantage-box.pros {
+  background: #e8f5e9;
+  border: 1px solid #c8e6c9;
+}
+
+.advantage-box.cons {
+  background: #ffebee;
+  border: 1px solid #ffcdd2;
+}
+
+.advantage-box h4 {
+  margin-top: 0;
+  font-size: 14px;
+}
+
+.advantage-box.pros h4 {
+  color: #2e7d32;
+}
+
+.advantage-box.cons h4 {
+  color: #c62828;
+}
+
+.advantage-box ul {
+  margin: 8px 0 0 0;
+  padding-left: 20px;
+  font-size: 13px;
+}
+
+.advantage-box li {
+  margin: 6px 0;
+}
+
+.example-box {
+  background: #ffebee;
+  padding: 20px;
+  border-radius: 4px;
+  margin: 20px 0;
+  border-left: 4px solid #ef5350;
+}
+
+.example-box h3 {
+  margin-top: 0;
+  color: #c62828;
+}
+
+.code-block {
+  font-family: 'Courier New', monospace;
+  background: white;
+  padding: 12px;
+  border-radius: 4px;
+  margin: 12px 0;
+  font-size: 14px;
+  border: 1px solid #e5e5e5;
+}
+
+.usage-box {
+  background: #e8f5e9;
+  padding: 20px;
+  border-radius: 4px;
+  margin: 20px 0;
+  border-left: 4px solid #4caf50;
+}
+
+.usage-box h3 {
+  margin-top: 0;
+  color: #2e7d32;
+}
+
+.summary-box {
+  background: #fafafa;
+  padding: 20px;
+  border-radius: 4px;
+  margin: 20px 0;
+  border: 2px dashed #ddd;
+}
+
+.summary-box h3 {
+  margin-top: 0;
+  color: #333;
+}
+
 @media (max-width: 768px) {
   body {
     padding: 20px 15px;
@@ -506,6 +606,10 @@ tr:hover {
   .btn {
     margin: 0;
   }
+
+  .comparison-grid {
+    grid-template-columns: 1fr;
+  }
 }
   </style>
 </head>
@@ -521,6 +625,10 @@ tr:hover {
       <label>
         <input type="radio" name="format" value="64">
         Double Precision (64-bit / double)
+      </label>
+      <label>
+        <input type="radio" name="format" value="bf16">
+        Brain Float 16 (bfloat16)
       </label>
     </div>
 
@@ -558,6 +666,7 @@ tr:hover {
       <table>
         <tr>
           <th>Component</th>
+          <th>bfloat16</th>
           <th>Single (32-bit)</th>
           <th>Double (64-bit)</th>
           <th>Purpose</th>
@@ -566,19 +675,29 @@ tr:hover {
           <td><strong>Sign</strong></td>
           <td>1 bit</td>
           <td>1 bit</td>
+          <td>1 bit</td>
           <td>0 = positive, 1 = negative</td>
         </tr>
         <tr>
           <td><strong>Exponent</strong></td>
+          <td>8 bits</td>
           <td>8 bits</td>
           <td>11 bits</td>
           <td>Determines the scale/magnitude</td>
         </tr>
         <tr>
           <td><strong>Mantissa (Fraction)</strong></td>
+          <td>7 bits</td>
           <td>23 bits</td>
           <td>52 bits</td>
           <td>Stores the precision/significant digits</td>
+        </tr>
+        <tr style="background: #e0f7fa;">
+          <td><strong>Total Size</strong></td>
+          <td>16 bits</td>
+          <td>32 bits</td>
+          <td>64 bits</td>
+          <td>Memory footprint</td>
         </tr>
       </table>
 
@@ -589,7 +708,7 @@ tr:hover {
       </div>
       <p>Where:</p>
       <ul>
-        <li><strong>Bias</strong> = 127 for single precision, 1023 for double precision</li>
+        <li><strong>Bias</strong> = 127 for single precision and bfloat16, 1023 for double precision</li>
         <li><strong>1.mantissa</strong> = implicit leading 1 + fractional part from mantissa bits</li>
       </ul>
 
@@ -624,7 +743,7 @@ tr:hover {
           <th>Bit</th>
           <th>New Fraction</th>
         </tr>
-        <tr class="highlight">
+        <tr class="highlight" style="background: #e8f5e9;">
           <td>0.625</td>
           <td>x 2</td>
           <td>1.25</td>
@@ -638,7 +757,7 @@ tr:hover {
           <td><strong>0</strong></td>
           <td>0.5</td>
         </tr>
-        <tr class="highlight">
+        <tr class="highlight" style="background: #e8f5e9;">
           <td>0.5</td>
           <td>x 2</td>
           <td>1.0</td>
@@ -653,6 +772,206 @@ tr:hover {
     </div>
   </div>
 
+  <div class="container">
+    <h2>Format Comparison: bfloat16 vs float32 vs float64</h2>
+    
+    <div class="info-box">
+      <h3>What is bfloat16?</h3>
+      <p><strong>Brain Floating Point 16 (bfloat16)</strong> is a 16-bit format developed by Google Brain for machine learning. It's essentially a <strong>truncated float32</strong> that keeps the same 8-bit exponent but reduces the mantissa from 23 bits to just 7 bits.</p>
+      <p style="margin-bottom: 0;">Think of it as: <code style="background: white; padding: 2px 6px; border-radius: 3px;">bfloat16 = float32 with the last 16 bits chopped off</code></p>
+    </div>
+
+    <table style="margin: 20px 0;">
+      <tr style="background: #00838f; color: white;">
+        <th>Property</th>
+        <th>bfloat16</th>
+        <th>float32</th>
+        <th>float64</th>
+      </tr>
+      <tr>
+        <td><strong>Total Bits</strong></td>
+        <td>16</td>
+        <td>32</td>
+        <td>64</td>
+      </tr>
+      <tr>
+        <td><strong>Sign + Exponent + Mantissa</strong></td>
+        <td>1 + 8 + 7</td>
+        <td>1 + 8 + 23</td>
+        <td>1 + 11 + 52</td>
+      </tr>
+      <tr style="background: #fff8e1;">
+        <td><strong>Dynamic Range (Max)</strong></td>
+        <td>+/-3.4 x 10^38</td>
+        <td>+/-3.4 x 10^38</td>
+        <td>+/-1.7 x 10^308</td>
+      </tr>
+      <tr style="background: #fff8e1;">
+        <td><strong>Smallest Normal Positive</strong></td>
+        <td>~1.18 x 10^-38</td>
+        <td>~1.18 x 10^-38</td>
+        <td>~2.23 x 10^-308</td>
+      </tr>
+      <tr style="background: #e0f7fa;">
+        <td><strong>Decimal Precision</strong></td>
+        <td>~2-3 digits</td>
+        <td>~7 digits</td>
+        <td>~15-16 digits</td>
+      </tr>
+      <tr style="background: #e0f7fa;">
+        <td><strong>Precision (bits)</strong></td>
+        <td>~7-8 bits (~0.78%)</td>
+        <td>~24 bits (~0.000012%)</td>
+        <td>~53 bits (~0.00000000000011%)</td>
+      </tr>
+      <tr>
+        <td><strong>Memory per Value</strong></td>
+        <td>2 bytes</td>
+        <td>4 bytes</td>
+        <td>8 bytes</td>
+      </tr>
+      <tr>
+        <td><strong>Memory Savings vs float32</strong></td>
+        <td>50% reduction</td>
+        <td>-</td>
+        <td>2x increase</td>
+      </tr>
+      <tr>
+        <td><strong>Primary Use Case</strong></td>
+        <td>ML Training</td>
+        <td>General Purpose</td>
+        <td>Scientific Computing</td>
+      </tr>
+    </table>
+
+    <div style="background: #fff8e1; padding: 20px; border-radius: 4px; margin: 20px 0; border-left: 4px solid #ffb300;">
+      <h3 style="margin-top: 0; color: #f57c00;">Key Trade-offs</h3>
+      
+      <div class="comparison-grid">
+        <div class="advantage-box pros">
+          <h4>bfloat16 Advantages</h4>
+          <ul>
+            <li><strong>Same range</strong> as float32 (8-bit exponent)</li>
+            <li><strong>50% memory</strong> savings</li>
+            <li><strong>2x bandwidth</strong> improvement</li>
+            <li><strong>Faster on AI hardware</strong> (TPUs, newer GPUs)</li>
+            <li><strong>Simple conversion</strong> to/from float32</li>
+            <li><strong>Acts as regularization</strong> (reduces overfitting)</li>
+            <li><strong>Gradient stability</strong> maintained</li>
+          </ul>
+        </div>
+        
+        <div class="advantage-box cons">
+          <h4>bfloat16 Limitations</h4>
+          <ul>
+            <li><strong>Low precision:</strong> Only ~3 decimal digits</li>
+            <li><strong>Rounding errors</strong> accumulate faster</li>
+            <li><strong>Poor for exact calculations</strong> (finance, science)</li>
+            <li><strong>Can lose small gradients</strong> if not careful</li>
+            <li><strong>Not suitable for accumulation</strong> operations</li>
+            <li><strong>No precision advantage</strong> over float32</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="example-box">
+      <h3>Precision Loss Examples</h3>
+      
+      <p><strong>Example 1: pi</strong></p>
+      <div class="code-block">
+        Actual:   3.141592653589793...<br>
+        bfloat16: 3.140625 (error: 0.000968, ~0.031%)<br>
+        float32:  3.1415927 (error: 0.0000001, accurate to 7 digits)<br>
+        float64:  3.141592653589793 (exact to 15 digits)
+      </div>
+
+      <p><strong>Example 2: Small number (gradient in neural net)</strong></p>
+      <div class="code-block">
+        Actual:   0.000123456789<br>
+        bfloat16: 0.0001232624 (loses ~4 digits)<br>
+        float32:  0.000123456789 (accurate)<br>
+        float64:  0.000123456789 (accurate)
+      </div>
+
+      <p><strong>Example 3: Accumulation error</strong></p>
+      <div class="code-block">
+        Sum 0.1 + 0.1 + 0.1 ten thousand times (should = 1000):<br>
+        bfloat16: ~992-1008 (+/-0.8% error!)<br>
+        float32:  1000.0039 (+/-0.0004% error)<br>
+        float64:  1000.0000 (negligible error)
+      </div>
+    </div>
+
+    <div class="usage-box">
+      <h3>When to Use Each Format</h3>
+      
+      <div style="margin-top: 16px;">
+        <p style="font-weight: 600; margin-bottom: 8px;">Use <span style="color: #00bcd4;">bfloat16</span> when:</p>
+        <ul>
+          <li>Training large neural networks (transformers, CNNs)</li>
+          <li>Memory bandwidth is a bottleneck</li>
+          <li>You have TPUs or NVIDIA Ampere/Hopper GPUs</li>
+          <li>You need float32's range but can sacrifice precision</li>
+          <li>Mixed-precision training (bfloat16 forward, float32 accumulation)</li>
+        </ul>
+
+        <p style="font-weight: 600; margin-bottom: 8px; margin-top: 16px;">Use <span style="color: #4caf50;">float32</span> when:</p>
+        <ul>
+          <li>General-purpose computing and graphics</li>
+          <li>You need ~7 decimal digits of precision</li>
+          <li>Standard ML inference (after training)</li>
+          <li>Game physics, audio processing</li>
+          <li>Default choice for most applications</li>
+        </ul>
+
+        <p style="font-weight: 600; margin-bottom: 8px; margin-top: 16px;">Use <span style="color: #7c3aed;">float64</span> when:</p>
+        <ul>
+          <li>Scientific simulations (weather, physics, astronomy)</li>
+          <li>Financial calculations (must avoid rounding errors)</li>
+          <li>Long numerical integrations</li>
+          <li>Computing mathematical constants</li>
+          <li>You need ~15 decimal digits of precision</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="summary-box">
+      <h3>Range vs Precision Summary</h3>
+      
+      <table style="margin: 12px 0; font-size: 14px;">
+        <tr style="background: #e5e5e5;">
+          <th>Format</th>
+          <th>Range Coverage</th>
+          <th>Precision</th>
+          <th>Best For</th>
+        </tr>
+        <tr>
+          <td><strong>bfloat16</strong></td>
+          <td>Excellent (same as float32)</td>
+          <td>Poor (~0.78% relative error)</td>
+          <td>ML training where speed > precision</td>
+        </tr>
+        <tr>
+          <td><strong>float32</strong></td>
+          <td>Excellent</td>
+          <td>Good (~0.000012% relative error)</td>
+          <td>General computing, balanced choice</td>
+        </tr>
+        <tr>
+          <td><strong>float64</strong></td>
+          <td>Outstanding (huge range)</td>
+          <td>Excellent (~10^-14% relative error)</td>
+          <td>Scientific/financial precision critical</td>
+        </tr>
+      </table>
+
+      <p style="margin-top: 16px; font-size: 14px; color: #555;">
+        <strong>Key Insight:</strong> bfloat16 sacrifices precision for memory efficiency while keeping the same range as float32. This works for neural networks because they're error-tolerant, but fails for applications requiring exact calculations. The 8-bit exponent means you can represent numbers from tiny (10^-38) to huge (10^38), but with only 7 mantissa bits, you can't distinguish between nearby values (e.g., 1.0 and 1.01 might round to the same representation).
+      </p>
+    </div>
+  </div>
+
 <script type="module">
 let currentFormat = 32;
 
@@ -662,7 +981,7 @@ const formatRadios = document.querySelectorAll('input[name="format"]');
 
 formatRadios.forEach(radio => {
   radio.addEventListener('change', (e) => {
-    currentFormat = parseInt(e.target.value);
+    currentFormat = e.target.value === 'bf16' ? 'bf16' : parseInt(e.target.value);
     updateVisualization();
   });
 });
@@ -681,7 +1000,15 @@ function updateFromHex() {
   if (!hexValue) return;
   
   try {
-    if (currentFormat === 32) {
+    if (currentFormat === 'bf16') {
+      const bf16Bits = parseInt(hexValue, 16);
+      const float32Bits = bf16Bits << 16;
+      const buffer = new ArrayBuffer(4);
+      const view = new DataView(buffer);
+      view.setUint32(0, float32Bits, false);
+      const floatValue = view.getFloat32(0, false);
+      numberInput.value = floatValue;
+    } else if (currentFormat === 32) {
       const buffer = new ArrayBuffer(4);
       const view = new DataView(buffer);
       view.setUint32(0, parseInt(hexValue, 16), false);
@@ -821,8 +1148,8 @@ function renderEncoding(value, format) {
   
   const absValue = Math.abs(value);
   const isNegative = value < 0;
-  const bias = format === 32 ? 127 : 1023;
-  const mantissaBits = format === 32 ? 23 : 52;
+  const bias = (format === 'bf16' || format === 32) ? 127 : 1023;
+  const mantissaBits = format === 'bf16' ? 7 : (format === 32 ? 23 : 52);
   
   let html = '<div class="controls">';
   html += '<button class="btn" id="startBtn">Start Encoding Animation</button>';
@@ -862,29 +1189,27 @@ function renderEncoding(value, format) {
   // Convert fractional part to binary with detailed steps
   let fracBinary = '';
   let frac = fractionalPart;
-  let stepDetails = '<table class="step-table">';
-  stepDetails += '<tr><th>Step</th><th>Value</th><th>x 2</th><th>Result</th><th>Integer Part</th><th>New Fraction</th></tr>';
+  let stepDetails = '<div style="font-family: monospace; background: white; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin: 10px 0;">';
+  stepDetails += '<table style="width: 100%; font-size: 13px;">';
+  stepDetails += '<tr style="background: #fafafa;"><th>Step</th><th>Value</th><th>x 2</th><th>Result</th><th>Integer Part</th><th>New Fraction</th></tr>';
   
   for (let i = 0; i < Math.min(15, 60) && frac > 0; i++) {
     const beforeMult = frac;
     frac *= 2;
     const afterMult = frac;
-    let bit;
     
     if (frac >= 1) {
-      bit = '1';
-      stepDetails += `<tr class="highlight">`;
+      stepDetails += `<tr style="background: #e8f5e9;">`;
       stepDetails += `<td>${i + 1}</td>`;
       stepDetails += `<td>${beforeMult.toFixed(10)}</td>`;
       stepDetails += `<td>x 2</td>`;
       stepDetails += `<td>${afterMult.toFixed(10)}</td>`;
-      stepDetails += `<td><strong class="bit-result">1</strong> (>= 1, take it!)</td>`;
+      stepDetails += `<td><strong style="color: #2e7d32;">1</strong> (>= 1, take it!)</td>`;
       stepDetails += `<td>${(frac - 1).toFixed(10)}</td>`;
       stepDetails += `</tr>`;
       fracBinary += '1';
       frac -= 1;
     } else {
-      bit = '0';
       stepDetails += `<tr>`;
       stepDetails += `<td>${i + 1}</td>`;
       stepDetails += `<td>${beforeMult.toFixed(10)}</td>`;
@@ -908,20 +1233,20 @@ function renderEncoding(value, format) {
     }
   }
   
-  stepDetails += '</table>';
+  stepDetails += '</table></div>';
   
   html += '<div class="algorithm-box">';
-  html += '<strong>Fractional to Binary Algorithm</strong><br><br>';
+  html += '<strong style="font-size: 15px;">Fractional to Binary Algorithm</strong><br><br>';
   html += '<div style="font-size: 14px; line-height: 1.8;">';
   html += '1. <strong>Multiply</strong> the fraction by 2<br>';
   html += '2. <strong>If result >= 1:</strong> Write "1" as the next binary digit, subtract 1, continue with remainder<br>';
   html += '3. <strong>If result < 1:</strong> Write "0" as the next binary digit, continue with the result<br>';
   html += '4. <strong>Repeat</strong> until fraction becomes 0 (or desired precision reached)<br><br>';
-  html += '<div class="algorithm-example">';
+  html += '<div style="background: white; padding: 10px; border-radius: 4px; margin-top: 8px; font-family: monospace; font-size: 13px;">';
   html += '<strong>Example: 0.625 to binary</strong><br>';
-  html += '0.625 x 2 = 1.25 -> bit <span class="bit-result">1</span>, remainder 0.25<br>';
-  html += '0.25 x 2 = 0.5 -> bit <strong>0</strong>, remainder 0.5<br>';
-  html += '0.5 x 2 = 1.0 -> bit <span class="bit-result">1</span>, remainder 0<br>';
+  html += '0.625 x 2 = 1.25 -> bit <span style="color: #2e7d32; font-weight: bold;">1</span>, remainder 0.25<br>';
+  html += '0.25 x 2 = 0.5 -> bit <span style="font-weight: bold;">0</span>, remainder 0.5<br>';
+  html += '0.5 x 2 = 1.0 -> bit <span style="color: #2e7d32; font-weight: bold;">1</span>, remainder 0<br>';
   html += 'Result: 0.625 (base 10) = 0.101 (base 2)';
   html += '</div>';
   html += '</div>';
@@ -986,10 +1311,10 @@ function renderEncoding(value, format) {
   html += '<h4>Step 4: Calculate Biased Exponent</h4>';
   html += '<div class="step-calculation">';
   html += `Actual exponent: <span class="step-highlight">${actualExponent}</span><br>`;
-  html += `Bias (${format}-bit): ${bias}<br>`;
+  html += `Bias (${format === 'bf16' ? 'bfloat16' : format}-bit): ${bias}<br>`;
   html += `Biased exponent = ${actualExponent} + ${bias} = <span class="step-highlight">${biasedExponent}</span><br><br>`;
   
-  const expBinary = biasedExponent.toString(2).padStart(format === 32 ? 8 : 11, '0');
+  const expBinary = biasedExponent.toString(2).padStart(format === 'bf16' ? 8 : (format === 32 ? 8 : 11), '0');
   html += `Convert to binary: <span class="step-highlight">${expBinary}</span><br>`;
   html += '<div class="binary-conversion" id="expBinaryConv">';
   for (let i = 0; i < expBinary.length; i++) {
@@ -1043,9 +1368,9 @@ function renderEncoding(value, format) {
   html += `<tr><td>Mantissa</td><td>${mantissaBinary.substring(0, 16)}...</td><td>${mantissaBits}</td></tr>`;
   html += '</table><br>';
   html += 'Final encoding: ';
-  html += `<span class="step-highlight" style="background: #ffebee; color: #c62828;">${isNegative ? '1' : '0'}</span> `;
-  html += `<span class="step-highlight" style="background: #e0f7fa; color: #00838f;">${expBinary}</span> `;
-  html += `<span class="step-highlight" style="background: #e8f5e9; color: #2e7d32;">${mantissaBinary.substring(0, 16)}...</span>`;
+  html += `<span class="step-highlight" style="background: #ffebee;">${isNegative ? '1' : '0'}</span> `;
+  html += `<span class="step-highlight" style="background: #e0f7fa;">${expBinary}</span> `;
+  html += `<span class="step-highlight" style="background: #e8f5e9;">${mantissaBinary.substring(0, 16)}...</span>`;
   html += '</div>';
   html += '</div>';
   
@@ -1124,7 +1449,6 @@ function renderEncoding(value, format) {
             });
           }
         } else if (idx < stepIndex) {
-          // Keep previous steps visible but not highlighted
           step.classList.remove('active');
         } else {
           step.classList.remove('active');
@@ -1134,7 +1458,7 @@ function renderEncoding(value, format) {
       updateStepIndicator();
     }
     
-    function nextStepAction() {
+    function nextStep() {
       if (!isAnimating) return;
       
       currentStep++;
@@ -1153,13 +1477,13 @@ function renderEncoding(value, format) {
         nextBtn.disabled = false;
         nextBtn.textContent = 'Next Step';
         updateStepIndicator();
-        nextStepAction();
+        nextStep();
       }
     });
     
     nextBtn.addEventListener('click', () => {
       if (isAnimating && currentStep < steps.length - 1) {
-        nextStepAction();
+        nextStep();
       }
     });
     
@@ -1167,7 +1491,6 @@ function renderEncoding(value, format) {
     
     // Keyboard controls
     function handleKeyPress(e) {
-      // Only handle keys if the encoding section is visible
       if (!isAnimating) {
         if (e.key === 'Enter') {
           startBtn.click();
@@ -1178,13 +1501,13 @@ function renderEncoding(value, format) {
       if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
         e.preventDefault();
         if (currentStep < steps.length - 1) {
-          nextStepAction();
+          nextStep();
         }
       } else if (e.key === 'ArrowLeft') {
         e.preventDefault();
         if (currentStep > 0) {
-          currentStep -= 2; // Subtract 2 because nextStepAction will add 1
-          nextStepAction();
+          currentStep -= 2;
+          nextStep();
         }
       } else if (e.key === 'Escape') {
         e.preventDefault();
@@ -1216,9 +1539,21 @@ function updateVisualization() {
   const buffer = new ArrayBuffer(8);
   const view = new DataView(buffer);
   
-  let bits, signBits, exponentBits, mantissaBits, bias, exponentMask, mantissaMask;
+  let bits, signBits, exponentBits, mantissaBits, bias;
   
-  if (currentFormat === 32) {
+  if (currentFormat === 'bf16') {
+    view.setFloat32(0, value, false);
+    const float32Bits = view.getUint32(0, false);
+    const bf16Bits = float32Bits >>> 16;
+    bits = bf16Bits.toString(2).padStart(16, '0');
+    signBits = 1;
+    exponentBits = 8;
+    mantissaBits = 7;
+    bias = 127;
+    
+    const hexValue = bf16Bits.toString(16).toUpperCase().padStart(4, '0');
+    document.getElementById('hexDisplay').innerHTML = `<strong>Hexadecimal:</strong> 0x${hexValue}`;
+  } else if (currentFormat === 32) {
     view.setFloat32(0, value, false);
     const intBits = view.getUint32(0, false);
     bits = intBits.toString(2).padStart(32, '0');
@@ -1255,3 +1590,4 @@ updateVisualization();
 </script>
 </body>
 </html>
+

@@ -48,6 +48,12 @@ const toolsData: Tool[] = [
     imgSrc: '/static/images/find-svgrepo-com.svg',
     href: '/tools/ripgrep-reference-guide.html',
   },
+  {
+    title: 'IEEE 754 Floating-Point Visualizer',
+    description: `IEEE 754 Floating-Point Visualizer`,
+    imgSrc: '/static/images/reduce-decimal-places-svgrepo-com.svg',
+    href: '/tools/floating-point-visualiser.html',
+  },  
 ]
 
 export default toolsData

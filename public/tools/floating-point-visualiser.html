@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Floating-Point Number Visualizer</title>
+  <style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background: #ffffff;
+  color: #1a1a1a;
+  line-height: 1.6;
+}
+
+h1 {
+  color: #1a1a1a;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+h2 {
+  color: #1a1a1a;
+  font-size: 24px;
+  font-weight: 600;
+  margin-top: 40px;
+  margin-bottom: 16px;
+  letter-spacing: -0.3px;
+  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: 8px;
+}
+
+.container {
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  margin-bottom: 40px;
+  box-shadow: none;
+  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: 32px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #1a1a1a;
+  font-size: 14px;
+}
+
+input[type="number"],
+input[type="text"] {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  background: #ffffff;
+  color: #1a1a1a;
+  transition: border-color 0.2s;
+}
+
+input[type="number"]:focus,
+input[type="text"]:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.format-selector {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.format-selector label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.format-selector input[type="radio"] {
+  width: auto;
+}
+
+.bit-visualization {
+  display: flex;
+  gap: 8px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.bit-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bit-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  padding: 6px 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sign-section .bit-section-label {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.exponent-section .bit-section-label {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+.mantissa-section .bit-section-label {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.bits-container {
+  display: flex;
+  gap: 2px;
+}
+
+.bit {
+  width: 28px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #e5e7eb;
+  background: #fafafa;
+}
+
+.sign-section .bit {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.exponent-section .bit {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.mantissa-section .bit {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.bit-index {
+  font-size: 9px;
+  color: #6b7280;
+  text-align: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+.explanation {
+  background: #fafafa;
+  padding: 20px;
+  border-left: 3px solid #3b82f6;
+  margin: 24px 0;
+  border-radius: 0;
+}
+
+.explanation h3 {
+  margin-top: 0;
+  color: #1a1a1a;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.explanation p {
+  margin: 12px 0;
+  line-height: 1.7;
+  color: #374151;
+}
+
+.calculation {
+  background: #f9fafb;
+  padding: 16px;
+  border-radius: 4px;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  margin: 12px 0;
+  overflow-x: auto;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+  color: #1f2937;
+}
+
+.special-value {
+  background: #fef3c7;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin: 12px 0;
+  font-weight: 600;
+  border: 1px solid #fde68a;
+  color: #92400e;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 14px;
+}
+
+th, td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+  background: #f9fafb;
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+td {
+  color: #374151;
+}
+
+tr:hover {
+  background: #fafafa;
+}
+
+.hex-display {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  background: #f9fafb;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin: 12px 0;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+  color: #1f2937;
+}
+
+.encoding-step {
+  background: #fafafa;
+  padding: 20px;
+  margin: 20px 0;
+  border-left: 3px solid #3b82f6;
+  border-radius: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+}
+
+.encoding-step h4 {
+  margin-top: 0;
+  color: #1a1a1a;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+.encoding-step.active {
+  background: #eff6ff;
+  border-left-color: #2563eb;
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.15), 0 2px 4px rgba(0, 0, 0, 0.05);
+  transform: translateY(-6px) scale(1.01);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+  position: relative;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+.step-calculation {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 4px;
+  margin: 12px 0;
+  border: 1px solid #e5e7eb;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.step-highlight {
+  background: #fef3c7;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 600;
+  color: #92400e;
+}
+
+.binary-conversion {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 16px 0;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+}
+
+.binary-digit {
+  padding: 8px 12px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 4px;
+  font-weight: 600;
+  color: #166534;
+  font-size: 14px;
+}
+
+.binary-digit.active {
+  background: #22c55e;
+  color: white;
+  border-color: #16a34a;
+  animation: highlight 0.3s ease-in-out;
+}
+
+@keyframes highlight {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+.normalization-visual {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  font-size: 16px;
+  margin: 16px 0;
+  padding: 16px;
+  background: #fef3c7;
+  border-radius: 4px;
+  border: 1px solid #fde68a;
+}
+
+.normalization-step {
+  margin: 10px 0;
+  padding: 10px;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.normalization-step.active {
+  background: #fde68a;
+  transform: translateX(12px);
+  font-weight: 600;
+}
+
+.controls {
+  margin: 24px 0;
+  text-align: center;
+}
+
+.btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 0 6px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn:hover {
+  background: #374151;
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
+  color: #6b7280;
+  transform: none;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 3px;
+  background: #e5e7eb;
+  border-radius: 2px;
+  margin: 16px 0;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #3b82f6;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+  </style>
+</head>
+<body>
+  <h1>IEEE 754 Floating-Point Visualizer</h1>
+  
+  <div class="container">
+    <div class="format-selector">
+      <label>
+        <input type="radio" name="format" value="32" checked>
+        Single Precision (32-bit / float)
+      </label>
+      <label>
+        <input type="radio" name="format" value="64">
+        Double Precision (64-bit / double)
+      </label>
+    </div>
+
+    <label for="numberInput">Enter a Number:</label>
+    <input type="number" id="numberInput" step="any" value="42.5" placeholder="Enter any number">
+    
+    <div style="margin-top: 12px;">
+      <label for="hexInput">Or enter hexadecimal representation:</label>
+      <input type="text" id="hexInput" placeholder="e.g., 0x42AA0000 for float">
+    </div>
+  </div>
+
+  <div class="container">
+    <h2>Binary Representation</h2>
+    <div id="bitVisualization" class="bit-visualization"></div>
+    <div id="hexDisplay" class="hex-display"></div>
+  </div>
+
+  <div class="container">
+    <h2>How the Number is Encoded</h2>
+    <div id="encoding"></div>
+  </div>
+
+  <div class="container">
+    <h2>Component Breakdown</h2>
+    <div id="breakdown"></div>
+  </div>
+
+  <div class="container">
+    <h2>How It Works</h2>
+    <div class="explanation">
+      <h3>IEEE 754 Floating-Point Format</h3>
+      <p>Floating-point numbers are stored using three components:</p>
+      
+      <table>
+        <tr>
+          <th>Component</th>
+          <th>Single (32-bit)</th>
+          <th>Double (64-bit)</th>
+          <th>Purpose</th>
+        </tr>
+        <tr>
+          <td><strong>Sign</strong></td>
+          <td>1 bit</td>
+          <td>1 bit</td>
+          <td>0 = positive, 1 = negative</td>
+        </tr>
+        <tr>
+          <td><strong>Exponent</strong></td>
+          <td>8 bits</td>
+          <td>11 bits</td>
+          <td>Determines the scale/magnitude</td>
+        </tr>
+        <tr>
+          <td><strong>Mantissa (Fraction)</strong></td>
+          <td>23 bits</td>
+          <td>52 bits</td>
+          <td>Stores the precision/significant digits</td>
+        </tr>
+      </table>
+
+      <h3>The Formula</h3>
+      <p>The actual value is calculated as:</p>
+      <div class="calculation">
+        value = (-1)^sign × 1.mantissa × 2^(exponent - bias)
+      </div>
+      <p>Where:</p>
+      <ul>
+        <li><strong>Bias</strong> = 127 for single precision, 1023 for double precision</li>
+        <li><strong>1.mantissa</strong> = implicit leading 1 + fractional part from mantissa bits</li>
+      </ul>
+
+      <h3>Special Values</h3>
+      <ul>
+        <li><strong>Zero:</strong> exponent = 0, mantissa = 0</li>
+        <li><strong>Infinity:</strong> exponent = all 1s, mantissa = 0</li>
+        <li><strong>NaN (Not a Number):</strong> exponent = all 1s, mantissa ≠ 0</li>
+        <li><strong>Subnormal:</strong> exponent = 0, mantissa ≠ 0 (very small numbers)</li>
+      </ul>
+
+      <h3>Converting Fractions to Binary</h3>
+      <p>Converting the fractional part of a decimal number to binary uses a different algorithm than converting integers:</p>
+      
+      <div class="calculation" style="background: #e3f2fd;">
+        <strong>Algorithm: Multiply by 2 repeatedly</strong><br><br>
+        1. Take the fractional part<br>
+        2. Multiply by 2<br>
+        3. If result ≥ 1: record "1" and subtract 1<br>
+        4. If result &lt; 1: record "0"<br>
+        5. Repeat with the new fractional part
+      </div>
+
+      <p><strong>Example: Convert 0.625 to binary</strong></p>
+      <table style="font-family: monospace; font-size: 14px;">
+        <tr style="background: #f0f0f0;">
+          <th>Fraction</th>
+          <th>× 2</th>
+          <th>Result</th>
+          <th>Bit</th>
+          <th>New Fraction</th>
+        </tr>
+        <tr style="background: #e8f5e9;">
+          <td>0.625</td>
+          <td>× 2</td>
+          <td>1.25</td>
+          <td><strong>1</strong></td>
+          <td>0.25 (subtract 1)</td>
+        </tr>
+        <tr>
+          <td>0.25</td>
+          <td>× 2</td>
+          <td>0.5</td>
+          <td><strong>0</strong></td>
+          <td>0.5</td>
+        </tr>
+        <tr style="background: #e8f5e9;">
+          <td>0.5</td>
+          <td>× 2</td>
+          <td>1.0</td>
+          <td><strong>1</strong></td>
+          <td>0.0 (done!)</td>
+        </tr>
+      </table>
+      <p>Reading top to bottom: 0.625₁₀ = 0.101₂</p>
+
+      <p><strong>Why some fractions can't be exactly represented:</strong></p>
+      <p>Just like 1/3 = 0.333... in decimal (repeating forever), many decimal fractions become repeating patterns in binary. For example, 0.1₁₀ = 0.0001100110011...₂ (repeating). This is why 0.1 + 0.2 ≠ 0.3 in many programming languages!</p>
+    </div>
+  </div>
+
+<script type="module">
+let currentFormat = 32;
+
+const numberInput = document.getElementById('numberInput');
+const hexInput = document.getElementById('hexInput');
+const formatRadios = document.querySelectorAll('input[name="format"]');
+
+formatRadios.forEach(radio => {
+  radio.addEventListener('change', (e) => {
+    currentFormat = parseInt(e.target.value);
+    updateVisualization();
+  });
+});
+
+numberInput.addEventListener('input', () => {
+  hexInput.value = '';
+  updateVisualization();
+});
+
+hexInput.addEventListener('input', () => {
+  updateFromHex();
+});
+
+function updateFromHex() {
+  const hexValue = hexInput.value.trim().replace(/^0x/i, '');
+  if (!hexValue) return;
+  
+  try {
+    if (currentFormat === 32) {
+      const buffer = new ArrayBuffer(4);
+      const view = new DataView(buffer);
+      view.setUint32(0, parseInt(hexValue, 16), false);
+      const floatValue = view.getFloat32(0, false);
+      numberInput.value = floatValue;
+    } else {
+      const buffer = new ArrayBuffer(8);
+      const view = new DataView(buffer);
+      view.setBigUint64(0, BigInt('0x' + hexValue), false);
+      const doubleValue = view.getFloat64(0, false);
+      numberInput.value = doubleValue;
+    }
+    updateVisualization();
+  } catch (e) {
+    console.error('Invalid hex input');
+  }
+}
+
+function renderBits(sign, exponent, mantissa) {
+  const container = document.getElementById('bitVisualization');
+  
+  let html = '';
+  
+  html += '<div class="bit-section sign-section">';
+  html += '<div class="bit-section-label">Sign (1 bit)</div>';
+  html += '<div class="bits-container">';
+  html += `<div><div class="bit">${sign}</div><div class="bit-index">0</div></div>`;
+  html += '</div></div>';
+  
+  html += '<div class="bit-section exponent-section">';
+  html += `<div class="bit-section-label">Exponent (${exponent.length} bits)</div>`;
+  html += '<div class="bits-container">';
+  for (let i = 0; i < exponent.length; i++) {
+    html += `<div><div class="bit">${exponent[i]}</div><div class="bit-index">${i + 1}</div></div>`;
+  }
+  html += '</div></div>';
+  
+  html += '<div class="bit-section mantissa-section">';
+  html += `<div class="bit-section-label">Mantissa/Fraction (${mantissa.length} bits)</div>`;
+  html += '<div class="bits-container">';
+  for (let i = 0; i < mantissa.length; i++) {
+    html += `<div><div class="bit">${mantissa[i]}</div><div class="bit-index">${i + 1 + exponent.length}</div></div>`;
+  }
+  html += '</div></div>';
+  
+  container.innerHTML = html;
+}
+
+function renderBreakdown(value, sign, exponent, mantissa, bias, format) {
+  const container = document.getElementById('breakdown');
+  
+  const signValue = parseInt(sign, 2);
+  const exponentValue = parseInt(exponent, 2);
+  const maxExponent = (1 << exponent.length) - 1;
+  
+  let html = '<table>';
+  html += '<tr><th>Component</th><th>Binary</th><th>Decimal</th><th>Meaning</th></tr>';
+  
+  html += `<tr>
+    <td><strong>Sign</strong></td>
+    <td>${sign}</td>
+    <td>${signValue}</td>
+    <td>${signValue === 0 ? 'Positive (+)' : 'Negative (-)'}</td>
+  </tr>`;
+  
+  html += `<tr>
+    <td><strong>Exponent</strong></td>
+    <td>${exponent}</td>
+    <td>${exponentValue}</td>
+    <td>Stored value (biased)</td>
+  </tr>`;
+  
+  let mantissaValue = 0;
+  for (let i = 0; i < mantissa.length; i++) {
+    mantissaValue += parseInt(mantissa[i]) * Math.pow(2, -(i + 1));
+  }
+  
+  html += `<tr>
+    <td><strong>Mantissa</strong></td>
+    <td>${mantissa.substring(0, 16)}${mantissa.length > 16 ? '...' : ''}</td>
+    <td>${mantissaValue.toFixed(10)}</td>
+    <td>Fractional part</td>
+  </tr>`;
+  
+  html += '</table>';
+  
+  if (exponentValue === 0 && mantissaValue === 0) {
+    html += '<div class="special-value">Special Value: Zero</div>';
+    html += '<p>When exponent and mantissa are both zero, the value is exactly zero (with sign).</p>';
+  } else if (exponentValue === maxExponent && mantissaValue === 0) {
+    html += '<div class="special-value">Special Value: Infinity</div>';
+    html += `<p>Value: ${signValue === 0 ? '+' : '-'}∞</p>`;
+  } else if (exponentValue === maxExponent && mantissaValue !== 0) {
+    html += '<div class="special-value">Special Value: NaN (Not a Number)</div>';
+    html += '<p>This represents an undefined or unrepresentable value.</p>';
+  } else if (exponentValue === 0) {
+    html += '<div class="special-value">Subnormal Number</div>';
+    const actualExponent = 1 - bias;
+    const actualValue = Math.pow(-1, signValue) * mantissaValue * Math.pow(2, actualExponent);
+    html += '<div class="calculation">';
+    html += `Actual Exponent = 1 - ${bias} = ${actualExponent}<br>`;
+    html += `Value = (-1)^${signValue} × 0.${mantissaValue.toFixed(10)} × 2^${actualExponent}<br>`;
+    html += `Value = ${actualValue}`;
+    html += '</div>';
+  } else {
+    const actualExponent = exponentValue - bias;
+    const significand = 1 + mantissaValue;
+    
+    html += '<h3>Decoding to Decimal</h3>';
+    html += '<div class="calculation">';
+    html += `Actual Exponent = ${exponentValue} - ${bias} = ${actualExponent}<br>`;
+    html += `Significand = 1 + ${mantissaValue.toFixed(10)} = ${significand.toFixed(10)}<br>`;
+    html += `Value = (-1)^${signValue} × ${significand.toFixed(10)} × 2^${actualExponent}<br>`;
+    html += `Value = ${signValue === 0 ? '+' : '-'}${significand.toFixed(10)} × ${Math.pow(2, actualExponent)}<br>`;
+    html += `<strong>Value = ${value}</strong>`;
+    html += '</div>';
+    
+    html += '<h3>Step-by-Step Decoding</h3>';
+    html += '<ol>';
+    html += `<li><strong>Sign bit:</strong> ${sign} means the number is ${signValue === 0 ? 'positive' : 'negative'}</li>`;
+    html += `<li><strong>Exponent:</strong> ${exponent} (binary) = ${exponentValue} (decimal). Subtract bias of ${bias} to get actual exponent: ${actualExponent}</li>`;
+    html += `<li><strong>Mantissa:</strong> ${mantissa.substring(0, 20)}... represents the fractional part. With implicit leading 1, we get: 1.${mantissaValue.toFixed(10)}</li>`;
+    html += `<li><strong>Final calculation:</strong> ${signValue === 0 ? '' : '-'}${significand.toFixed(6)} × 2^${actualExponent} = ${value}</li>`;
+    html += '</ol>';
+  }
+  
+  container.innerHTML = html;
+}
+
+function renderEncoding(value, format) {
+  const container = document.getElementById('encoding');
+  
+  if (isNaN(value) || !isFinite(value)) {
+    container.innerHTML = '<p>Special values (NaN, Infinity) have predefined encodings.</p>';
+    return;
+  }
+  
+  const absValue = Math.abs(value);
+  const isNegative = value < 0;
+  const bias = format === 32 ? 127 : 1023;
+  const mantissaBits = format === 32 ? 23 : 52;
+  
+  let html = '<div class="controls">';
+  html += '<button class="btn" id="startBtn">Start Encoding Animation</button>';
+  html += '<button class="btn" id="nextBtn" disabled>Next Step (→ or Space)</button>';
+  html += '<button class="btn" id="resetBtn">Reset</button>';
+  html += '</div>';
+  html += '<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>';
+  html += '<div id="stepIndicator" style="text-align: center; margin: 12px 0; font-weight: bold; color: #2196F3;"></div>';
+  
+  // Step 1: Determine sign
+  html += '<div class="encoding-step" data-step="0">';
+  html += '<h4>Step 1: Determine the Sign Bit</h4>';
+  html += '<div class="step-calculation">';
+  html += `Original value: <span class="step-highlight">${value}</span><br>`;
+  html += `Is negative? ${isNegative ? 'Yes' : 'No'}<br>`;
+  html += `Sign bit = <span class="step-highlight">${isNegative ? '1' : '0'}</span>`;
+  html += '</div>';
+  html += '</div>';
+  
+  // Step 2: Convert to binary
+  html += '<div class="encoding-step" data-step="1">';
+  html += '<h4>Step 2: Convert Absolute Value to Binary</h4>';
+  html += '<div class="step-calculation">';
+  html += `Working with: <span class="step-highlight">${absValue}</span><br><br>`;
+  
+  const integerPart = Math.floor(absValue);
+  const fractionalPart = absValue - integerPart;
+  
+  html += `<strong>Integer part: ${integerPart}</strong><br>`;
+  const intBinary = integerPart.toString(2);
+  html += `Convert to binary (divide by 2 repeatedly):<br>`;
+  html += `Binary: <span class="step-highlight">${intBinary}</span><br><br>`;
+  
+  html += `<strong>Fractional part: ${fractionalPart.toFixed(10)}</strong><br>`;
+  html += `To convert fraction to binary, <strong>multiply by 2 repeatedly</strong>:<br><br>`;
+  
+  // Convert fractional part to binary with detailed steps
+  let fracBinary = '';
+  let frac = fractionalPart;
+  let stepDetails = '<div style="font-family: monospace; background: white; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin: 10px 0;">';
+  stepDetails += '<table style="width: 100%; font-size: 13px;">';
+  stepDetails += '<tr style="background: #f0f0f0;"><th>Step</th><th>Value</th><th>× 2</th><th>Result</th><th>Integer Part</th><th>New Fraction</th></tr>';
+  
+  for (let i = 0; i < Math.min(15, 60) && frac > 0; i++) {
+    const beforeMult = frac;
+    frac *= 2;
+    const afterMult = frac;
+    let bit;
+    
+    if (frac >= 1) {
+      bit = '1';
+      stepDetails += `<tr style="background: #e8f5e9;">`;
+      stepDetails += `<td>${i + 1}</td>`;
+      stepDetails += `<td>${beforeMult.toFixed(10)}</td>`;
+      stepDetails += `<td>× 2</td>`;
+      stepDetails += `<td>${afterMult.toFixed(10)}</td>`;
+      stepDetails += `<td><strong style="color: #2e7d32;">1</strong> (≥ 1, take it!)</td>`;
+      stepDetails += `<td>${(frac - 1).toFixed(10)}</td>`;
+      stepDetails += `</tr>`;
+      fracBinary += '1';
+      frac -= 1;
+    } else {
+      bit = '0';
+      stepDetails += `<tr>`;
+      stepDetails += `<td>${i + 1}</td>`;
+      stepDetails += `<td>${beforeMult.toFixed(10)}</td>`;
+      stepDetails += `<td>× 2</td>`;
+      stepDetails += `<td>${afterMult.toFixed(10)}</td>`;
+      stepDetails += `<td><strong>0</strong> (< 1, keep going)</td>`;
+      stepDetails += `<td>${frac.toFixed(10)}</td>`;
+      stepDetails += `</tr>`;
+      fracBinary += '0';
+    }
+  }
+  
+  // Continue without showing details for remaining bits
+  for (let i = 15; i < 60 && frac > 0; i++) {
+    frac *= 2;
+    if (frac >= 1) {
+      fracBinary += '1';
+      frac -= 1;
+    } else {
+      fracBinary += '0';
+    }
+  }
+  
+  stepDetails += '</table></div>';
+  
+  html += '<div style="background: #fffde7; padding: 16px; border-radius: 4px; margin: 10px 0; border-left: 4px solid #fbc02d;">';
+  html += '<strong style="font-size: 15px;">📝 Fractional to Binary Algorithm</strong><br><br>';
+  html += '<div style="font-size: 14px; line-height: 1.8;">';
+  html += '1️⃣ <strong>Multiply</strong> the fraction by 2<br>';
+  html += '2️⃣ <strong>If result ≥ 1:</strong> Write "1" as the next binary digit, subtract 1, continue with remainder<br>';
+  html += '3️⃣ <strong>If result < 1:</strong> Write "0" as the next binary digit, continue with the result<br>';
+  html += '4️⃣ <strong>Repeat</strong> until fraction becomes 0 (or desired precision reached)<br><br>';
+  html += '<div style="background: white; padding: 10px; border-radius: 4px; margin-top: 8px; font-family: monospace; font-size: 13px;">';
+  html += '<strong>Example: 0.625 to binary</strong><br>';
+  html += '0.625 × 2 = 1.25 → bit <span style="color: #2e7d32; font-weight: bold;">1</span>, remainder 0.25<br>';
+  html += '0.25 × 2 = 0.5 → bit <span style="font-weight: bold;">0</span>, remainder 0.5<br>';
+  html += '0.5 × 2 = 1.0 → bit <span style="color: #2e7d32; font-weight: bold;">1</span>, remainder 0<br>';
+  html += 'Result: 0.625₁₀ = 0.101₂';
+  html += '</div>';
+  html += '</div>';
+  html += '</div>';
+  
+  html += stepDetails;
+  
+  html += `<br>Reading the integer parts top to bottom gives us the binary:<br>`;
+  html += `Binary: 0.<span class="step-highlight">${fracBinary.substring(0, 30)}${fracBinary.length > 30 ? '...' : ''}</span><br><br>`;
+  
+  if (frac > 0) {
+    html += '<div style="background: #fff3e0; padding: 8px; border-radius: 4px; margin: 8px 0; font-size: 13px;">';
+    html += `⚠️ Note: Some decimals (like 0.1, 0.3) cannot be exactly represented in binary, leading to infinite repeating patterns. This is why floating-point math can have small rounding errors!`;
+    html += '</div>';
+  }
+  
+  html += `<br><strong>Combined:</strong> <span class="step-highlight">${intBinary}.${fracBinary.substring(0, 20)}...</span>`;
+  html += '</div>';
+  html += '</div>';
+  
+  // Step 3: Normalize
+  html += '<div class="encoding-step" data-step="2">';
+  html += '<h4>Step 3: Normalize to Scientific Notation</h4>';
+  html += '<div class="step-calculation">';
+  
+  let fullBinary = intBinary + fracBinary;
+  let firstOnePos = fullBinary.indexOf('1');
+  let exponentAdjust;
+  
+  if (integerPart >= 1) {
+    exponentAdjust = intBinary.length - 1;
+    html += `Binary: ${intBinary}.${fracBinary.substring(0, 20)}...<br><br>`;
+    html += 'Move decimal point left to get 1.xxxxx format:<br>';
+    html += '<div class="normalization-visual">';
+    html += `<div class="normalization-step" data-norm="0">${intBinary}.${fracBinary.substring(0, 20)}</div>`;
+    html += `<div class="normalization-step" data-norm="1">1.${intBinary.substring(1)}${fracBinary.substring(0, 20)}</div>`;
+    html += '</div>';
+    html += `Moved ${exponentAdjust} positions left<br>`;
+    html += `Exponent adjustment: <span class="step-highlight">+${exponentAdjust}</span>`;
+  } else if (fractionalPart > 0) {
+    exponentAdjust = -(firstOnePos + 1);
+    html += `Binary: 0.${fracBinary.substring(0, 30)}...<br><br>`;
+    html += 'Move decimal point right to get 1.xxxxx format:<br>';
+    html += '<div class="normalization-visual">';
+    html += `<div class="normalization-step" data-norm="0">0.${fracBinary.substring(0, 30)}</div>`;
+    html += `<div class="normalization-step" data-norm="1">1.${fracBinary.substring(firstOnePos + 1, firstOnePos + 30)}</div>`;
+    html += '</div>';
+    html += `Moved ${-exponentAdjust} positions right<br>`;
+    html += `Exponent adjustment: <span class="step-highlight">${exponentAdjust}</span>`;
+  } else {
+    exponentAdjust = 0;
+  }
+  
+  html += '</div>';
+  html += '</div>';
+  
+  // Step 4: Calculate exponent
+  const actualExponent = exponentAdjust;
+  const biasedExponent = actualExponent + bias;
+  
+  html += '<div class="encoding-step" data-step="3">';
+  html += '<h4>Step 4: Calculate Biased Exponent</h4>';
+  html += '<div class="step-calculation">';
+  html += `Actual exponent: <span class="step-highlight">${actualExponent}</span><br>`;
+  html += `Bias (${format}-bit): ${bias}<br>`;
+  html += `Biased exponent = ${actualExponent} + ${bias} = <span class="step-highlight">${biasedExponent}</span><br><br>`;
+  
+  const expBinary = biasedExponent.toString(2).padStart(format === 32 ? 8 : 11, '0');
+  html += `Convert to binary: <span class="step-highlight">${expBinary}</span><br>`;
+  html += '<div class="binary-conversion" id="expBinaryConv">';
+  for (let i = 0; i < expBinary.length; i++) {
+    html += `<div class="binary-digit" data-exp-bit="${i}">${expBinary[i]}</div>`;
+  }
+  html += '</div>';
+  html += '</div>';
+  html += '</div>';
+  
+  // Step 5: Extract mantissa
+  html += '<div class="encoding-step" data-step="4">';
+  html += '<h4>Step 5: Extract Mantissa (Drop Leading 1)</h4>';
+  html += '<div class="step-calculation">';
+  html += 'After normalization, we have: 1.xxxxx...<br>';
+  html += 'The leading "1" is <strong>implicit</strong> and not stored.<br><br>';
+  
+  let mantissaBinary;
+  if (integerPart >= 1) {
+    mantissaBinary = (intBinary.substring(1) + fracBinary).substring(0, mantissaBits);
+  } else if (fractionalPart > 0) {
+    let start = fullBinary.indexOf('1') + 1;
+    mantissaBinary = fullBinary.substring(start, start + mantissaBits);
+  } else {
+    mantissaBinary = '0'.repeat(mantissaBits);
+  }
+  
+  mantissaBinary = mantissaBinary.padEnd(mantissaBits, '0');
+  
+  html += `We store the fractional part (${mantissaBits} bits):<br>`;
+  html += `<span class="step-highlight">${mantissaBinary.substring(0, 20)}...</span><br><br>`;
+  
+  html += '<div class="binary-conversion" id="mantBinaryConv">';
+  for (let i = 0; i < Math.min(mantissaBinary.length, 30); i++) {
+    html += `<div class="binary-digit" data-mant-bit="${i}">${mantissaBinary[i]}</div>`;
+  }
+  if (mantissaBinary.length > 30) {
+    html += `<div>...and ${mantissaBinary.length - 30} more bits</div>`;
+  }
+  html += '</div>';
+  html += '</div>';
+  html += '</div>';
+  
+  // Step 6: Combine
+  html += '<div class="encoding-step" data-step="5">';
+  html += '<h4>Step 6: Combine All Components</h4>';
+  html += '<div class="step-calculation">';
+  html += '<table>';
+  html += '<tr><th>Component</th><th>Binary</th><th>Bits</th></tr>';
+  html += `<tr><td>Sign</td><td>${isNegative ? '1' : '0'}</td><td>1</td></tr>`;
+  html += `<tr><td>Exponent</td><td>${expBinary}</td><td>${expBinary.length}</td></tr>`;
+  html += `<tr><td>Mantissa</td><td>${mantissaBinary.substring(0, 16)}...</td><td>${mantissaBits}</td></tr>`;
+  html += '</table><br>';
+  html += 'Final encoding: ';
+  html += `<span class="step-highlight" style="background: #ffe0e0;">${isNegative ? '1' : '0'}</span> `;
+  html += `<span class="step-highlight" style="background: #d4f4f1;">${expBinary}</span> `;
+  html += `<span class="step-highlight" style="background: #e8f8f5;">${mantissaBinary.substring(0, 16)}...</span>`;
+  html += '</div>';
+  html += '</div>';
+  
+  container.innerHTML = html;
+  
+  // Add progressive animation controls
+  setTimeout(() => {
+    const startBtn = document.getElementById('startBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const steps = document.querySelectorAll('.encoding-step');
+    const progressFill = document.getElementById('progressFill');
+    const stepIndicator = document.getElementById('stepIndicator');
+    
+    let currentStep = -1;
+    let isAnimating = false;
+    
+    function updateStepIndicator() {
+      if (currentStep === -1) {
+        stepIndicator.textContent = 'Press "Start" or "Next" to begin';
+      } else if (currentStep >= steps.length) {
+        stepIndicator.textContent = '✓ Encoding Complete!';
+      } else {
+        stepIndicator.textContent = `Step ${currentStep + 1} of ${steps.length}`;
+      }
+    }
+    
+    function resetAnimation() {
+      currentStep = -1;
+      isAnimating = false;
+      steps.forEach(step => step.classList.remove('active'));
+      document.querySelectorAll('.normalization-step').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.binary-digit').forEach(d => d.classList.remove('active'));
+      progressFill.style.width = '0%';
+      startBtn.disabled = false;
+      nextBtn.disabled = true;
+      updateStepIndicator();
+    }
+    
+    function showStep(stepIndex) {
+      if (stepIndex >= steps.length) {
+        nextBtn.disabled = true;
+        startBtn.disabled = false;
+        updateStepIndicator();
+        return;
+      }
+      
+      const progress = ((stepIndex + 1) / steps.length) * 100;
+      progressFill.style.width = progress + '%';
+      
+      steps.forEach((step, idx) => {
+        if (idx === stepIndex) {
+          step.classList.add('active');
+          step.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          
+          // Animate normalization steps progressively
+          if (idx === 2) {
+            const normSteps = step.querySelectorAll('.normalization-step');
+            normSteps.forEach((ns, i) => {
+              setTimeout(() => ns.classList.add('active'), i * 300);
+            });
+          }
+          
+          // Animate binary conversion progressively
+          if (idx === 3) {
+            const expBits = step.querySelectorAll('.binary-digit');
+            expBits.forEach((bit, i) => {
+              setTimeout(() => bit.classList.add('active'), i * 40);
+            });
+          }
+          
+          if (idx === 4) {
+            const mantBits = step.querySelectorAll('.binary-digit');
+            mantBits.forEach((bit, i) => {
+              setTimeout(() => bit.classList.add('active'), i * 25);
+            });
+          }
+        } else if (idx < stepIndex) {
+          // Keep previous steps visible but not highlighted
+          step.classList.remove('active');
+        } else {
+          step.classList.remove('active');
+        }
+      });
+      
+      updateStepIndicator();
+    }
+    
+    function nextStep() {
+      if (!isAnimating) return;
+      
+      currentStep++;
+      showStep(currentStep);
+      
+      if (currentStep >= steps.length - 1) {
+        nextBtn.textContent = 'Animation Complete';
+      }
+    }
+    
+    startBtn.addEventListener('click', () => {
+      if (!isAnimating) {
+        isAnimating = true;
+        currentStep = -1;
+        startBtn.disabled = true;
+        nextBtn.disabled = false;
+        nextBtn.textContent = 'Next Step (→ or Space)';
+        updateStepIndicator();
+        nextStep();
+      }
+    });
+    
+    nextBtn.addEventListener('click', () => {
+      if (isAnimating && currentStep < steps.length - 1) {
+        nextStep();
+      }
+    });
+    
+    resetBtn.addEventListener('click', resetAnimation);
+    
+    // Keyboard controls
+    function handleKeyPress(e) {
+      // Only handle keys if the encoding section is visible
+      if (!isAnimating) {
+        if (e.key === 'Enter') {
+          startBtn.click();
+        }
+        return;
+      }
+      
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        if (currentStep < steps.length - 1) {
+          nextStep();
+        }
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        if (currentStep > 0) {
+          currentStep -= 2; // Subtract 2 because nextStep will add 1
+          nextStep();
+        }
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        resetAnimation();
+      }
+    }
+    
+    document.addEventListener('keydown', handleKeyPress);
+    
+    updateStepIndicator();
+    
+    // Add keyboard hint
+    const keyboardHint = document.createElement('div');
+    keyboardHint.style.cssText = 'text-align: center; margin-top: 8px; font-size: 14px; color: #666;';
+    keyboardHint.innerHTML = '💡 Tip: Use <strong>→</strong> or <strong>Space</strong> for next step, <strong>←</strong> for previous, <strong>Esc</strong> to reset';
+    stepIndicator.parentNode.insertBefore(keyboardHint, stepIndicator.nextSibling);
+  }, 100);
+}
+
+function updateVisualization() {
+  const value = parseFloat(numberInput.value);
+  
+  if (isNaN(value)) {
+    document.getElementById('bitVisualization').innerHTML = '<p>Enter a valid number</p>';
+    document.getElementById('encoding').innerHTML = '';
+    return;
+  }
+
+  const buffer = new ArrayBuffer(8);
+  const view = new DataView(buffer);
+  
+  let bits, signBits, exponentBits, mantissaBits, bias, exponentMask, mantissaMask;
+  
+  if (currentFormat === 32) {
+    view.setFloat32(0, value, false);
+    const intBits = view.getUint32(0, false);
+    bits = intBits.toString(2).padStart(32, '0');
+    signBits = 1;
+    exponentBits = 8;
+    mantissaBits = 23;
+    bias = 127;
+    
+    const hexValue = intBits.toString(16).toUpperCase().padStart(8, '0');
+    document.getElementById('hexDisplay').innerHTML = `<strong>Hexadecimal:</strong> 0x${hexValue}`;
+  } else {
+    view.setFloat64(0, value, false);
+    const bigIntBits = view.getBigUint64(0, false);
+    bits = bigIntBits.toString(2).padStart(64, '0');
+    signBits = 1;
+    exponentBits = 11;
+    mantissaBits = 52;
+    bias = 1023;
+    
+    const hexValue = bigIntBits.toString(16).toUpperCase().padStart(16, '0');
+    document.getElementById('hexDisplay').innerHTML = `<strong>Hexadecimal:</strong> 0x${hexValue}`;
+  }
+  
+  const sign = bits[0];
+  const exponent = bits.substring(1, 1 + exponentBits);
+  const mantissa = bits.substring(1 + exponentBits);
+  
+  renderBits(sign, exponent, mantissa);
+  renderEncoding(value, currentFormat);
+  renderBreakdown(value, sign, exponent, mantissa, bias, currentFormat);
+}
+
+updateVisualization();
+</script>
+</body>
+</html>

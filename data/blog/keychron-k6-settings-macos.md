@@ -23,11 +23,11 @@ For developers who write markdown, use terminal paths (`~/Documents`), or switch
 ## The Solution 💡
 
 The workaround is to:
-1. Remap the physical ESC key to output backtick/tilde
-2. Use Caps Lock as your new Escape key
-3. Add modifier combinations for convenience
+1. Remap the physical ESC key to make ESC work as is without any extra click
+2. Shift ESC is mapped to `~`
+3. Option ESC is mapped to `
 
-This way you get single-key access to backtick and keep Escape functionality.
+This way you get single-key access to ESC, backtick and tilde.
 
 ## Karabiner-Elements Setup ⚙️
 
@@ -54,9 +54,6 @@ These are applied only to the K6, not to MacBook's internal keyboard. Open Karab
 
 | From Key | To Key | Purpose |
 |----------|--------|---------|
-| `caps_lock` | `escape` | Caps Lock becomes your new ESC key |
-| `escape` | `grave_accent_and_tilde` | Physical ESC types backtick `` ` `` |
-| `grave_accent_and_tilde` | `escape` | Top-left key becomes ESC |
 | `home` | `delete_forward` | Home key acts as Forward Delete |
 | `page_up` | `home` | Page Up becomes Home |
 | `page_down` | `end` | Page Down becomes End |
@@ -67,27 +64,26 @@ These give you quick access to backtick, tilde, and window switching using modif
 
 | Shortcut | Output | Use Case |
 |----------|--------|----------|
-| `Shift + ESC` | `` ` `` (backtick) | Markdown code blocks, terminal |
-| `Ctrl + ESC` | `~` (tilde) | Home directory paths |
+| `Option + ESC` | ``  `` (backtick) | home, terminal |
+| `Shift + ESC` | `~` (tilde) | Home directory paths |
 | `Cmd + ESC` | `Cmd + ~` | Switch windows within same app |
 
 ### Final Key Behavior
 
 After applying the configuration:
 
-| Physical Key | Tap | With Shift | With Ctrl | With Cmd |
-|--------------|-----|------------|-----------|----------|
-| ESC | `` ` `` | `` ` `` | `~` | `Cmd + ~` |
-| Caps Lock | Escape | — | — | — |
-| Home | Forward Delete | — | — | — |
-| Page Up | Home | — | — | — |
-| Page Down | End | — | — | — |
+| Physical Key | Tap | With Option | With Shift | 
+|--------------|-----|------------|-----------|
+| ESC | `` ESC `` | `` ` `` | `~` |
+| Home | Forward Delete | — | — |
+| Page Up | Home | — | — |
+| Page Down | End | — | — |
 
 ## Complete Karabiner Configuration 📋
 
 Save this as `~/.config/karabiner/karabiner.json`:
 
-```json
+````json
 {
     "global": { "show_in_menu_bar": false },
     "profiles": [
@@ -95,76 +91,43 @@ Save this as `~/.config/karabiner/karabiner.json`:
             "complex_modifications": {
                 "rules": [
                     {
-                        "description": "Shift + Esc to ` Grave Accent",
+                        "description": "Shift + Esc to Tilde (~)",
                         "manipulators": [
                             {
-                                "conditions": [
-                                    {
-                                        "identifiers": [
-                                            {
-                                                "is_keyboard": true,
-                                                "product_id": 591,
-                                                "vendor_id": 1452
-                                            }
-                                        ],
-                                        "type": "device_if"
-                                    }
-                                ],
+                                "type": "basic",
                                 "from": {
                                     "key_code": "escape",
                                     "modifiers": { "mandatory": ["shift"] }
-                                },
-                                "to": [{ "key_code": "grave_accent_and_tilde" }],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
-                        "description": "Control + Esc to Tilde",
-                        "manipulators": [
-                            {
-                                "conditions": [
-                                    {
-                                        "identifiers": [
-                                            {
-                                                "is_keyboard": true,
-                                                "product_id": 591,
-                                                "vendor_id": 1452
-                                            }
-                                        ],
-                                        "type": "device_if"
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "escape",
-                                    "modifiers": { "mandatory": ["control"] }
                                 },
                                 "to": [
                                     {
                                         "key_code": "grave_accent_and_tilde",
                                         "modifiers": ["shift"]
                                     }
-                                ],
-                                "type": "basic"
+                                ]
                             }
                         ]
                     },
                     {
-                        "description": "Command + Esc to Command + Tilde",
+                        "description": "Option + Esc to Backtick (`)",
                         "manipulators": [
                             {
-                                "conditions": [
-                                    {
-                                        "identifiers": [
-                                            {
-                                                "is_keyboard": true,
-                                                "product_id": 591,
-                                                "vendor_id": 1452
-                                            }
-                                        ],
-                                        "type": "device_if"
-                                    }
-                                ],
+                                "type": "basic",
+                                "from": {
+                                    "key_code": "escape",
+                                    "modifiers": { "mandatory": ["option"] }
+                                },
+                                "to": [
+                                    { "key_code": "grave_accent_and_tilde" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Command + Esc to Command + Tilde (Window Switcher)",
+                        "manipulators": [
+                            {
+                                "type": "basic",
                                 "from": {
                                     "key_code": "escape",
                                     "modifiers": { "mandatory": ["command"] }
@@ -174,8 +137,7 @@ Save this as `~/.config/karabiner/karabiner.json`:
                                         "key_code": "grave_accent_and_tilde",
                                         "modifiers": ["command"]
                                     }
-                                ],
-                                "type": "basic"
+                                ]
                             }
                         ]
                     }
@@ -202,18 +164,6 @@ Save this as `~/.config/karabiner/karabiner.json`:
                         {
                             "from": { "key_code": "page_down" },
                             "to": [{ "key_code": "end" }]
-                        },
-                        {
-                            "from": { "key_code": "caps_lock" },
-                            "to": [{ "key_code": "escape" }]
-                        },
-                        {
-                            "from": { "key_code": "escape" },
-                            "to": [{ "key_code": "grave_accent_and_tilde" }]
-                        },
-                        {
-                            "from": { "key_code": "grave_accent_and_tilde" },
-                            "to": [{ "key_code": "escape" }]
                         }
                     ]
                 }
@@ -227,7 +177,7 @@ Save this as `~/.config/karabiner/karabiner.json`:
         }
     ]
 }
-```
+````
 
 ## K6 Hardware Shortcuts 🎹
 
@@ -318,9 +268,9 @@ ln -s ~/Library/Mobile\ Documents/com~apple~CloudDocs/karabiner.json ~/.config/k
 
 ## Things to Remember 📝
 
-1. **Caps Lock is now ESC** — use it for Vim, closing dialogs, canceling operations
-2. **Physical ESC types backtick** — no need for `fn1 + ESC` anymore
-3. **Ctrl + ESC for tilde** — quick access to `~` for terminal paths
+1. **Physical ESC works as it is** — no need anything else
+2. **Shift + ESC for tilde** — quick access to `~` for terminal paths
+3. **Option + ESC for backtick** — quick access to `` ` `` for markdown code block
 4. **Cmd + ESC for window switching** — replaces the standard `Cmd + ~`
 5. **Page Up/Down remapped** — now act as Home/End for line navigation
 6. **Home is Forward Delete** — useful for deleting text ahead of cursor

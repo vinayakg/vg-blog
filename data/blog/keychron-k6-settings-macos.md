@@ -64,7 +64,7 @@ These give you quick access to backtick, tilde, and window switching using modif
 
 | Shortcut | Output | Use Case |
 |----------|--------|----------|
-| `Option + ESC` | ``  `` (backtick) | home, terminal |
+| `Option + ESC` | `` ` `` (backtick) | Markdown code blocks, terminal |
 | `Shift + ESC` | `~` (tilde) | Home directory paths |
 | `Cmd + ESC` | `Cmd + ~` | Switch windows within same app |
 

@@ -6,8 +6,6 @@ draft: false
 summary: 'Complete guide to setting up Aerospace, walk through of various functions and finally leading to productivity and focussed workflows within MacOS'
 ---
 
-# Focus and Productivity with MacOS - Workspaces and Keyboard with Aerospace
-
 I have been a big fan of keyboard-driven workflows and have been optimizing my daily routines for years now. Window management on macOS has always been a pain point - the default experience of dragging windows around, resizing them manually, and hunting for apps buried under other windows is a productivity killer.
 
 I was experimenting with [Omarchy](https://omarchy.com/) on Linux recently, which is built on top of [Hyprland](https://hyprland.org/) - a fantastic tiling compositor for Wayland. The keyboard-first workflow was addictive, and I found myself wanting the same experience on my Mac. That's when I discovered [AeroSpace](https://github.com/nikitabobko/AeroSpace).

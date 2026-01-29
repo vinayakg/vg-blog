@@ -368,7 +368,7 @@ Starting position - 6 windows stacked vertically:
 
 The curated config above covers the essentials. If you want my complete configuration with all workspaces and window detection rules, you can download it here:
 
-📥 [Download full aerospace.toml](aerospace-full.toml)
+📥 [Download full aerospace.toml](https://gist.github.com/vinayakg/b9bd0702eedff93ca169c1462dde0a93#file--aerospace-toml)
 
 ## Final Thoughts
 

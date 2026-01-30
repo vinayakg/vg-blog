@@ -93,6 +93,26 @@ alt-l = 'focus right'
 | `Alt-K` | Focus window above |
 | `Alt-L` | Focus window to the right |
 
+### Window Swapping
+
+Swap the focused window's position with an adjacent window:
+
+```toml
+[mode.main.binding]
+# Swap windows using vim-style hjkl keys
+ctrl-h = 'swap left'
+ctrl-j = 'swap down'
+ctrl-k = 'swap up'
+ctrl-l = 'swap right'
+```
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl-H` | Swap with window to the left |
+| `Ctrl-J` | Swap with window below |
+| `Ctrl-K` | Swap with window above |
+| `Ctrl-L` | Swap with window to the right |
+
 ### Window Resizing
 
 Quickly resize the focused window:
@@ -354,6 +374,7 @@ Starting position - 6 windows stacked vertically:
 | Category | Shortcut | Action |
 |----------|----------|--------|
 | **Navigation** | `Alt-H/J/K/L` | Focus left/down/up/right |
+| **Swap** | `Ctrl-H/J/K/L` | Swap with left/down/up/right |
 | **Resize** | `Alt-Minus/Equal` | Shrink/grow window |
 | **Layout** | `Alt-Ctrl-H/V` | Force horizontal/vertical split |
 | **Layout** | `Alt-0` | Balance all window sizes |
@@ -381,7 +402,3 @@ If you're coming from Linux and missing i3/sway, or if you're just tired of manu
 - [AeroSpace GitHub](https://github.com/nikitabobko/AeroSpace)
 - [AeroSpace Documentation](https://nikitabobko.github.io/AeroSpace/guide)
 - [AeroSpace Commands Reference](https://nikitabobko.github.io/AeroSpace/commands)
-
-## Tags
-
-[mac](/tags/mac) [productivity](/tags/productivity) [tools](/tags/tools) [aerospace](/tags/aerospace) [window-manager](/tags/window-manager) [tiling](/tags/tiling)

@@ -3,6 +3,7 @@ title: 'Keychron K6 Setup Guide for Mac with Karabiner'
 date: '2026-01-23'
 tags: ['mac', 'keyboard', 'keychron', 'karabiner', 'productivity', 'setup', 'tools', 'tech']
 draft: false
+canonicalUrl:https://vinayakg.dev/keychron-k6-settings-macos
 summary: 'Complete guide to setting up Keychron K6 68-key mechanical keyboard on Mac. Solve the backtick/tilde problem, remap keys with Karabiner-Elements, and master all hardware shortcuts.'
 ---
 

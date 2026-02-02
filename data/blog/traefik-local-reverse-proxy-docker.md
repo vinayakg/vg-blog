@@ -9,7 +9,7 @@ canonicalUrl: 'https://vinayakg.dev/traefik-local-reverse-proxy-docker'
 
 I have been running multiple Docker services on my local machine for a while now - LLM gateways, PDF tools, web interfaces, and more. The problem? Remembering which service runs on which port. Is LiteLLM on 4000 or 8080? Is Open WebUI on 3000 or 8080? After a few weeks of `docker ps` and browser bookmark gymnastics, I decided to fix this once and for all.
 
-Enter [Traefik](https://traefik.io/) - a modern reverse proxy that auto-discovers Docker containers and routes traffic based on simple labels. Now I access my services with memorable URLs like `litellm.localhost`, `gptall.localhost`, and `pdftool.localhost`. No more port numbers to remember.
+Enter [Traefik](https://traefik.io/) - a modern reverse proxy that auto-discovers Docker containers and routes traffic based on simple labels. Now I access my services with memorable URLs like `litellm.localhost`, `gptall.localhost`, `pdftool.localhost` and `llm-council.localhost`. No more port numbers to remember.
 
 ## Why Traefik?
 

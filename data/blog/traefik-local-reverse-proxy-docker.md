@@ -1,8 +1,8 @@
 ---
 title: 'Traefik as Local Reverse Proxy for Docker Services'
 date: '2026-02-01'
-tags: ['docker', 'traefik', 'devops', 'productivity', 'tools', 'tech', 'setup', 'automation']
-summary: 'Complete guide to setting up Traefik as a local reverse proxy for Docker services. Access your local services with memorable URLs like litellm.localhost instead of ports. Includes auto-discovery, dynamic configuration, and sample setups for LLM tools.'
+tags: ['docker', 'traefik', 'devops', 'productivity', 'tools', 'tech', 'setup', 'automation', 'llm']
+summary: 'Complete guide to setting up Traefik as a local reverse proxy for Docker services. Access your local services with memorable URLs like litellm.localhost instead of ports. Includes auto-discovery, dynamic configuration, and sample setups for LLM tools including LLM Council, LiteLLM, and Open WebUI.'
 authors: ['default']
 canonicalUrl: 'https://vinayakg.dev/traefik-local-reverse-proxy-docker'
 ---
@@ -208,31 +208,49 @@ stirling-pdf:
 
 **What it solves**: Merge, split, rotate, convert PDFs - all locally without uploading to sketchy online tools. Your documents stay on your machine.
 
-## Dynamic Configuration for Non-Docker Services
+### LLM Council - Multi-LLM Consensus
 
-Sometimes you have services running directly on your host machine (not in Docker). Traefik handles this through dynamic configuration files.
+[LLM Council](https://github.com/karpathy/llm-council) by Andrej Karpathy is a clever tool that queries multiple LLMs simultaneously, has them review and rank each other's responses, and then a "Chairman" LLM produces the final consolidated answer.
 
-### Setting Up Dynamic Config
-
-Create a YAML file in your Traefik dynamic config directory:
+Since LLM Council runs directly on your host machine (not in Docker), we use dynamic configuration:
 
 ```yaml
 # /Volumes/lcldata/docker-volumes/traefik/dynamic.yaml
 http:
   routers:
-    llm-judge:
-      rule: "Host(`llm-judge.localhost`)"
+    llm-council:
+      rule: "Host(`llm-council.localhost`)"
       entryPoints:
         - web
-      service: llm-judge-service
+      service: llm-council-service
+    llm-council-api:
+      #rule: "Host(`llm-council.localhost`) && PathPrefix(`/api`)"
+      rule: "Host(`llm-council-api.localhost`)"
+      entryPoints:
+        - web
+      service: llm-council-api-service
   services:
-    llm-judge-service:
+    llm-council-service:
       loadBalancer:
         servers:
           - url: "http://host.docker.internal:5173"
+    llm-council-api-service:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:8001"
 ```
 
-This routes `llm-judge.localhost` to a Vite dev server running on port 5173 on your host machine.
+This routes `llm-council.localhost` to a Vite dev server running on port 5173 & flask api running on port 8001 on your host machine.
+
+**What it solves**: Instead of trusting a single LLM's response, get consensus from multiple models. The LLMs anonymously review each other's work and the best insights are compiled into the final answer. Great for complex questions where you want multiple perspectives.
+
+## Dynamic Configuration for Non-Docker Services
+
+Sometimes you have services running directly on your host machine (not in Docker). Traefik handles this through dynamic configuration files. We already saw this with LLM Council above.
+
+### Setting Up Dynamic Config
+
+Create a YAML file in your Traefik dynamic config directory. The LLM Council example shows the pattern - define a router with a `Host()` rule and a service with the target URL using `host.docker.internal` to reach the host machine from within Docker.
 
 ### Adding More Host Services
 
@@ -372,3 +390,4 @@ The initial setup takes about 15 minutes, but the productivity gains are worth i
 - [LiteLLM](https://github.com/BerriAI/litellm)
 - [Open WebUI](https://github.com/open-webui/open-webui)
 - [Stirling PDF](https://github.com/Stirling-Tools/Stirling-PDF)
+- [LLM Council](https://github.com/karpathy/llm-council)

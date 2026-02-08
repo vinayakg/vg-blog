@@ -3,7 +3,7 @@ title: 'Focus and Productivity with MacOS - Workspaces and Keyboard with Aerospa
 date: '2026-01-29'
 tags: ['mac', 'workspaces', 'focus', 'keyboard', 'productivity', 'macos', 'tools', 'tech']
 draft: false
-canonicalUrl:https://vinayakg.dev/tiling-manager-aerospace-mac-os
+canonicalUrl: https://vinayakg.dev/tiling-manager-aerospace-mac-os
 summary: 'Complete guide to setting up Aerospace, walk through of various functions and finally leading to productivity and focussed workflows within MacOS'
 ---
 

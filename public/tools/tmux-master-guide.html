@@ -199,7 +199,7 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1>Tmux Master Command Reference</h1>
+      <h1>🚀 Tmux Master Command Reference</h1>
       <p>Master tmux with these essential commands and shortcuts (Prefix: Ctrl+b)</p>
     </div>
 
@@ -369,6 +369,48 @@
             <div><span class="shortcut">Ctrl+b q, then 0-9</span></div>
             <div class="description">Display pane numbers, then jump to pane</div>
           </div>
+          <div class="command">
+            <div><span class="shortcut">Ctrl+b :break-pane</span></div>
+            <div class="description">Break pane into a new window (alternative command)</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">Ctrl+b :join-pane -t :window#</span></div>
+            <div class="description">Move current pane to an existing window</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">Ctrl+b :join-pane -h -t :window#</span></div>
+            <div class="description">Join pane horizontally to target window</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">Ctrl+b :join-pane -v -t :window#</span></div>
+            <div class="description">Join pane vertically to target window</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">Ctrl+b {</span></div>
+            <div class="description">Swap current pane with previous pane</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">Ctrl+b }</span></div>
+            <div class="description">Swap current pane with next pane</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">Ctrl+b :swap-pane -s # -t #</span></div>
+            <div class="description">Swap panes by index numbers</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">Ctrl+b :move-pane -t :window#</span></div>
+            <div class="description">Move current pane to specified window</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">Ctrl+b :select-layout layout-name</span></div>
+            <div class="description">Apply specific layout (even-horizontal, even-vertical, main-horizontal,
+              main-vertical, tiled)</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">Ctrl+b M-1 through M-5</span></div>
+            <div class="description">Select predefined layouts (M-1: main-horizontal, M-2: main-vertical, M-3:
+              even-horizontal, M-4: even-vertical, M-5: tiled)</div>
+          </div>
         </div>
       </div>
 
@@ -410,6 +452,10 @@
           <div class="command">
             <div><span class="shortcut">tmux select-pane -l</span></div>
             <div class="description">Navigate to last active pane</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">tmux set -g mouse on</span></div>
+            <div class="description">Enable mouse support for pane resizing and selection</div>
           </div>
         </div>
       </div>

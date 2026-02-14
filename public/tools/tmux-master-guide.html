@@ -211,6 +211,7 @@
         <button class="filter-btn" data-category="session">Sessions</button>
         <button class="filter-btn" data-category="window">Windows</button>
         <button class="filter-btn" data-category="pane">Panes</button>
+        <button class="filter-btn" data-category="copy">Copy Mode</button>
         <button class="filter-btn" data-category="misc">Miscellaneous</button>
       </div>
 
@@ -430,6 +431,80 @@
           <div class="command">
             <div><span class="shortcut">tmux resize-pane -x 80 -y 24</span></div>
             <div class="description">Resize pane to absolute width/height - CLI command</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">Ctrl+b prefix + [</span></div>
+            <div class="description">Enter copy mode for scrolling and searching</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">Ctrl+b prefix + ]</span></div>
+            <div class="description">Paste from tmux buffer</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" data-category="copy">
+        <h2>📋 Copy Mode & Search</h2>
+        <div class="command-grid">
+          <div class="command">
+            <div><span class="shortcut">Ctrl+b [</span></div>
+            <div class="description">Enter copy mode (scroll/search mode)</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">v</span> (in copy mode)</div>
+            <div class="description">Start visual selection (requires vi mode-keys)</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">V</span> (in copy mode)</div>
+            <div class="description">Select entire line</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">Ctrl+v</span> (in copy mode)</div>
+            <div class="description">Toggle rectangular selection</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">y</span> (in copy mode)</div>
+            <div class="description">Yank selection to clipboard and exit copy mode</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">/</span> (in copy mode)</div>
+            <div class="description">Search forward</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">?</span> (in copy mode)</div>
+            <div class="description">Search backward</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">n</span> (in copy mode)</div>
+            <div class="description">Next search match</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">N</span> (in copy mode)</div>
+            <div class="description">Previous search match</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">Ctrl+u</span> (in copy mode)</div>
+            <div class="description">Scroll half-page up</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">Ctrl+d</span> (in copy mode)</div>
+            <div class="description">Scroll half-page down</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">g</span> (in copy mode)</div>
+            <div class="description">Go to top of scrollback</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">G</span> (in copy mode)</div>
+            <div class="description">Go to bottom of scrollback</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">q or Esc</span> (in copy mode)</div>
+            <div class="description">Exit copy mode</div>
+          </div>
+          <div class="command">
+            <div><span class="shortcut">setw -g mode-keys vi</span></div>
+            <div class="description">Enable vi-style key bindings in copy mode</div>
           </div>
         </div>
       </div>

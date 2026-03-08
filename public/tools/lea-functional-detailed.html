@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+  <body>
+    <pre class="mermaid">
+---
+title: "LEA — Connected Functional Architecture (Left to Right)"
+---
+flowchart LR
+
+  %% ════════════════════════════════════════════
+  %% EXTERNAL INPUTS
+  %% ════════════════════════════════════════════
+  EXT_MAIL[/"📬 External Mailbox<br/>(IMAP / Graph API)"/]
+  EXT_USER[/"👤 User Query<br/>(Chat Interface)"/]
+
+  %% ════════════════════════════════════════════
+  %% F1 — ACQUIRE
+  %% ════════════════════════════════════════════
+  subgraph F1["F1 · EMAIL ACQUISITION"]
+    direction LR
+    F1_poll["⚡ pollMailbox()<br/><i>EFFECT</i><br/>MailboxConfig → IO RawEmail[]"]
+    F1_dedup["🔵 deduplicateEmails()<br/><i>PURE</i><br/>(RawEmail[], SeenSet) → RawEmail[]"]
+    F1_norm["🟣 normalizeEmail()<br/><i>TRANSFORM</i><br/>RawEmail → NormalizedEmail"]
+
+    F1_poll --> F1_dedup --> F1_norm
+  end
+
+  EXT_MAIL --> F1_poll
+  EXT_USER --> F1_norm
+
+  %% ════════════════════════════════════════════
+  %% F2 — UNDERSTAND
+  %% ════════════════════════════════════════════
+  subgraph F2["F2 · EMAIL UNDERSTANDING"]
+    direction LR
+    F2_redact["🩷 redactPII()<br/><i>GUARD</i><br/>NormalizedEmail → (RedactedEmail, RedactionMap)"]
+
+    subgraph F2_parallel["Parallel LLM Calls"]
+      direction TB
+      F2_intent["⚡ inferIntent()<br/><i>EFFECT</i><br/>RedactedEmail → IO Classification"]
+      F2_entity["⚡ extractEntities()<br/><i>EFFECT</i><br/>RedactedEmail → IO EntitySet"]
+      F2_sentiment["⚡ assessSentiment()<br/><i>EFFECT</i><br/>RedactedEmail → IO SentimentResult"]
+    end
+
+    F2_assemble["🔵 assembleUnderstanding()<br/><i>PURE</i><br/>(Classification, EntitySet, Sentiment,<br/>NormalizedEmail) → EmailUnderstanding"]
+
+    F2_redact --> F2_parallel --> F2_assemble
+  end
+
+  F1_norm -- "NormalizedEmail" --> F2_redact
+
+  %% ════════════════════════════════════════════
+  %% F3 — ROUTE
+  %% ════════════════════════════════════════════
+  subgraph F3["F3 · BUSINESS ROUTING (entirely pure)"]
+    direction LR
+    F3_conf["🔵 checkConfidence()<br/><i>PURE</i><br/>(EmailUnderstanding, Threshold)<br/>→ AutoProcess | HumanReview"]
+    F3_rules["🔵 evaluateRules()<br/><i>PURE</i><br/>(EmailUnderstanding, RuleSet)<br/>→ RoutingDecision"]
+    F3_prio["🔵 computePriority()<br/><i>PURE</i><br/>(EmailUnderstanding, SLAConfig)<br/>→ PriorityScore"]
+
+    F3_conf -- "AutoProcess" --> F3_rules --> F3_prio
+  end
+
+  F2_assemble -- "EmailUnderstanding" --> F3_conf
+
+  %% ════════════════════════════════════════════
+  %% F4 — ENRICH
+  %% ════════════════════════════════════════════
+  subgraph F4["F4 · DATA ENRICHMENT"]
+    direction LR
+    F4_plan["🔵 buildLookupPlan()<br/><i>PURE</i><br/>(RoutingDecision, EntitySet)<br/>→ LookupPlan[]"]
+    F4_exec["⚡ executeLookups()<br/><i>EFFECT</i><br/>LookupPlan → IO EnrichmentData"]
+    F4_merge["🟣 mergeContext()<br/><i>TRANSFORM</i><br/>(EmailUnderstanding, EnrichmentData,<br/>RoutingDecision) → ReplyContext"]
+
+    F4_plan --> F4_exec --> F4_merge
+  end
+
+  EXT_BANK1[/"🏦 Core Banking System 1"/]
+  EXT_BANK2[/"🏦 Core Banking System 2"/]
+
+  F3_prio -- "RoutingDecision" --> F4_plan
+  F4_exec <-- "MCP / Function Calling" --> EXT_BANK1
+  F4_exec <-- "MCP / Function Calling" --> EXT_BANK2
+
+  %% ════════════════════════════════════════════
+  %% F5 — GENERATE
+  %% ════════════════════════════════════════════
+  subgraph F5["F5 · RESPONSE GENERATION"]
+    direction LR
+    F5_template["🔵 selectTemplate()<br/><i>PURE</i><br/>(RoutingDecision, TemplateRegistry)<br/>→ Template"]
+    F5_draft["⚡ generateDraft()<br/><i>EFFECT</i><br/>(ReplyContext, Template)<br/>→ IO DraftEmail"]
+    F5_tone["🔵 calibrateTone()<br/><i>PURE</i><br/>(DraftEmail, SentimentResult)<br/>→ DraftEmail"]
+    F5_comply["🩷 validateCompliance()<br/><i>GUARD</i><br/>DraftEmail → ValidationResult"]
+    F5_rehydrate["🩷 rehydratePII()<br/><i>GUARD</i><br/>(DraftEmail, RedactionMap)<br/>→ DraftEmail"]
+    F5_format["🟣 formatFinalEmail()<br/><i>TRANSFORM</i><br/>DraftEmail → FinalEmail"]
+
+    F5_template --> F5_draft --> F5_tone --> F5_comply
+    F5_comply -- "passed ✓" --> F5_rehydrate --> F5_format
+  end
+
+  F4_merge -- "ReplyContext" --> F5_template
+
+  %% ════════════════════════════════════════════
+  %% F6 — REVIEW
+  %% ════════════════════════════════════════════
+  subgraph F6["F6 · HUMAN REVIEW"]
+    direction LR
+    F6_queue["⚡ queueForReview()<br/><i>EFFECT</i><br/>FinalEmail → IO ReviewTicket"]
+    F6_human["🧑 reviewDecision()<br/><i>HUMAN</i><br/>ReviewTicket → HumanDecision<br/>{Approve | Edit | Reject}"]
+    F6_apply["🔵 applyReviewOutcome()<br/><i>PURE</i><br/>HumanDecision<br/>→ Dispatch | Archive | Reclassify"]
+
+    F6_queue --> F6_human --> F6_apply
+  end
+
+  F5_format -- "FinalEmail" --> F6_queue
+
+  %% ════════════════════════════════════════════
+  %% F7 — DISPATCH
+  %% ════════════════════════════════════════════
+  subgraph F7["F7 · DISPATCH & RECORD"]
+    direction LR
+    F7_send["⚡ sendEmail()<br/><i>EFFECT</i><br/>FinalEmail → IO SendResult"]
+    F7_audit["⚡ writeAuditRecord()<br/><i>EFFECT</i><br/>(All prior outputs)<br/>→ IO AuditRecord"]
+    F7_metrics["⚡ emitMetrics()<br/><i>EFFECT</i><br/>AuditRecord → IO void"]
+
+    F7_send --> F7_audit --> F7_metrics
+  end
+
+  EXT_SMTP[/"📤 Email Services<br/>(SMTP / Graph API)"/]
+
+  F6_apply -- "Approve / Edit" --> F7_send
+  F7_send --> EXT_SMTP
+
+  %% ════════════════════════════════════════════
+  %% CROSS-STAGE DATA DEPENDENCIES
+  %% ════════════════════════════════════════════
+  F2_redact -. "RedactionMap ···→ F5" .-> F5_rehydrate
+  F2_sentiment -. "SentimentResult → F3" .-> F3_prio
+  F2_sentiment -. "SentimentResult → F5" .-> F5_tone
+  F2_entity -. "EntitySet → F4" .-> F4_plan
+  F2_assemble -. "EmailUnderstanding → F4" .-> F4_merge
+  F3_prio -. "RoutingDecision → F5" .-> F5_template
+  F1_norm -. "NormalizedEmail → F7" .-> F7_audit
+
+  %% ════════════════════════════════════════════
+  %% CROSS-CUTTING: LLM GUARDRAILS
+  %% ════════════════════════════════════════════
+  subgraph GUARD["🛡️ CROSS-CUTTING · LLM Guardrails"]
+    direction LR
+    GR_pre["🩷 preGuard()<br/>PII scan · injection detect"]
+    GR_llm["Azure OpenAI<br/>LLM Inference"]
+    GR_post["🩷 postGuard()<br/>hallucination · policy check"]
+    GR_pre --> GR_llm --> GR_post
+  end
+
+  F2_intent <-. "guarded call" .-> GUARD
+  F2_entity <-. "guarded call" .-> GUARD
+  F2_sentiment <-. "guarded call" .-> GUARD
+  F5_draft <-. "guarded call" .-> GUARD
+
+  %% ════════════════════════════════════════════
+  %% CROSS-CUTTING: STATE MACHINE
+  %% ════════════════════════════════════════════
+  subgraph STATE["📊 CROSS-CUTTING · Workflow State Machine"]
+    direction LR
+    S1["RECEIVED"] --> S2["CLASSIFIED"] --> S3["ROUTED"] --> S4["ENRICHED"] --> S5["DRAFTED"] --> S6["REVIEWED"] --> S7["SENT"]
+  end
+
+  F1_norm -. "→ RECEIVED" .-> S1
+  F2_assemble -. "→ CLASSIFIED" .-> S2
+  F3_prio -. "→ ROUTED" .-> S3
+  F4_merge -. "→ ENRICHED" .-> S4
+  F5_format -. "→ DRAFTED" .-> S5
+  F6_apply -. "→ REVIEWED" .-> S6
+  F7_send -. "→ SENT" .-> S7
+
+  %% ════════════════════════════════════════════
+  %% FEEDBACK LOOPS
+  %% ════════════════════════════════════════════
+
+  %% Rejection → reclassify
+  F6_apply -- "Reject → Reclassify<br/>with reviewer notes" --> F2_redact
+
+  %% Low confidence bypass
+  F3_conf -- "HumanReview<br/>(low confidence)" --> F6_human
+
+  %% Compliance retry loop
+  F5_comply -- "failed ✗ (retry ≤3×)" --> F5_draft
+
+  %% Dead letter
+  DLQ[/"💀 Dead Letter Queue<br/>→ Manual Resolution"/]
+  F4_exec -. "exhaust retries" .-> DLQ
+  F5_comply -. "exhaust compliance retries" .-> DLQ
+  F7_send -. "send failure" .-> DLQ
+
+  %% Archive
+  ARCHIVE[/"🗄️ Archive"/]
+  F6_apply -- "Archive<br/>(rejected)" --> ARCHIVE
+
+  %% Metrics feedback loop
+  F7_metrics -. "accuracy data<br/>tunes thresholds" .-> F3_conf
+
+  %% ════════════════════════════════════════════
+  %% CROSS-CUTTING: OBSERVABILITY
+  %% ════════════════════════════════════════════
+  subgraph OBS["📈 CROSS-CUTTING · Observability"]
+    direction LR
+    OBS_log["logAuditEvent()<br/>every fn emits"]
+    OBS_trace["distributedTrace()<br/>end-to-end"]
+    OBS_alert["alertManager()<br/>thresholds · anomalies"]
+    OBS_log --> OBS_trace --> OBS_alert
+  end
+
+  F7_audit -. "audit events" .-> OBS_log
+  F7_metrics -. "metrics" .-> OBS_trace
+  DLQ -. "dead letter alerts" .-> OBS_alert
+
+  %% ════════════════════════════════════════════
+  %% STYLING
+  %% ════════════════════════════════════════════
+  classDef effectNode fill:#fef3c7,stroke:#f59e0b,color:#92400e,stroke-width:2px
+  classDef pureNode fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f,stroke-width:2px
+  classDef guardNode fill:#fce7f3,stroke:#ec4899,color:#831843,stroke-width:2px
+  classDef transformNode fill:#ede9fe,stroke:#a78bfa,color:#4c1d95,stroke-width:2px
+  classDef humanNode fill:#cffafe,stroke:#06b6d4,color:#164e63,stroke-width:2px
+  classDef externalNode fill:#f1f5f9,stroke:#64748b,color:#334155,stroke-width:1px
+  classDef crossNode fill:#fff1f2,stroke:#f43f5e,color:#9f1239,stroke-width:1px
+  classDef deadNode fill:#fef2f2,stroke:#ef4444,color:#7f1d1d,stroke-width:2px
+  classDef stateNode fill:#f0fdf4,stroke:#22c55e,color:#166534,stroke-width:1px
+
+  class F1_poll,F2_intent,F2_entity,F2_sentiment,F4_exec,F5_draft,F6_queue,F7_send,F7_audit,F7_metrics effectNode
+  class F1_dedup,F2_assemble,F3_conf,F3_rules,F3_prio,F4_plan,F5_template,F5_tone,F6_apply pureNode
+  class F2_redact,F5_comply,F5_rehydrate,GR_pre,GR_post guardNode
+  class F1_norm,F4_merge,F5_format transformNode
+  class F6_human humanNode
+  class EXT_MAIL,EXT_USER,EXT_BANK1,EXT_BANK2,EXT_SMTP externalNode
+  class DLQ,ARCHIVE deadNode
+  class S1,S2,S3,S4,S5,S6,S7 stateNode
+  class OBS_log,OBS_trace,OBS_alert,GR_llm crossNode
+    </pre>
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    </script>
+  </body>
+</html>

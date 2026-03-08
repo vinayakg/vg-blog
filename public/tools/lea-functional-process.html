@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LEA — Functional Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* {
+  box-sizing: border-box;
+}
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --surface-alt: #f3f1ed;
+  --border: #e2ddd5;
+  --border-hi: #c9c2b6;
+  --text: #3d3830;
+  --text-mid: #6b6358;
+  --text-dim: #9a9185;
+  --ink: #1a1714;
+
+  --fn-input: #1b6b4a;
+  --fn-input-bg: #e8f5ee;
+  --fn-pure: #2557a7;
+  --fn-pure-bg: #e8f0fb;
+  --fn-effect: #b44d12;
+  --fn-effect-bg: #fef0e4;
+  --fn-guard: #9e1f63;
+  --fn-guard-bg: #fce8f1;
+  --fn-data: #5c5095;
+  --fn-data-bg: #eeecf7;
+  --fn-human: #0e7490;
+  --fn-human-bg: #e4f6fa;
+
+  --font: 'Instrument Sans', Helvetica, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  padding: 40px;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+/* ── Header ── */
+.page-header {
+  margin-bottom: 44px;
+}
+h1 {
+  font-size: 26px;
+  color: var(--ink);
+  margin: 0 0 6px 0;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+.page-sub {
+  color: var(--text-dim);
+  font-size: 13px;
+  margin: 0 0 20px 0;
+}
+.legend {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-mid);
+}
+.legend-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+/* ── Swim Lanes ── */
+.swim-lane {
+  margin-bottom: 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  animation: laneIn 0.5s ease both;
+}
+.swim-lane:nth-child(2) { animation-delay: 0.05s; }
+.swim-lane:nth-child(3) { animation-delay: 0.10s; }
+.swim-lane:nth-child(4) { animation-delay: 0.15s; }
+.swim-lane:nth-child(5) { animation-delay: 0.20s; }
+.swim-lane:nth-child(6) { animation-delay: 0.25s; }
+.swim-lane:nth-child(7) { animation-delay: 0.30s; }
+
+@keyframes laneIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.lane-header {
+  padding: 14px 20px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface-alt);
+}
+.lane-number {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.lane-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.lane-desc {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-left: auto;
+  font-style: italic;
+}
+.lane-body {
+  padding: 20px;
+}
+
+/* ── Function Blocks ── */
+.fn-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.fn-row:last-child {
+  margin-bottom: 0;
+}
+.fn-block {
+  flex: 1;
+  min-width: 220px;
+  max-width: 340px;
+  border: 1px solid;
+  border-radius: 6px;
+  padding: 14px 16px;
+  position: relative;
+}
+.fn-block.wide {
+  max-width: 520px;
+  flex: 2;
+}
+.fn-block.full {
+  max-width: 100%;
+  flex: 1 1 100%;
+}
+.fn-name {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.fn-badge {
+  font-family: var(--font);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: white;
+}
+.fn-desc {
+  font-size: 12px;
+  color: var(--text-mid);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+.fn-sig {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  margin-top: 8px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* Input functions */
+.fn-input {
+  border-color: #c2ddd0;
+  background: var(--fn-input-bg);
+}
+.fn-input .fn-name { color: var(--fn-input); }
+.fn-input .fn-badge { background: var(--fn-input); }
+.fn-input .fn-sig { background: #d5ebe0; color: #145237; }
+
+/* Pure functions */
+.fn-pure {
+  border-color: #b8cee8;
+  background: var(--fn-pure-bg);
+}
+.fn-pure .fn-name { color: var(--fn-pure); }
+.fn-pure .fn-badge { background: var(--fn-pure); }
+.fn-pure .fn-sig { background: #d4e2f5; color: #1a3d7a; }
+
+/* Effect / Side-effect functions */
+.fn-effect {
+  border-color: #ecc9a3;
+  background: var(--fn-effect-bg);
+}
+.fn-effect .fn-name { color: var(--fn-effect); }
+.fn-effect .fn-badge { background: var(--fn-effect); }
+.fn-effect .fn-sig { background: #fbe0c5; color: #7a3408; }
+
+/* Guard / Validation */
+.fn-guard {
+  border-color: #e4b4ce;
+  background: var(--fn-guard-bg);
+}
+.fn-guard .fn-name { color: var(--fn-guard); }
+.fn-guard .fn-badge { background: var(--fn-guard); }
+.fn-guard .fn-sig { background: #f5d0e2; color: #6e1245; }
+
+/* Data transformation */
+.fn-data {
+  border-color: #c5bfdb;
+  background: var(--fn-data-bg);
+}
+.fn-data .fn-name { color: var(--fn-data); }
+.fn-data .fn-badge { background: var(--fn-data); }
+.fn-data .fn-sig { background: #ddd9ec; color: #3a3270; }
+
+/* Human decision */
+.fn-human {
+  border-color: #a3d5e0;
+  background: var(--fn-human-bg);
+}
+.fn-human .fn-name { color: var(--fn-human); }
+.fn-human .fn-badge { background: var(--fn-human); }
+.fn-human .fn-sig { background: #c9e8f0; color: #065061; }
+
+/* ── Flow Connectors ── */
+.flow-pipe {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 10px 0;
+  flex-wrap: wrap;
+}
+.pipe-node {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 5px 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  font-weight: 500;
+}
+.pipe-arrow {
+  font-size: 16px;
+  color: var(--border-hi);
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+.pipe-label {
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-left: 12px;
+  font-style: italic;
+}
+.pipe-input { background: var(--fn-input-bg); color: var(--fn-input); border: 1px solid #c2ddd0; }
+.pipe-pure { background: var(--fn-pure-bg); color: var(--fn-pure); border: 1px solid #b8cee8; }
+.pipe-effect { background: var(--fn-effect-bg); color: var(--fn-effect); border: 1px solid #ecc9a3; }
+.pipe-guard { background: var(--fn-guard-bg); color: var(--fn-guard); border: 1px solid #e4b4ce; }
+.pipe-data { background: var(--fn-data-bg); color: var(--fn-data); border: 1px solid #c5bfdb; }
+.pipe-human { background: var(--fn-human-bg); color: var(--fn-human); border: 1px solid #a3d5e0; }
+
+/* ── Separator ── */
+.section-sep {
+  text-align: center;
+  padding: 16px 0;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  position: relative;
+}
+.section-sep::before,
+.section-sep::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: calc(50% - 100px);
+  height: 1px;
+  background: var(--border);
+}
+.section-sep::before { left: 0; }
+.section-sep::after { right: 0; }
+
+/* ── Notes ── */
+.arch-note {
+  margin-top: 28px;
+  padding: 20px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.arch-note h3 {
+  font-size: 14px;
+  color: var(--ink);
+  margin: 0 0 12px 0;
+}
+.arch-note p {
+  font-size: 13px;
+  color: var(--text-mid);
+  margin: 0 0 10px 0;
+  line-height: 1.65;
+}
+.arch-note p:last-child { margin-bottom: 0; }
+.tag-inf {
+  font-family: var(--mono);
+  font-size: 10px;
+  background: #fef0e4;
+  color: var(--fn-effect);
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>LEA — Functional Architecture</h1>
+  <p class="page-sub">Organized by business functions &amp; data transformations · "What does the system do?" not "What is it made of?"</p>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--fn-input-bg); border-color:#c2ddd0;"></div> Input / Ingestion</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--fn-pure-bg); border-color:#b8cee8;"></div> Pure Logic (no side effects)</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--fn-data-bg); border-color:#c5bfdb;"></div> Data Transformation</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--fn-guard-bg); border-color:#e4b4ce;"></div> Validation &amp; Guardrails</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--fn-human-bg); border-color:#a3d5e0;"></div> Human Decision</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--fn-effect-bg); border-color:#ecc9a3;"></div> Side Effect (I/O, external call)</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- F1: EMAIL ACQUISITION -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="swim-lane">
+  <div class="lane-header">
+    <div class="lane-number" style="background:var(--fn-input-bg); color:var(--fn-input);">F1</div>
+    <span class="lane-title">Email Acquisition</span>
+    <span class="lane-desc">Capture inbound emails and normalize into a standard internal format</span>
+  </div>
+  <div class="lane-body">
+    <div class="fn-row">
+
+      <div class="fn-block fn-effect">
+        <div class="fn-name"><span class="fn-badge">EFFECT</span> pollMailbox()</div>
+        <div class="fn-desc">Connects to external email service on a scheduled interval. Fetches new messages since last checkpoint.</div>
+        <div class="fn-sig">MailboxConfig → IO&lt;RawEmail[]&gt;
+Side effects: network I/O, reads external state</div>
+      </div>
+
+      <div class="fn-block fn-pure">
+        <div class="fn-name"><span class="fn-badge">PURE</span> deduplicateEmails()</div>
+        <div class="fn-desc">Filters out already-processed messages by comparing message-IDs against the seen set. No external calls.</div>
+        <div class="fn-sig">(RawEmail[], SeenSet) → RawEmail[]
+Pure: same input always → same output</div>
+      </div>
+
+      <div class="fn-block fn-data">
+        <div class="fn-name"><span class="fn-badge">TRANSFORM</span> normalizeEmail()</div>
+        <div class="fn-desc">Parses raw email into a structured canonical form: headers, body (plain + HTML), attachments as references, thread ID.</div>
+        <div class="fn-sig">RawEmail → NormalizedEmail {
+  id, threadId, from, to, cc,
+  subject, bodyPlain, bodyHtml,
+  attachmentRefs[], receivedAt, headers
+}</div>
+      </div>
+
+    </div>
+
+    <div class="flow-pipe">
+      <span class="pipe-node pipe-effect">Mailbox (IMAP/Graph)</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-effect">pollMailbox()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-pure">deduplicateEmails()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-data">normalizeEmail()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-pure" style="font-weight:700;">NormalizedEmail</span>
+      <span class="pipe-label">impure shell → pure core</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- F2: EMAIL UNDERSTANDING -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="swim-lane">
+  <div class="lane-header">
+    <div class="lane-number" style="background:var(--fn-pure-bg); color:var(--fn-pure);">F2</div>
+    <span class="lane-title">Email Understanding</span>
+    <span class="lane-desc">Classify intent, extract entities, and assess sentiment — the "thinking" layer</span>
+  </div>
+  <div class="lane-body">
+    <div class="fn-row">
+
+      <div class="fn-block fn-guard">
+        <div class="fn-name"><span class="fn-badge">GUARD</span> redactPII()</div>
+        <div class="fn-desc">Scans email content for PII (SSNs, account numbers, names). Replaces with tokens before LLM processing. Maintains a redaction map for later re-insertion.</div>
+        <div class="fn-sig">NormalizedEmail → (RedactedEmail, RedactionMap)
+Pure: deterministic regex + NER rules</div>
+      </div>
+
+      <div class="fn-block fn-effect">
+        <div class="fn-name"><span class="fn-badge">EFFECT</span> inferIntent()</div>
+        <div class="fn-desc">Sends redacted content to LLM for intent classification. Returns structured classification with confidence scores.</div>
+        <div class="fn-sig">RedactedEmail → IO&lt;Classification&gt; {
+  intent: Inquiry | Complaint | Request |
+          Escalation | Informational,
+  confidence: 0.0–1.0,
+  reasoning: string
+}</div>
+      </div>
+
+      <div class="fn-block fn-effect">
+        <div class="fn-name"><span class="fn-badge">EFFECT</span> extractEntities()</div>
+        <div class="fn-desc">LLM-powered extraction of domain entities: customer IDs, account numbers, product names, dates, monetary amounts.</div>
+        <div class="fn-sig">RedactedEmail → IO&lt;EntitySet&gt; {
+  customerId?, accountNumber?,
+  products[], amounts[], dates[],
+  references[]
+}</div>
+      </div>
+
+    </div>
+
+    <div class="fn-row">
+
+      <div class="fn-block fn-effect">
+        <div class="fn-name"><span class="fn-badge">EFFECT</span> assessSentiment()</div>
+        <div class="fn-desc">Evaluates emotional tone and urgency. Outputs a sentiment score and urgency flag to guide downstream tone calibration.</div>
+        <div class="fn-sig">RedactedEmail → IO&lt;SentimentResult&gt; {
+  tone: Positive | Neutral | Negative | Angry,
+  urgency: Low | Medium | High | Critical,
+  emotionalMarkers: string[]
+}</div>
+      </div>
+
+      <div class="fn-block fn-pure wide">
+        <div class="fn-name"><span class="fn-badge">PURE</span> assembleUnderstanding()</div>
+        <div class="fn-desc">Merges classification, entities, and sentiment into a single EmailUnderstanding record. No I/O — just combining the outputs from the three analysis functions into one structure.</div>
+        <div class="fn-sig">(Classification, EntitySet, SentimentResult, NormalizedEmail) → EmailUnderstanding {
+  email, intent, confidence, entities, sentiment, urgency
+}
+Pure: deterministic merge, no external calls</div>
+      </div>
+
+    </div>
+
+    <div class="flow-pipe">
+      <span class="pipe-node pipe-pure">NormalizedEmail</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-guard">redactPII()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-effect">inferIntent()</span>
+      <span class="pipe-arrow">+</span>
+      <span class="pipe-node pipe-effect">extractEntities()</span>
+      <span class="pipe-arrow">+</span>
+      <span class="pipe-node pipe-effect">assessSentiment()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-pure">assembleUnderstanding()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-pure" style="font-weight:700;">EmailUnderstanding</span>
+      <span class="pipe-label">parallel LLM calls, then pure merge</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- F3: BUSINESS ROUTING -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="swim-lane">
+  <div class="lane-header">
+    <div class="lane-number" style="background:var(--fn-pure-bg); color:var(--fn-pure);">F3</div>
+    <span class="lane-title">Business Routing &amp; Decision</span>
+    <span class="lane-desc">Apply business rules to decide what happens next — pure decision logic, no side effects</span>
+  </div>
+  <div class="lane-body">
+    <div class="fn-row">
+
+      <div class="fn-block fn-pure">
+        <div class="fn-name"><span class="fn-badge">PURE</span> evaluateRules()</div>
+        <div class="fn-desc">Runs the email understanding against a rule table. Each rule maps (intent + entity patterns + sentiment) to a routing decision. Entirely deterministic — given the same rules and understanding, always returns the same route.</div>
+        <div class="fn-sig">(EmailUnderstanding, RuleSet) → RoutingDecision {
+  action: AutoReply | LookupAndReply |
+          Escalate | Forward | Archive,
+  templateId?, escalationTarget?,
+  requiresDataLookup: boolean,
+  priority: 1–5
+}</div>
+      </div>
+
+      <div class="fn-block fn-pure">
+        <div class="fn-name"><span class="fn-badge">PURE</span> checkConfidence()</div>
+        <div class="fn-desc">Evaluates whether classification confidence exceeds the threshold for automated processing. Low confidence routes to human review instead of agent pipeline.</div>
+        <div class="fn-sig">(EmailUnderstanding, ConfidenceThreshold)
+  → AutoProcess | HumanReview
+Pure: simple threshold comparison</div>
+      </div>
+
+      <div class="fn-block fn-pure">
+        <div class="fn-name"><span class="fn-badge">PURE</span> computePriority()</div>
+        <div class="fn-desc">Calculates final processing priority from urgency, customer tier, SLA constraints, and email age. Used to order the processing queue.</div>
+        <div class="fn-sig">(EmailUnderstanding, SLAConfig)
+  → PriorityScore (1–100)
+Pure: deterministic scoring function</div>
+      </div>
+
+    </div>
+
+    <div class="flow-pipe">
+      <span class="pipe-node pipe-pure">EmailUnderstanding</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-pure">checkConfidence()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-pure">evaluateRules()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-pure">computePriority()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-pure" style="font-weight:700;">RoutingDecision</span>
+      <span class="pipe-label">entirely pure — no I/O, fully testable with unit tests</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- F4: DATA ENRICHMENT -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="swim-lane">
+  <div class="lane-header">
+    <div class="lane-number" style="background:var(--fn-effect-bg); color:var(--fn-effect);">F4</div>
+    <span class="lane-title">Data Enrichment</span>
+    <span class="lane-desc">Fetch external data from core banking to build reply context — the impure shell</span>
+  </div>
+  <div class="lane-body">
+    <div class="fn-row">
+
+      <div class="fn-block fn-pure">
+        <div class="fn-name"><span class="fn-badge">PURE</span> buildLookupPlan()</div>
+        <div class="fn-desc">Determines which external data is needed based on the routing decision and extracted entities. Produces a lookup plan — a list of queries to execute — without executing them.</div>
+        <div class="fn-sig">(RoutingDecision, EntitySet) → LookupPlan [
+  { system: "CBS1", query: "getAccount", params },
+  { system: "CBS2", query: "getLoanStatus", params }
+]
+Pure: plans the work, doesn't do it</div>
+      </div>
+
+      <div class="fn-block fn-effect">
+        <div class="fn-name"><span class="fn-badge">EFFECT</span> executeLookups()</div>
+        <div class="fn-desc">Executes the lookup plan via MCP / Function Calling against core banking systems. Handles timeouts, retries, and partial failures. This is where side effects happen.</div>
+        <div class="fn-sig">LookupPlan → IO&lt;EnrichmentData&gt; {
+  accountDetails?, transactionHistory?,
+  loanStatus?, productInfo?,
+  lookupErrors[]
+}
+Side effects: network I/O to banking systems</div>
+      </div>
+
+      <div class="fn-block fn-data">
+        <div class="fn-name"><span class="fn-badge">TRANSFORM</span> mergeContext()</div>
+        <div class="fn-desc">Combines the email understanding with enrichment data into a complete ReplyContext. This is the full picture the drafting function needs.</div>
+        <div class="fn-sig">(EmailUnderstanding, EnrichmentData,
+ RoutingDecision) → ReplyContext {
+  originalEmail, intent, entities,
+  sentiment, customerData,
+  routingAction, templateId, priority
+}
+Pure: structural merge only</div>
+      </div>
+
+    </div>
+
+    <div class="flow-pipe">
+      <span class="pipe-node pipe-pure">RoutingDecision</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-pure">buildLookupPlan()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-effect">executeLookups()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-data">mergeContext()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-pure" style="font-weight:700;">ReplyContext</span>
+      <span class="pipe-label">pure plan → impure execute → pure merge</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- F5: RESPONSE GENERATION -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="swim-lane">
+  <div class="lane-header">
+    <div class="lane-number" style="background:var(--fn-pure-bg); color:var(--fn-pure);">F5</div>
+    <span class="lane-title">Response Generation</span>
+    <span class="lane-desc">Draft, validate, and refine the reply email</span>
+  </div>
+  <div class="lane-body">
+    <div class="fn-row">
+
+      <div class="fn-block fn-pure">
+        <div class="fn-name"><span class="fn-badge">PURE</span> selectTemplate()</div>
+        <div class="fn-desc">Chooses the appropriate response template based on intent classification and routing action. Returns template structure and tone guidelines.</div>
+        <div class="fn-sig">(RoutingDecision, TemplateRegistry)
+  → Template { structure, toneGuide,
+    requiredSections, disclaimers }
+Pure: lookup from registry</div>
+      </div>
+
+      <div class="fn-block fn-effect">
+        <div class="fn-name"><span class="fn-badge">EFFECT</span> generateDraft()</div>
+        <div class="fn-desc">Sends the full reply context and template to the LLM. Produces a structured draft email with greeting, body paragraphs, and closing.</div>
+        <div class="fn-sig">(ReplyContext, Template) → IO&lt;DraftEmail&gt; {
+  subject, greeting, bodyParagraphs[],
+  closing, signature, disclaimers[]
+}
+Side effects: LLM inference call</div>
+      </div>
+
+      <div class="fn-block fn-pure">
+        <div class="fn-name"><span class="fn-badge">PURE</span> calibrateTone()</div>
+        <div class="fn-desc">Adjusts the draft's language based on sentiment analysis. Angry customer → more empathetic phrasing. Routine inquiry → professional and concise. Applies deterministic rewrite rules.</div>
+        <div class="fn-sig">(DraftEmail, SentimentResult) → DraftEmail
+Pure: rule-based tone adjustments</div>
+      </div>
+
+    </div>
+
+    <div class="fn-row">
+
+      <div class="fn-block fn-guard">
+        <div class="fn-name"><span class="fn-badge">GUARD</span> validateCompliance()</div>
+        <div class="fn-desc">Checks draft against regulatory rules: required disclaimers present, no unauthorized promises, no disclosure of internal data, brand voice consistency.</div>
+        <div class="fn-sig">DraftEmail → ValidationResult {
+  passed: boolean,
+  violations: ComplianceViolation[],
+  suggestions: string[]
+}
+Pure: rule evaluation against draft</div>
+      </div>
+
+      <div class="fn-block fn-guard">
+        <div class="fn-name"><span class="fn-badge">GUARD</span> rehydratePII()</div>
+        <div class="fn-desc">Re-inserts redacted PII back into the draft using the redaction map from F2. Customer names, account references are restored for the final email.</div>
+        <div class="fn-sig">(DraftEmail, RedactionMap) → DraftEmail
+Pure: token replacement using map</div>
+      </div>
+
+      <div class="fn-block fn-data">
+        <div class="fn-name"><span class="fn-badge">TRANSFORM</span> formatFinalEmail()</div>
+        <div class="fn-desc">Assembles the complete email: applies HTML formatting, inserts signature block, attaches disclaimers, sets reply headers for proper threading.</div>
+        <div class="fn-sig">DraftEmail → FinalEmail {
+  to, cc, subject, htmlBody,
+  plainBody, inReplyTo, references[],
+  attachments[]
+}</div>
+      </div>
+
+    </div>
+
+    <div class="flow-pipe">
+      <span class="pipe-node pipe-pure">ReplyContext</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-pure">selectTemplate()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-effect">generateDraft()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-pure">calibrateTone()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-guard">validateCompliance()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-guard">rehydratePII()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-data">formatFinalEmail()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-pure" style="font-weight:700;">FinalEmail</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- F6: HUMAN REVIEW -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="swim-lane">
+  <div class="lane-header">
+    <div class="lane-number" style="background:var(--fn-human-bg); color:var(--fn-human);">F6</div>
+    <span class="lane-title">Human Review &amp; Approval</span>
+    <span class="lane-desc">Pause the pipeline for human judgment — the deliberate break in automation</span>
+  </div>
+  <div class="lane-body">
+    <div class="fn-row">
+
+      <div class="fn-block fn-effect">
+        <div class="fn-name"><span class="fn-badge">EFFECT</span> queueForReview()</div>
+        <div class="fn-desc">Persists the final email and full context to a review queue. Notifies the assigned reviewer. Pipeline pauses here.</div>
+        <div class="fn-sig">FinalEmail → IO&lt;ReviewTicket&gt; {
+  ticketId, assignee, queuedAt,
+  originalEmail, draftEmail, context
+}
+Side effects: write to queue, send notification</div>
+      </div>
+
+      <div class="fn-block fn-human wide">
+        <div class="fn-name"><span class="fn-badge">HUMAN</span> reviewDecision()</div>
+        <div class="fn-desc">Human reviewer examines the draft alongside the original email, classification reasoning, and enrichment data. Three possible outcomes: approve as-is, edit and approve, or reject with reason. This is not a function the system calls — it's a decision point where automation yields to human judgment.</div>
+        <div class="fn-sig">ReviewTicket → HumanDecision {
+  action: Approve | Edit | Reject,
+  editedEmail?: FinalEmail,
+  rejectionReason?: string,
+  reviewerNotes?: string,
+  reviewedAt: timestamp
+}
+Not a function — a human decision boundary</div>
+      </div>
+
+    </div>
+
+    <div class="fn-row">
+
+      <div class="fn-block fn-pure">
+        <div class="fn-name"><span class="fn-badge">PURE</span> applyReviewOutcome()</div>
+        <div class="fn-desc">Routes the workflow based on human decision. Approve → proceed to dispatch. Edit → use edited version. Reject → return to classification or archive with reason.</div>
+        <div class="fn-sig">HumanDecision → WorkflowNext {
+  Approve → dispatch(finalEmail)
+  Edit    → dispatch(editedEmail)
+  Reject  → archive(reason) | reclassify()
+}
+Pure: pattern match on decision</div>
+      </div>
+
+    </div>
+
+    <div class="flow-pipe">
+      <span class="pipe-node pipe-pure">FinalEmail</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-effect">queueForReview()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-human">reviewDecision()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-pure">applyReviewOutcome()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-effect" style="font-weight:700;">Dispatch | Archive | Loop</span>
+      <span class="pipe-label">automation pauses → human decides → automation resumes</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- F7: DISPATCH & RECORD -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="swim-lane">
+  <div class="lane-header">
+    <div class="lane-number" style="background:var(--fn-effect-bg); color:var(--fn-effect);">F7</div>
+    <span class="lane-title">Dispatch &amp; Record</span>
+    <span class="lane-desc">Send the approved email and record everything for compliance and learning</span>
+  </div>
+  <div class="lane-body">
+    <div class="fn-row">
+
+      <div class="fn-block fn-effect">
+        <div class="fn-name"><span class="fn-badge">EFFECT</span> sendEmail()</div>
+        <div class="fn-desc">Delivers the approved email via SMTP / Graph API. Handles send failures, retries, and bounce detection.</div>
+        <div class="fn-sig">FinalEmail → IO&lt;SendResult&gt; {
+  messageId, sentAt,
+  deliveryStatus: Sent | Bounced | Failed
+}
+Side effects: network I/O, sends email</div>
+      </div>
+
+      <div class="fn-block fn-effect">
+        <div class="fn-name"><span class="fn-badge">EFFECT</span> writeAuditRecord()</div>
+        <div class="fn-desc">Persists the complete decision trail: original email, classification, enrichment data, draft, review decision, and send result. Immutable append-only log for compliance.</div>
+        <div class="fn-sig">(NormalizedEmail, EmailUnderstanding,
+ ReplyContext, FinalEmail, HumanDecision,
+ SendResult) → IO&lt;AuditRecord&gt;
+Side effects: write to audit store</div>
+      </div>
+
+      <div class="fn-block fn-effect">
+        <div class="fn-name"><span class="fn-badge">EFFECT</span> emitMetrics()</div>
+        <div class="fn-desc">Publishes processing metrics: end-to-end latency, per-function timing, classification accuracy (when feedback is available), and throughput counters.</div>
+        <div class="fn-sig">(AuditRecord, Timestamps) → IO&lt;void&gt;
+Side effects: write to monitoring</div>
+      </div>
+
+    </div>
+
+    <div class="flow-pipe">
+      <span class="pipe-node pipe-pure">Approved Email</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-effect">sendEmail()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-effect">writeAuditRecord()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-effect">emitMetrics()</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node pipe-effect" style="font-weight:700;">Done</span>
+      <span class="pipe-label">all side effects — the impure edge of the system</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- NOTES -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="arch-note">
+  <h3>How This Differs from the Component Architecture</h3>
+  <p><strong>Component architecture</strong> answered: "What are the parts, where do they live, and how do they connect?" — it showed Docker containers, subnets, Kubernetes, and Azure services.</p>
+  <p><strong>Functional architecture</strong> answers: "What does the system <em>do</em>, and how does data transform as it flows through?" — it shows functions, their inputs/outputs, their purity, and the pipeline of transformations from raw email to sent reply.</p>
+  <p><strong>The key structural idea:</strong> Each function is explicitly tagged as <em>pure</em> (deterministic, testable with unit tests, no I/O) or <em>effect</em> (reaches outside the system boundary — LLM calls, database writes, network I/O). The architecture deliberately pushes decisions into pure functions (F3 is entirely pure) and isolates side effects at the boundaries (F1 ingestion, F4 banking lookups, F7 dispatch). This is the "functional core, imperative shell" pattern.</p>
+  <p><strong>Why this matters:</strong> Every blue (pure) function can be tested with just inputs and expected outputs — no mocks, no test databases, no network stubs. The orange (effect) functions are where integration testing focuses. The pink (guard) functions are your compliance safety net. This separation makes the system dramatically easier to reason about, test, and audit.</p>
+  <p><span class="tag-inf">Inference</span> The function signatures, data types, and internal decomposition shown here are inferred from the original infrastructure diagram. The actual system's internal function boundaries, naming, and data shapes may differ. What is confirmed from the diagram: the agent pipeline order, the presence of guardrails, HITL review, MCP/function calling to banking, and the polling-based email ingestion.</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Software Architecture Types — Comparison</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: 'DM Sans', Helvetica, sans-serif;
+  margin: 0;
+  padding: 24px;
+  background: #0e1117;
+  color: #c9d1d9;
+  font-size: 15px;
+  line-height: 1.55;
+}
+h1 {
+  font-size: 28px;
+  color: #e6edf3;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.5px;
+}
+.subtitle {
+  color: #7d8590;
+  margin: 0 0 32px 0;
+  font-size: 14px;
+}
+.legend {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #7d8590;
+}
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.cat-app { background: #58a6ff; }
+.cat-sys { background: #f78166; }
+.cat-org { background: #a5d6ff; }
+.cat-data { background: #7ee787; }
+.cat-behav { background: #d2a8ff; }
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid #21262d;
+  border-radius: 8px;
+  background: #161b22;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1100px;
+}
+thead th {
+  background: #1c2128;
+  color: #e6edf3;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 2px solid #30363d;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+thead th:first-child {
+  min-width: 170px;
+}
+tbody tr {
+  border-bottom: 1px solid #21262d;
+  transition: background 0.15s;
+}
+tbody tr:hover {
+  background: #1c2128;
+}
+tbody tr:last-child {
+  border-bottom: none;
+}
+td {
+  padding: 14px 16px;
+  vertical-align: top;
+  font-size: 14px;
+  line-height: 1.5;
+}
+td:first-child {
+  font-weight: 700;
+  color: #e6edf3;
+  white-space: nowrap;
+}
+.cat-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 10px;
+  margin-left: 6px;
+  vertical-align: middle;
+  color: #0e1117;
+}
+.focus-col {
+  color: #58a6ff;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+}
+.example-col {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: #7d8590;
+}
+.book-col {
+  font-size: 13px;
+  color: #a5d6ff;
+  font-style: italic;
+}
+
+.section-row td {
+  background: #1c2128;
+  padding: 10px 16px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #7d8590;
+  font-weight: 700;
+  border-bottom: 1px solid #30363d;
+}
+
+.notes {
+  margin-top: 32px;
+  padding: 20px;
+  border: 1px solid #21262d;
+  border-radius: 8px;
+  background: #161b22;
+  font-size: 13px;
+  color: #7d8590;
+  line-height: 1.7;
+}
+.notes strong {
+  color: #c9d1d9;
+}
+</style>
+</head>
+<body>
+
+<h1>Software Architecture Types</h1>
+<p class="subtitle">A comparison across 14 architecture types — what they solve, how they differ, and where to learn more.</p>
+
+<div class="legend">
+  <div class="legend-item"><span class="legend-dot cat-app"></span> Application-level</div>
+  <div class="legend-item"><span class="legend-dot cat-sys"></span> System / Infrastructure</div>
+  <div class="legend-item"><span class="legend-dot cat-org"></span> Organizational</div>
+  <div class="legend-item"><span class="legend-dot cat-data"></span> Data-centric</div>
+  <div class="legend-item"><span class="legend-dot cat-behav"></span> Behavioral</div>
+</div>
+
+<div class="table-wrap">
+<table>
+<thead>
+  <tr>
+    <th>Architecture Type</th>
+    <th>Primary Focus</th>
+    <th>Unit of Structure</th>
+    <th>State Handling</th>
+    <th>Best For</th>
+    <th>Real-World Examples</th>
+    <th>Recommended Book</th>
+  </tr>
+</thead>
+<tbody>
+
+<tr class="section-row"><td colspan="7">Application-Level Architectures</td></tr>
+
+<tr>
+  <td>Functional<span class="cat-tag cat-app">APP</span></td>
+  <td class="focus-col">Data transformation &amp; purity</td>
+  <td>Pure functions + data pipelines</td>
+  <td>Centralized or threaded; immutable preferred</td>
+  <td>Predictable logic, testability, data pipelines</td>
+  <td class="example-col">Elm, Clojure apps, Unix pipes, Redux reducers</td>
+  <td class="book-col">Grokking Simplicity (Normand)</td>
+</tr>
+
+<tr>
+  <td>Component<span class="cat-tag cat-app">APP</span></td>
+  <td class="focus-col">Encapsulation &amp; composability</td>
+  <td>Self-contained components with interfaces</td>
+  <td>Local to each component</td>
+  <td>UI systems, modular apps, plugin ecosystems</td>
+  <td class="example-col">React, Angular, COM, OSGi bundles</td>
+  <td class="book-col">Clean Architecture (Martin)</td>
+</tr>
+
+<tr>
+  <td>Layered / N-Tier<span class="cat-tag cat-app">APP</span></td>
+  <td class="focus-col">Separation of concerns by layer</td>
+  <td>Horizontal layers (UI → Logic → Data)</td>
+  <td>Passed between layers, stored at data layer</td>
+  <td>Enterprise CRUD apps, traditional web apps</td>
+  <td class="example-col">MVC, Spring Boot, Django, .NET MVC</td>
+  <td class="book-col">Patterns of Enterprise Application Architecture (Fowler)</td>
+</tr>
+
+<tr>
+  <td>Hexagonal (Ports &amp; Adapters)<span class="cat-tag cat-app">APP</span></td>
+  <td class="focus-col">Isolating domain from I/O</td>
+  <td>Core domain + ports (interfaces) + adapters</td>
+  <td>Inside the domain core</td>
+  <td>Testable business logic, swappable infrastructure</td>
+  <td class="example-col">DDD services, Clean Architecture implementations</td>
+  <td class="book-col">Architecture Patterns with Python (Percival &amp; Gregory)</td>
+</tr>
+
+<tr>
+  <td>Event-Driven<span class="cat-tag cat-app">APP</span></td>
+  <td class="focus-col">Loose coupling via async events</td>
+  <td>Producers, consumers, event channels</td>
+  <td>Event log / event store; state derived from events</td>
+  <td>Reactive systems, real-time processing</td>
+  <td class="example-col">Kafka pipelines, Node.js EventEmitter, CQRS/ES</td>
+  <td class="book-col">Designing Event-Driven Systems (Stopford)</td>
+</tr>
+
+<tr>
+  <td>Pipeline / Pipes &amp; Filters<span class="cat-tag cat-app">APP</span></td>
+  <td class="focus-col">Sequential data processing</td>
+  <td>Filters connected by pipes</td>
+  <td>Stateless filters; data flows through</td>
+  <td>ETL, compilers, stream processing</td>
+  <td class="example-col">Unix shell pipelines, Apache Beam, compiler passes</td>
+  <td class="book-col">Fundamentals of Software Architecture (Richards &amp; Ford)</td>
+</tr>
+
+<tr class="section-row"><td colspan="7">System / Infrastructure Architectures</td></tr>
+
+<tr>
+  <td>Infrastructure<span class="cat-tag cat-sys">SYS</span></td>
+  <td class="focus-col">Hardware, networking, deployment</td>
+  <td>Servers, networks, load balancers, cloud regions</td>
+  <td>Distributed across nodes; managed by orchestrators</td>
+  <td>Scalability, reliability, deployment topology</td>
+  <td class="example-col">AWS VPC diagrams, Kubernetes clusters, Terraform configs</td>
+  <td class="book-col">Designing Data-Intensive Applications (Kleppmann)</td>
+</tr>
+
+<tr>
+  <td>Microservices<span class="cat-tag cat-sys">SYS</span></td>
+  <td class="focus-col">Independent deployability</td>
+  <td>Small, autonomous services</td>
+  <td>Each service owns its database</td>
+  <td>Large teams, independent scaling, polyglot stacks</td>
+  <td class="example-col">Netflix, Spotify squads, Amazon service teams</td>
+  <td class="book-col">Building Microservices (Newman)</td>
+</tr>
+
+<tr>
+  <td>Service-Oriented (SOA)<span class="cat-tag cat-sys">SYS</span></td>
+  <td class="focus-col">Reusable enterprise services</td>
+  <td>Coarse-grained services + ESB</td>
+  <td>Shared databases common; distributed transactions</td>
+  <td>Enterprise integration, legacy modernization</td>
+  <td class="example-col">SOAP services, ESB middleware, WS-* standards</td>
+  <td class="book-col">Enterprise Integration Patterns (Hohpe &amp; Woolf)</td>
+</tr>
+
+<tr class="section-row"><td colspan="7">Behavioral Architecture</td></tr>
+
+<tr>
+  <td>State Machine / Statechart<span class="cat-tag cat-behav">BEH</span></td>
+  <td class="focus-col">Explicit states &amp; transitions</td>
+  <td>States, events, transitions, guards</td>
+  <td>Current state is the primary concern; transitions are explicit</td>
+  <td>Workflows, UI flows, protocols, embedded systems</td>
+  <td class="example-col">XState, UML statecharts, TCP protocol, traffic lights</td>
+  <td class="book-col">Constructing the User Interface with Statecharts (Horrocks)</td>
+</tr>
+
+<tr class="section-row"><td colspan="7">Data-Centric Architectures</td></tr>
+
+<tr>
+  <td>Data Architecture<span class="cat-tag cat-data">DATA</span></td>
+  <td class="focus-col">Data models, flow, storage, governance</td>
+  <td>Schemas, lakes, warehouses, pipelines</td>
+  <td>Central concern — data at rest and in motion</td>
+  <td>Analytics, compliance, data-heavy orgs</td>
+  <td class="example-col">Star schemas, data lakes, dbt models, data mesh</td>
+  <td class="book-col">Designing Data-Intensive Applications (Kleppmann)</td>
+</tr>
+
+<tr class="section-row"><td colspan="7">Organizational / Strategic Architectures</td></tr>
+
+<tr>
+  <td>Enterprise Architecture<span class="cat-tag cat-org">ORG</span></td>
+  <td class="focus-col">Aligning IT with business strategy</td>
+  <td>Business capabilities, application portfolio</td>
+  <td>Not a primary concern — focuses on governance</td>
+  <td>Large organizations, IT strategy, roadmaps</td>
+  <td class="example-col">TOGAF, Zachman Framework, ArchiMate models</td>
+  <td class="book-col">Enterprise Architecture as Strategy (Ross, Weill, Robertson)</td>
+</tr>
+
+<tr>
+  <td>Technical Architecture<span class="cat-tag cat-org">ORG</span></td>
+  <td class="focus-col">Technology choices &amp; standards</td>
+  <td>Tech stack, protocols, frameworks, patterns</td>
+  <td>Defines how state is managed across the stack</td>
+  <td>Platform decisions, tech standardization</td>
+  <td class="example-col">ADRs, tech radar, reference architectures</td>
+  <td class="book-col">Technology Strategy Patterns (Hewitt)</td>
+</tr>
+
+<tr>
+  <td>Security Architecture<span class="cat-tag cat-org">ORG</span></td>
+  <td class="focus-col">Threat modeling &amp; access control</td>
+  <td>Trust boundaries, auth flows, encryption zones</td>
+  <td>Session state, token lifecycle, audit logs</td>
+  <td>Compliance, secure systems, zero-trust design</td>
+  <td class="example-col">OAuth2 flows, RBAC models, STRIDE threat models</td>
+  <td class="book-col">Designing Secure Software (Deogun et al.)</td>
+</tr>
+
+</tbody>
+</table>
+</div>
+
+<div class="notes">
+  <strong>Key insight:</strong> These are not mutually exclusive choices. A real system typically combines several — for instance, a <strong>microservices</strong> system (system-level) where each service uses <strong>hexagonal architecture</strong> (application-level), state machines for workflow logic (behavioral), all deployed on a well-defined <strong>infrastructure architecture</strong>, governed by an <strong>enterprise architecture</strong> framework.<br><br>
+  <strong>If you only read two books:</strong> <em>Fundamentals of Software Architecture</em> (Richards &amp; Ford) for the broadest survey of application and system styles, and <em>Designing Data-Intensive Applications</em> (Kleppmann) for infrastructure, data, and distributed systems.
+</div>
+
+</body>
+</html>

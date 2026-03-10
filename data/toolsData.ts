@@ -54,6 +54,12 @@ const toolsData: Tool[] = [
     imgSrc: '/static/images/reduce-decimal-places-svgrepo-com.svg',
     href: '/tools/floating-point-visualiser.html',
   },  
+  {
+    title: 'Software Architecture Types — Comparison',
+    description: `Software Architecture Types — Comparison`,
+    imgSrc: '/static/images/reduce-decimal-places-svgrepo-com.svg',
+    href: '/tools/software-architectural-types-comparison.html',
+  },  
 ]
 
 export default toolsData

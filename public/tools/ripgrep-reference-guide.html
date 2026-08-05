@@ -252,215 +252,497 @@
 
     <div class="categories">
       <button class="category-btn active" data-category="all">All Commands</button>
-      <button class="category-btn" data-category="basic">Basic Search</button>
-      <button class="category-btn" data-category="files">File Operations</button>
-      <button class="category-btn" data-category="patterns">Pattern Matching</button>
-      <button class="category-btn" data-category="output">Output Control</button>
-      <button class="category-btn" data-category="advanced">Advanced</button>
+      <button class="category-btn" data-category="everyday">Everyday Search</button>
+      <button class="category-btn" data-category="scoping">Scoping Files</button>
+      <button class="category-btn" data-category="regex">Regex &amp; Patterns</button>
+      <button class="category-btn" data-category="output">Reading Output</button>
+      <button class="category-btn" data-category="extract">Extract &amp; Count</button>
+      <button class="category-btn" data-category="pipelines">Pipelines &amp; Refactor</button>
+      <button class="category-btn" data-category="logs">Logs &amp; Big Files</button>
+      <button class="category-btn" data-category="fixing">Fixing &amp; Config</button>
     </div>
 
     <div class="content">
-      <div class="section" data-category="basic">
-        <h2>Basic Search</h2>
+      <div class="section" data-category="everyday">
+        <h2>Everyday Search</h2>
         <div class="command-grid">
           <div class="command-card">
             <div class="command">rg "pattern"</div>
-            <div class="description">Search for exact text pattern in current directory</div>
-            <div class="example">Example: rg "TODO" - finds all TODO comments</div>
+            <div class="description">Recursive search from the current directory. Skips .gitignore'd files, hidden files and binaries — which is why it sometimes "misses" things.</div>
+            <div class="example">Example: rg "TODO" - quote the pattern whenever it contains spaces or shell characters</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -S "pattern"</div>
+            <div class="description">Smart case: insensitive until your pattern contains a capital letter. The best everyday default — alias it and stop thinking about -i.</div>
+            <div class="example">Example: alias rg='rg -S' - then rg error matches all casings, rg Error only matches Error</div>
           </div>
 
           <div class="command-card">
             <div class="command">rg -i "pattern"</div>
-            <div class="description">Case-insensitive search</div>
-            <div class="example">Example: rg -i "error" - finds Error, ERROR, error, etc.</div>
-          </div>
-
-          <div class="command-card">
-            <div class="command">rg "pattern" path/</div>
-            <div class="description">Search in specific directory</div>
-            <div class="example">Example: rg "function" src/ - search only in src directory</div>
+            <div class="description">Force case-insensitive, even when the pattern has capitals. Use when you know the casing in the codebase is inconsistent.</div>
+            <div class="example">Example: rg -i "connection refused" - matches any capitalisation</div>
           </div>
 
           <div class="command-card">
             <div class="command">rg -w "word"</div>
-            <div class="description">Search for whole words only</div>
-            <div class="example">Example: rg -w "log" - finds "log" but not "blog"</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="section" data-category="files">
-        <h2>File Operations</h2>
-        <div class="command-grid">
-          <div class="command-card">
-            <div class="command">rg --files</div>
-            <div class="description">List all files that would be searched</div>
-            <div class="example">Example: rg --files | grep ".py$" - list all Python files</div>
+            <div class="description">Whole words only. The fastest single way to cut noise when your term is a common substring.</div>
+            <div class="example">Example: rg -w "id" - matches id, but not uuid, ident or valid</div>
           </div>
 
           <div class="command-card">
-            <div class="command">rg -t py "pattern"</div>
-            <div class="description">Search only in Python files</div>
-            <div class="example">Example: rg -t py "import" - find imports in Python files</div>
+            <div class="command">rg "pattern" src/ tests/</div>
+            <div class="description">Search one or more specific paths. Narrowing up front beats filtering the results afterwards.</div>
+            <div class="example">Example: rg "useAuth" src/hooks src/pages - several paths in one command</div>
           </div>
 
           <div class="command-card">
-            <div class="command">rg -T js "pattern"</div>
-            <div class="description">Exclude JavaScript files from search</div>
-            <div class="example">Example: rg -T js "function" - search everywhere except JS files</div>
-          </div>
-
-          <div class="command-card">
-            <div class="command">rg -g "*.txt" "pattern"</div>
-            <div class="description">Search only files matching glob pattern</div>
-            <div class="example">Example: rg -g "*.{py,js}" "function" - search .py and .js files</div>
-          </div>
-
-          <div class="command-card">
-            <div class="command">rg --hidden "pattern"</div>
-            <div class="description">Include hidden files in search</div>
-            <div class="example">Example: rg --hidden "config" - search including .hidden files</div>
+            <div class="command">rg -F "app.config[0]"</div>
+            <div class="description">Literal string, regex disabled. Reach for this any time the term has dots, brackets, parens or slashes in it.</div>
+            <div class="example">Example: rg -F "$_POST['id']" - no escaping needed anywhere</div>
           </div>
 
           <div class="command-card">
             <div class="command">rg -l "pattern"</div>
-            <div class="description">Show only filenames with matches</div>
-            <div class="example">Example: rg -l "TODO" - list files containing TODO</div>
+            <div class="description">Filenames only, one per line. This is the form you pipe into other commands.</div>
+            <div class="example">Example: rg -l "deprecated" - 12 filenames instead of 400 matching lines</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --files-without-match "pattern"</div>
+            <div class="description">The inverse of -l: files that do not contain the pattern. Good for auditing what is missing rather than what is there.</div>
+            <div class="example">Example: rg --files-without-match "@license" -g "*.js" - JS files with no licence header</div>
           </div>
         </div>
       </div>
 
-      <div class="section" data-category="patterns">
-        <h2>Pattern Matching</h2>
+      <div class="section" data-category="scoping">
+        <h2>Scoping Files &amp; Directories</h2>
         <div class="command-grid">
           <div class="command-card">
-            <div class="command">rg "pat.*tern"</div>
-            <div class="description">Use regular expressions (default)</div>
-            <div class="example">Example: rg "func.*\(" - find function declarations</div>
+            <div class="command">rg -t py "pattern"</div>
+            <div class="description">Restrict to a file type. Faster than an equivalent glob, because rg rejects files before opening them.</div>
+            <div class="example">Example: rg -t py "def process" - covers .py, .pyi and other Python extensions</div>
           </div>
 
           <div class="command-card">
-            <div class="command">rg -F "literal.string"</div>
-            <div class="description">Search for literal string (disable regex)</div>
-            <div class="example">Example: rg -F "3.14" - find exact "3.14", not regex</div>
+            <div class="command">rg -t js -t ts "pattern"</div>
+            <div class="description">Repeat -t to include several types. Types are additive, not exclusive.</div>
+            <div class="example">Example: rg -t js -t ts "useEffect" - the whole JS/TS surface in one pass</div>
           </div>
 
           <div class="command-card">
-            <div class="command">rg "^pattern"</div>
-            <div class="description">Match pattern at start of line</div>
-            <div class="example">Example: rg "^import" - find import statements at line start</div>
+            <div class="command">rg -T md "pattern"</div>
+            <div class="description">Exclude a type with -T. Use it to keep docs, lockfiles or fixtures out of code searches.</div>
+            <div class="example">Example: rg -T md "install" - skip every Markdown file, search only code</div>
           </div>
 
           <div class="command-card">
-            <div class="command">rg "pattern$"</div>
-            <div class="description">Match pattern at end of line</div>
-            <div class="example">Example: rg ";$" - find lines ending with semicolon</div>
+            <div class="command">rg -g "*.{ts,tsx}" "pattern"</div>
+            <div class="description">Glob when no built-in type fits, or when you need one precise set of extensions.</div>
+            <div class="example">Example: rg -g "*.{yml,yaml}" "image:" - both YAML spellings</div>
           </div>
 
           <div class="command-card">
-            <div class="command">rg "\bpattern\b"</div>
-            <div class="description">Word boundary matching</div>
-            <div class="example">Example: rg "\blog\b" - match "log" as whole word</div>
+            <div class="command">rg -g '!node_modules' "pattern"</div>
+            <div class="description">A leading ! negates the glob. This is how you exclude a directory, and it is the flag missing from most cheatsheets.</div>
+            <div class="example">Example: rg -g '!{node_modules,dist,build,*.min.js}' "apiKey" - exclude several at once</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -g "**/migrations/**" "pattern"</div>
+            <div class="description">Restrict to a directory pattern at any depth in the tree.</div>
+            <div class="example">Example: rg -g "**/test/**" "fixture" - only inside test directories</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -uu "pattern"</div>
+            <div class="description">One -u ignores .gitignore. Two also searches hidden files. Three also searches binaries. Add u's until the file turns up.</div>
+            <div class="example">Example: rg -uu "TODO" - includes .env, .github and everything git is hiding</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --hidden "pattern"</div>
+            <div class="description">Include dotfiles and dot-directories while still honouring .gitignore. Short form is -. (a bare dot).</div>
+            <div class="example">Example: rg --hidden "AWS_" -g '!.git' - search dotfiles but skip .git internals</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --no-ignore-vcs "pattern"</div>
+            <div class="description">Bypass .gitignore but keep obeying .ignore and .rgignore. Lets you see build output without losing your own excludes.</div>
+            <div class="example">Example: rg --no-ignore-vcs "sourceMappingURL" - finds generated files</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --max-depth 1 "pattern"</div>
+            <div class="description">Cap the recursion depth. A depth of 1 means the current directory only, no subdirectories.</div>
+            <div class="example">Example: rg --max-depth 2 "version" . - top two levels only</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --files -t py</div>
+            <div class="description">List the files rg would search, with no pattern at all. Filter it with -t or -g rather than piping into grep.</div>
+            <div class="example">Example: rg --files -g '!node_modules' - every file in your real project</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" data-category="regex">
+        <h2>Regex &amp; Patterns</h2>
+        <div class="command-grid">
+          <div class="command-card">
+            <div class="command">rg "^import"</div>
+            <div class="description">^ anchors to the start of the line. Cheap, precise, and cuts out indented or commented occurrences.</div>
+            <div class="example">Example: rg "^from \w+ import" - top-level Python imports only</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg "\s+$"</div>
+            <div class="description">$ anchors to the end of the line.</div>
+            <div class="example">Example: rg "\s+$" -t py - every line with trailing whitespace</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg "(GET|POST|PUT|DELETE) /api"</div>
+            <div class="description">Alternation and grouping. Inside quotes you never need to escape the parens or the pipe.</div>
+            <div class="example">Example: rg "(warn|warning|WARN)\b" - several spellings in one pass</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -e "pattern1" -e "pattern2"</div>
+            <div class="description">Multiple independent patterns. Also the only way to search for a term that begins with a dash, which rg would otherwise read as a flag.</div>
+            <div class="example">Example: rg -e "--force" -e "-f " - dash-leading patterns</div>
           </div>
 
           <div class="command-card">
             <div class="command">rg -v "pattern"</div>
-            <div class="description">Invert match (show lines that DON'T match)</div>
-            <div class="example">Example: rg -v "^#" file.py - show non-comment lines</div>
+            <div class="description">Invert: print the lines that do not match. Combine with a second rg to whittle noise down in stages.</div>
+            <div class="example">Example: rg -v "^\s*(#|$)" config.ini - drop comments and blank lines</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -P "(?&lt;=version: )\d+\.\d+\.\d+"</div>
+            <div class="description">-P switches to the PCRE2 engine. Lookahead and lookbehind do not exist in rg's default engine, so without -P these patterns error out.</div>
+            <div class="example">Example: rg -P "password(?!_hash)" - password but never password_hash</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -P "\b(\w+) \1\b"</div>
+            <div class="description">Backreferences also need PCRE2. This one finds accidentally doubled words.</div>
+            <div class="example">Example: rg -P "\b(\w+) \1\b" -t md - "the the" typos across your docs</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -U --multiline-dotall "class Foo.*?\}"</div>
+            <div class="description">-U lets a match span lines, but . still stops at a newline until you add --multiline-dotall. Missing that second flag is why most multiline examples silently fail. Keep quantifiers lazy (.*?) or you will match the whole file.</div>
+            <div class="example">Example: rg -U "try \{[\s\S]*?catch" - same result using [\s\S] instead of the flag</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -f patterns.txt</div>
+            <div class="description">Read patterns from a file, one per line. Pass - to take the list from stdin instead.</div>
+            <div class="example">Example: rg -f indicators.txt /var/log/ - hunt a whole list across your logs</div>
           </div>
         </div>
       </div>
 
       <div class="section" data-category="output">
-        <h2>Output Control</h2>
+        <h2>Reading Output</h2>
         <div class="command-grid">
           <div class="command-card">
-            <div class="command">rg -n "pattern"</div>
-            <div class="description">Show line numbers</div>
-            <div class="example">Example: rg -n "error" - show matches with line numbers</div>
+            <div class="command">rg -C 3 "pattern"</div>
+            <div class="description">Three lines of context on both sides. The single most useful flag for actually understanding a hit.</div>
+            <div class="example">Example: rg -C 5 "raise ValueError" - see the surrounding logic</div>
           </div>
 
           <div class="command-card">
-            <div class="command">rg -A 3 -B 3 "pattern"</div>
-            <div class="description">Show 3 lines after and before each match</div>
-            <div class="example">Example: rg -A 2 -B 2 "class" - show class with context</div>
+            <div class="command">rg -F -A 20 "Traceback (most recent call last)"</div>
+            <div class="description">-A is lines after, -B is lines before. Asymmetric context is what you want for stack traces and multi-line log entries.</div>
+            <div class="example">Example: rg -B 2 -A 20 "Traceback" - the error plus its whole trace</div>
           </div>
 
           <div class="command-card">
-            <div class="command">rg -C 5 "pattern"</div>
-            <div class="description">Show 5 lines of context around matches</div>
-            <div class="example">Example: rg -C 3 "function" - show function with context</div>
+            <div class="command">rg -p "pattern" | less -R</div>
+            <div class="description">rg drops colour and grouping the moment output is piped. -p forces the terminal formatting back on so less can render it.</div>
+            <div class="example">Example: rg -p "TODO" | less -R - paged, coloured, grouped by file</div>
           </div>
 
           <div class="command-card">
-            <div class="command">rg --no-heading "pattern"</div>
-            <div class="description">Don't show file headings</div>
-            <div class="example">Example: rg --no-heading "TODO" - compact output format</div>
+            <div class="command">rg -M 200 --max-columns-preview "pattern"</div>
+            <div class="description">Cap how much of a long line prints, so one minified file cannot flood the terminal. --max-columns-preview shows a truncated preview instead of suppressing the line entirely.</div>
+            <div class="example">Example: rg -M 150 --max-columns-preview "apiKey" -g "*.min.js" - readable output from minified code</div>
           </div>
 
           <div class="command-card">
-            <div class="command">rg -c "pattern"</div>
-            <div class="description">Show count of matches per file</div>
-            <div class="example">Example: rg -c "import" - count imports per file</div>
+            <div class="command">rg --sortr modified "pattern"</div>
+            <div class="description">Newest files first — the only sensible order for logs. --sort does oldest first. Both force single-threaded searching, so use them on narrow scopes.</div>
+            <div class="example">Example: rg --sortr modified -l "OOMKilled" /var/log/ - most recent occurrence at the top</div>
           </div>
 
           <div class="command-card">
-            <div class="command">rg --color=never "pattern"</div>
-            <div class="description">Disable colored output</div>
-            <div class="example">Example: rg --color=never "pattern" > output.txt</div>
+            <div class="command">rg --no-heading -n "pattern"</div>
+            <div class="description">Flat file:line:text on every row instead of results grouped under filename headings. Easier to scan, and each line stands alone when pasted.</div>
+            <div class="example">Example: rg --no-heading -n "func " -t go - one self-contained line per match</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -IN "pattern"</div>
+            <div class="description">-I drops filenames, -N drops line numbers. What is left is clean text you can copy straight into something else.</div>
+            <div class="example">Example: rg -IN -o "https?://\S+" -t md - a bare list of URLs</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --trim "pattern"</div>
+            <div class="description">Strip leading whitespace from each result line, so deeply indented code stops wrapping in your terminal.</div>
+            <div class="example">Example: rg --trim -C 2 "return null" -t java</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --column "pattern"</div>
+            <div class="description">Add column numbers, implying line numbers too. Needed by any tool that jumps to an exact position.</div>
+            <div class="example">Example: rg --column "TODO" - prints file:line:col:text</div>
           </div>
         </div>
       </div>
 
-      <div class="section" data-category="advanced">
-        <h2>Advanced Features</h2>
+      <div class="section" data-category="extract">
+        <h2>Extract &amp; Count</h2>
         <div class="command-grid">
           <div class="command-card">
-            <div class="command">rg -U "pattern.*\n.*pattern"</div>
-            <div class="description">Multiline search mode</div>
-            <div class="example">Example: rg -U "class.*\n.*def" - find class followed by method</div>
+            <div class="command">rg -c "pattern"</div>
+            <div class="description">Counts matching LINES per file, not matches. A line with three hits still counts as one — this is the surprise behind most wrong totals.</div>
+            <div class="example">Example: rg -c "import" -t py - per-file line counts</div>
           </div>
 
           <div class="command-card">
-            <div class="command">rg --replace '$1' "capture_group"</div>
-            <div class="description">Show replacements (preview mode)</div>
-            <div class="example">Example: rg --replace 'NEW' "old_(\w+)" - preview replacements</div>
+            <div class="command">rg --count-matches "pattern"</div>
+            <div class="description">Counts every match, including several on the same line. This is the number you actually meant when -c disappointed you.</div>
+            <div class="example">Example: rg --count-matches "\bTODO\b" - the true total</div>
           </div>
 
           <div class="command-card">
-            <div class="command">rg -z "pattern"</div>
-            <div class="description">Search in compressed files</div>
-            <div class="example">Example: rg -z "error" logs.gz - search in gzipped files</div>
+            <div class="command">rg -c --include-zero "pattern"</div>
+            <div class="description">List files with zero matches alongside the rest, so the report covers everything searched.</div>
+            <div class="example">Example: rg -c --include-zero "assert" -t py - files with no assertions show as 0</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -o "pattern"</div>
+            <div class="description">Print only the matched text rather than the whole line. Every extraction pipeline starts here.</div>
+            <div class="example">Example: rg -o "https?://[^\s\"')]+" -t md - just the URLs, not their sentences</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -o -r '$1' "version=\"([^\"]+)\""</div>
+            <div class="description">-r rewrites output using capture groups; with -o you get the captured value on its own. Single-quote the replacement or your shell will eat $1 before rg sees it.</div>
+            <div class="example">Example: rg -o -r '$1' '"version": "([^"]+)"' package.json - the version, nothing else</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -IN -o "pattern" | sort | uniq -c | sort -rn</div>
+            <div class="description">The frequency tally: extract, group, rank. This answers "which of these appears most", which no single rg flag does.</div>
+            <div class="example">Example: rg -IN -o '"[a-z_]+":' -t json | sort | uniq -c | sort -rn - most common JSON keys</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -r 'new_$1' "old_(\w+)"</div>
+            <div class="description">Preview a rewrite on stdout. rg never edits files — there is no in-place mode — so this is purely a dry run before you hand the job to sed.</div>
+            <div class="example">Example: rg -r 'logger.info($1)' 'print\((.+)\)' -t py - inspect the refactor first</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --json "pattern" | jq</div>
+            <div class="description">JSON Lines output with byte offsets and submatch positions. Use this in scripts instead of parsing rg's human-readable text.</div>
+            <div class="example">Example: rg --json "TODO" | jq -r 'select(.type=="match") | .data.path.text'</div>
           </div>
 
           <div class="command-card">
             <div class="command">rg --stats "pattern"</div>
-            <div class="description">Show search statistics</div>
-            <div class="example">Example: rg --stats "function" - show files searched, matches found</div>
+            <div class="description">Append a summary: matches, matched lines, files with matches, files searched, elapsed time.</div>
+            <div class="example">Example: rg --stats "TODO" -t py - handy for tracking cleanup progress week to week</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" data-category="pipelines">
+        <h2>Pipelines &amp; Refactoring</h2>
+        <div class="command-grid">
+          <div class="command-card">
+            <div class="command">rg -l0 "old" | xargs -0 sed -i 's/old/new/g'</div>
+            <div class="description">Repo-wide find and replace, the safe way. rg locates the files, sed makes the edit. -l0 and xargs -0 use NUL separators so paths with spaces do not break.</div>
+            <div class="example">Example: on macOS, sed needs an empty argument: sed -i '' 's/old/new/g'</div>
           </div>
 
           <div class="command-card">
-            <div class="command">rg -j 8 "pattern"</div>
-            <div class="description">Use 8 threads for parallel search</div>
-            <div class="example">Example: rg -j 4 "pattern" - faster search on multi-core systems</div>
+            <div class="command">rg -l "old" | xargs sed -i 's/old/new/g'</div>
+            <div class="description">The shorter form of the same thing. Fine for tidy paths, but it will mangle filenames containing spaces — prefer the -l0 variant.</div>
+            <div class="example">Example: rg -l "getUserById" | xargs sed -i 's/getUserById/findUser/g'</div>
           </div>
 
           <div class="command-card">
-            <div class="command">rg -f patterns.txt</div>
-            <div class="description">Read patterns from file</div>
-            <div class="example">Example: rg -f search_patterns.txt - search multiple patterns</div>
+            <div class="command">rg -l "pattern" | wc -l</div>
+            <div class="description">How many files a change would touch. The fastest way to size a refactor before starting it.</div>
+            <div class="example">Example: rg -l "deprecated_api" | wc -l - 34 files to work through</div>
           </div>
 
           <div class="command-card">
-            <div class="command">rg --max-depth 2 "pattern"</div>
-            <div class="description">Limit directory traversal depth</div>
-            <div class="example">Example: rg --max-depth 1 "config" - search only 1 level deep</div>
+            <div class="command">rg -l "pattern" | xargs $EDITOR</div>
+            <div class="description">Open every matching file at once and work through them in one sitting.</div>
+            <div class="example">Example: rg -l "FIXME" -t ts | xargs nvim</div>
           </div>
 
           <div class="command-card">
-            <div class="command">rg --sort path "pattern"</div>
-            <div class="description">Sort results by path, modified, accessed, or created</div>
-            <div class="example">Example: rg --sort modified "pattern" - newest files first</div>
+            <div class="command">rg -l0 "useState" | xargs -0 rg -l "useEffect"</div>
+            <div class="description">Chain two searches to find files containing both patterns — an AND that a single regex cannot express across lines.</div>
+            <div class="example">Example: rg -l0 "TODO" | xargs -0 rg -l "@deprecated" - files with both markers</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --vimgrep "pattern"</div>
+            <div class="description">file:line:col:text with exactly one row per match, which is the shape vim's quickfix list and most editor pickers expect.</div>
+            <div class="example">Example: rg --vimgrep "TODO" &gt; /tmp/q &amp;&amp; vim -q /tmp/q</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --vimgrep "pattern" | fzf</div>
+            <div class="description">Pipe into fzf for interactive narrowing, with a preview pane to see each hit in place.</div>
+            <div class="example">Example: rg --vimgrep "TODO" | fzf --delimiter=: --preview 'bat -n {1} --highlight-line {2}'</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg "pattern" $(git diff --name-only main)</div>
+            <div class="description">Search only the files you have changed. A quick pre-commit check that never touches the rest of the repo.</div>
+            <div class="example">Example: rg -n "console\.log" $(git diff --name-only --diff-filter=ACM main)</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">command | rg "pattern"</div>
+            <div class="description">rg reads stdin, so it is a drop-in replacement for grep anywhere in a pipeline.</div>
+            <div class="example">Example: curl -s https://api.example.com/health | rg -o '"status":"[^"]+"'</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" data-category="logs">
+        <h2>Logs &amp; Big Files</h2>
+        <div class="command-grid">
+          <div class="command-card">
+            <div class="command">rg -z "pattern" /var/log/</div>
+            <div class="description">Search inside .gz, .bz2, .xz, .zst and .lz4 archives without unpacking them first.</div>
+            <div class="example">Example: rg -z "OOMKilled" /var/log/pods/ - rotated logs included</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">tail -f app.log | rg --line-buffered -i "error"</div>
+            <div class="description">--line-buffered is mandatory on a live stream. Without it rg buffers its output and you sit staring at nothing.</div>
+            <div class="example">Example: kubectl logs -f deploy/api | rg --line-buffered -i "panic|fatal"</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg "ERROR" app.log | rg -v "noise"</div>
+            <div class="description">Narrow in stages instead of building one enormous regex. Easier to write, and easier to adjust when it over-matches.</div>
+            <div class="example">Example: rg "ERROR" app.log | rg -v "HealthCheck|favicon"</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -a "pattern" dump.bin</div>
+            <div class="description">-a treats binary files as text. By default rg stops at the first NUL byte and just warns you it found binary data.</div>
+            <div class="example">Example: rg -a "BEGIN RSA PRIVATE KEY" core.dump - find keys in a memory dump</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --max-filesize 5M "pattern"</div>
+            <div class="description">Skip files above a size limit, so one stray database dump or 2 GB log cannot stall the whole search.</div>
+            <div class="example">Example: rg --max-filesize 500K "TODO" -uu - stays fast even with filtering off</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --crlf "pattern$"</div>
+            <div class="description">Treat \r\n as the line ending. Without it, $ never matches on Windows-format files because \r sits between your pattern and the line end.</div>
+            <div class="example">Example: rg --crlf "\d+$" export.csv - anchors work again</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -p --passthru "pattern" app.log | less -R</div>
+            <div class="description">Print every line but highlight the matches — reading the whole file with your search term lit up. -p keeps the colour alive through the pipe.</div>
+            <div class="example">Example: rg -p --passthru "timeout" app.log | less -R</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --pre pdftotext.sh -g "*.pdf" "pattern"</div>
+            <div class="description">Run each file through a preprocessor before searching, which lets rg read PDFs, DOCX, or anything else it cannot parse natively. Your script takes the path as $1 and writes plain text to stdout.</div>
+            <div class="example">Example: --pre scripts run per file, so keep them fast or scope them with -g</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg -b "pattern" archive.bin</div>
+            <div class="description">Print the byte offset of each match, so you can seek straight to it with dd or tail -c.</div>
+            <div class="example">Example: rg -ab "corrupt" archive.bin - offset to feed dd skip=</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" data-category="fixing">
+        <h2>Fixing &amp; Config</h2>
+        <div class="command-grid">
+          <div class="command-card">
+            <div class="command">rg -uuu "pattern"</div>
+            <div class="description">The first thing to try when rg finds nothing you know is there. Disables .gitignore, hidden-file skipping and binary detection in one go.</div>
+            <div class="example">Example: rg -uuu "MY_SECRET" - searches .env, node_modules, build output and binaries</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --files | rg "filename"</div>
+            <div class="description">Check the file is even in the search set before blaming your pattern. No output means rg is excluding it, not failing to match.</div>
+            <div class="example">Example: rg --files | rg "config.local" - silence here explains everything</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --debug "pattern" 2&gt;&amp;1 | rg -i "ignor"</div>
+            <div class="description">Shows exactly which ignore rule excluded a file and which file that rule came from. Ends the guessing.</div>
+            <div class="example">Example: rg --debug "x" dist/ 2&gt;&amp;1 | rg -i "ignor"</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --type-list</div>
+            <div class="description">Every built-in type name and the globs it covers. Check here instead of guessing what -t accepts.</div>
+            <div class="example">Example: rg --type-list | rg "tsx" - find which type owns .tsx files</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --type-add 'web:*.{html,css,js,vue}' -t web "pattern"</div>
+            <div class="description">Define your own type inline. Put the same string in your config file to keep it permanently.</div>
+            <div class="example">Example: rg --type-add 'conf:*.{conf,cfg,ini,toml}' -t conf "port"</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">export RIPGREP_CONFIG_PATH=~/.config/ripgrep/rc</div>
+            <div class="description">Point rg at a config file of default flags, one per line, # for comments. This is where --smart-case and your standing excludes belong.</div>
+            <div class="example">Example: file contents, one per line: --smart-case then --max-columns=200 then --glob=!.git</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">RIPGREP_CONFIG_PATH= rg "pattern"</div>
+            <div class="description">Unset the config for a single run. The way to find out whether one of your own defaults is causing the odd result.</div>
+            <div class="example">Example: RIPGREP_CONFIG_PATH= rg -uuu "pattern" - a completely clean search</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --no-require-git "pattern"</div>
+            <div class="description">Apply .gitignore rules even outside a git repository, which rg skips by default. Useful in extracted tarballs and scratch directories.</div>
+            <div class="example">Example: rg --no-require-git "TODO" ~/scratch/</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --engine auto "pattern"</div>
+            <div class="description">Use the fast default engine and fall back to PCRE2 automatically when the pattern needs it, so you stop having to remember -P.</div>
+            <div class="example">Example: rg --engine auto "(?&lt;=key=)\w+" - lookbehind just works</div>
+          </div>
+
+          <div class="command-card">
+            <div class="command">rg --help | rg -A 3 "max-filesize"</div>
+            <div class="description">rg's own help is long and searchable with rg. Usually faster than opening the man page.</div>
+            <div class="example">Example: rg --help | rg -A 3 "sort" - remind yourself of the sort options</div>
           </div>
         </div>
       </div>
